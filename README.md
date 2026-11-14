@@ -43,7 +43,7 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
 - **What Claude Code records depends on how it was launched.** When Claude
   Code 2.1.322 was told it was running inside the Claude desktop app
   (`CLAUDE_CODE_ENTRYPOINT=claude-desktop`, which the app sets for the
-  sessions it starts), every API-key session made one billed small-model
+  sessions it starts), every headless API-key session we ran (`claude -p`) made one billed small-model
   (Haiku) request that appeared in none of its own records: telemetry events,
   metrics, session files or cost totals. On our small tasks it was a quarter
   to a half of each session's billed tokens. Every run with that setting had
@@ -59,7 +59,8 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
   and [#82274](https://github.com/anthropics/claude-code/issues/82274)). The
   bill check accounts for all of this; anything beyond it shows up, except
   small-model usage that fits inside the per-session allowance it makes for
-  the desktop request.
+  the desktop request. (We didn't test the desktop app's own interactive
+  sessions.)
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
   all show up as unexplained minutes.

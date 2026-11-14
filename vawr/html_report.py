@@ -399,8 +399,9 @@ def _bill(report, check, billcheck):
     return {
         "key": "bill", "status": status, "short": short, "result": result,
         "means": "Compares Anthropic's per-minute billing records for one API key with what was recorded, "
-                 "minute by minute. Sessions started from the Claude desktop app make one small background "
-                 "request that Claude Code records nowhere; the check allows one such request per session.",
+                 "minute by minute. In our tests, headless Claude Code runs that inherit the Claude desktop "
+                 "app's environment made one small background request that Claude Code records nowhere; the "
+                 "check allows one such request per session.",
         "limits": "It covers only that one API key%s. Re-running it needs the organization's Admin key." % scope,
         "details": "".join(_bill_detail(k, r) for k, r in sources),
     }
