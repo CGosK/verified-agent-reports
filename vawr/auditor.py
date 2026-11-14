@@ -84,27 +84,31 @@ def check_sessions(log_reqs, start, end, runs_dir=paths.RUNS_DIR):
 
 
 def match_minutes(provider, logged, minutes, shift):
-    """Greedy earliest-first matching of provider tokens to logged tokens that
-    lie within +/- shift minutes. Returns (unmatched_provider, unmatched_log),
-    both {minute: tokens}."""
+    """Match provider tokens to logged tokens within +/- shift minutes, nearest
+    minute first: every exact-minute match is made before any one-minute match,
+    and so on. Earliest-first within each distance. (Matching the nearest first
+    keeps a request from taking a neighbouring session's tokens when sessions
+    run back to back.) Returns (unmatched_provider, unmatched_log), both
+    {minute: tokens}."""
     remaining = dict(logged)
-    unmatched = {}
-    for m in minutes:
-        need = provider.get(m, 0)
-        if not need:
-            continue
-        for j in range(-shift, shift + 1):
-            mm = m + timedelta(minutes=j)
-            have = remaining.get(mm, 0)
-            if have:
-                take = min(need, have)
-                remaining[mm] = have - take
-                need -= take
-                if not need:
-                    break
-        if need:
-            unmatched[m] = need
-    return unmatched, {m: v for m, v in remaining.items() if v}
+    need = {m: provider.get(m, 0) for m in minutes if provider.get(m, 0)}
+    for d in range(shift + 1):
+        for m in minutes:
+            n = need.get(m, 0)
+            if not n:
+                continue
+            for j in ((0,) if d == 0 else (-d, d)):
+                mm = m + timedelta(minutes=j)
+                have = remaining.get(mm, 0)
+                if have:
+                    take = min(n, have)
+                    remaining[mm] = have - take
+                    n -= take
+                    if not n:
+                        break
+            need[m] = n
+    return ({m: n for m, n in need.items() if n},
+            {m: v for m, v in remaining.items() if v})
 
 
 def cluster(flagged, gap_minutes=2):

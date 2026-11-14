@@ -42,12 +42,14 @@ def parse_when(s, now=None):
 
 
 # Signs that a session was signed in with a Claude account (a subscription)
-# rather than an API key. Across our runs every subscription session file had
-# all four and no API-key session file had any. Getting this wrong in one
-# direction (an API-key session read as a subscription one) shows up as
-# unexplained usage, a visible false alarm; the other direction could hide
-# usage, so any one sign is enough.
-ACCOUNT_SIGNS = ('"session-owner"', '"accountUuid"', '"advisorModel"', '"ttl": "1h"', '"ttl":"1h"')
+# rather than an API key: an owner entry, or 1-hour prompt caching, which Claude
+# Code uses for subscribers while API-key sessions use 5-minute caching. Across
+# our runs every subscription session file had these and no API-key session file
+# (headless or interactive) did. (advisorModel is not a sign: interactive API-key
+# sessions carry it too.) Reading an API-key session as a subscription one shows
+# up as unexplained usage, a visible false alarm; the other direction shows up as
+# usage "in session files, not billed here".
+ACCOUNT_SIGNS = ('"session-owner"', '"accountUuid"', '"ttl": "1h"', '"ttl":"1h"')
 
 
 def _signed_in(path):
@@ -239,8 +241,8 @@ def render(res):
         lines.append("Unexplained usage came from somewhere this machine has no record of: another "
                      "machine or script using the key, a run with session files off, or a leaked key.")
     else:
-        lines.append("Every billed token is accounted for by this machine's session files, apart from "
-                     "Claude Code's own background requests.")
+        lines.append("Every billed token is accounted for by this machine's session files and session "
+                     "cost totals%s." % (", apart from Claude Code's own background requests" if bg else ""))
     if res.get("source") == "analytics":
         lines.append("Records came from the Usage and Cost Analytics API, which can run 4-24 hours behind; "
                      "recent minutes may be missing.")

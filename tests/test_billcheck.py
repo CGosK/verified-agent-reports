@@ -65,7 +65,7 @@ class BillCheckTest(unittest.TestCase):
     def test_subscription_sessions_never_offset_billed_usage(self):
         # a subscription session in the same minute as an unlogged key run must not hide it
         self.write("p", "s1", [assistant("r1", 3, 100, "s1")])
-        self.write("q", "sub", [assistant("r2", 12, 500, "sub", extra={"advisorModel": "x"})])
+        self.write("q", "sub", [{"type": "session-owner"}, assistant("r2", 12, 500, "sub")])
         res = self.run_check({m(3): {SONNET: tok(100), HAIKU: BG}, m(12): {SONNET: tok(500)}})
         self.assertEqual(len(res["gaps"]), 1)
         self.assertEqual(res["local_account_requests"], 1)
