@@ -159,7 +159,9 @@ def demo_report(key_var=KEY_VAR):
     day = min(r["start"] for r in sess)[:10]
     env = dict(os.environ, VAWR_HOME=os.path.join(DEMO, "home"))
     out = os.path.join(DEMO, "grant-demo.zip")
-    until = (datetime.now(timezone.utc) - timedelta(minutes=40)).strftime("%Y-%m-%dT%H:%M")
+    last_end = max(datetime.fromisoformat(r["end"]) for r in sess)
+    until = max(datetime.now(timezone.utc) - timedelta(minutes=30), last_end + timedelta(minutes=2)) \
+        .strftime("%Y-%m-%dT%H:%M")
     steps = [["bundle", "--log", log, "--since", day + "T00:00", "--until", until, "--project", "grant-demo",
               "--key-id", key_id, "--title", "Grant demo, " + day, "--projects", os.path.join(DEMO, "claude-config",
                                                                                              "projects"),
@@ -176,6 +178,40 @@ def demo_report(key_var=KEY_VAR):
         print(st[0], "exit", r.returncode, flush=True)
 
 
+def demo_report_when_ready(expected=5, key_var=KEY_VAR, poll=180, max_wait=6 * 3600):
+    """Wait for the sessions to finish and for Anthropic's daily count to show all of
+    them on the test key, then run demo_report()."""
+    import time
+    from . import billcheck, usage_api
+    t0 = time.time()
+    admin, _ = billcheck.admin_and_key()
+    key_id = usage_api.find_key_id(admin, load_env()[key_var])
+    name = next(k.get("name") for k in usage_api.api_keys(admin) if k.get("id") == key_id)
+    runlog = os.path.join(DEMO, "run.log")
+    while time.time() - t0 < max_wait:
+        done = os.path.exists(runlog) and "DEMO_SESSIONS_DONE" in open(runlog).read()
+        if done:
+            sess = [json.loads(line) for line in open(os.path.join(DEMO, "sessions", "sessions.jsonl"))]
+            days = sorted({r["start"][:10] for r in sess} | {r["end"][:10] for r in sess})
+            try:
+                seen = sum((rec.get("core_metrics") or {}).get("num_sessions") or 0 for d in days
+                           for rec in usage_api.claude_code_day(admin, d)
+                           if (rec.get("actor") or {}).get("api_key_name") == name)
+            except Exception as exc:
+                seen = -1
+                print("analytics not readable yet: %s" % exc, flush=True)
+            print("%s Anthropic shows %d of %d sessions" % (datetime.now(timezone.utc).strftime("%H:%M"), seen,
+                                                            expected), flush=True)
+            if seen >= expected:
+                time.sleep(300)  # let the last records settle
+                demo_report(key_var)
+                print("DEMO_REPORT_DONE", flush=True)
+                return
+        time.sleep(poll)
+    print("gave up waiting", flush=True)
+
+
 if __name__ == "__main__":
     import sys
-    demo_report() if sys.argv[1:] == ["report"] else demo_day()
+    {"report": demo_report, "report-when-ready": demo_report_when_ready}.get(
+        (sys.argv[1:] or [""])[0], demo_day)()
