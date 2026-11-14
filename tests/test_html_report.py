@@ -92,9 +92,9 @@ class HtmlReportTest(unittest.TestCase):
         # the re-run command carries the check's window and the log path
         start, end = self.check["window"]
         path = self.report["log"]["path"]
-        self.assertIn("vawr check --since %s \\\n    --until %s \\\n    --log %s" % (start, end, path), doc)
+        self.assertIn("vawr check --no-coverage --since %s \\\n    --until %s \\\n    --log %s" % (start, end, path), doc)
         self.assertIn("vawr status --log %s" % path, doc)
-        self.assertIn("vawr report --log %s" % path, doc)
+        self.assertIn("vawr verify-report report.json --log %s" % path, doc)
         # every unexplained billed minute is listed, with the total the CLI would print
         gap = sum(sum(g["tokens"].values()) for g in self.check["bill"]["gaps"])
         self.assertIn("{:,}".format(gap), doc)

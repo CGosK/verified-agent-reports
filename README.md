@@ -123,6 +123,13 @@ vawr check --since 24h
 vawr report
 ```
 
+`vawr report --html report.html --check check.json` (with `vawr check --json
+check.json` first) writes one self-contained page to hand to a funder or
+client: usage by category and project, each check with what it does and
+doesn't show, and how they can verify it themselves (`vawr verify-report`).
+Example, from four real interactive sessions:
+[`work/samples/report_interactive.html`](work/samples/report_interactive.html).
+
 `vawr check` runs three checks:
 
 | Check | What it shows | What it can't show |

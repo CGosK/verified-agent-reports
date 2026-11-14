@@ -399,8 +399,8 @@ def _bill(report, check, billcheck):
     return {
         "key": "bill", "status": status, "short": short, "result": result,
         "means": "Compares Anthropic's per-minute billing records for one API key with what was recorded, "
-                 "minute by minute, allowing one small background request per Claude Code session that "
-                 "Claude Code records nowhere.",
+                 "minute by minute. Sessions started from the Claude desktop app make one small background "
+                 "request that Claude Code records nowhere; the check allows one such request per session.",
         "limits": "It covers only that one API key%s. Re-running it needs the organization's Admin key." % scope,
         "details": "".join(_bill_detail(k, r) for k, r in sources),
     }
@@ -716,8 +716,8 @@ def _verify(report, check, billcheck):
         since, until = "<start>", "<end>"
     commands = "\n".join([  # continuation lines keep each line short enough for a phone or paper
         "vawr status --log %s" % q,
-        "vawr check --since %s \\\n    --until %s \\\n    --log %s" % (since, until, q),
-        "vawr report --log %s" % q,
+        "vawr verify-report report.json --log %s" % q,
+        "vawr check --no-coverage --since %s \\\n    --until %s \\\n    --log %s" % (since, until, q),
     ])
     head = log.get("head")
     facts = [("Log file", "<code>%s</code>" % _e(path)),
@@ -729,13 +729,14 @@ def _verify(report, check, billcheck):
     steps = ["<li><code>vawr status</code> should show %s and the chain intact. The last line of the log "
              "carries the head hash above in its <code>hash</code> field.</li>" % _count(
                  _int(log.get("entries")), "entry", "entries"),
-             "<li><code>vawr report</code> recounts the usage table from the log; its figures should match "
-             "the table above, and it prints the head hash's first 16 characters%s.</li>" % (
+             "<li><code>vawr verify-report</code> takes the report's data file (<code>report.json</code>, "
+             "from <code>vawr report --out</code>), checks that its head hash%s is an entry of the log, and "
+             "recounts its totals from the log; any edited figure fails.</li>" % (
                  " (<code>%s</code>)" % _e(str(head)[:16]) if head else ""),
-             "<li><code>vawr check</code> re-runs the chain check on any machine. Its coverage and bill "
-             "parts only reproduce on the team's machine (coverage reads its Claude Code session files) "
-             "with the organization's Admin key (bill), so ask the team to run them with you or to share "
-             "their output.</li>"]
+             "<li><code>vawr check --no-coverage</code> re-runs the chain check, and with the account's "
+             "Admin key the bill check, on any machine. If you hold the account (for example, you issued "
+             "the API key), nothing here rests on the team's word. Coverage reads the team's own session "
+             "files, so only the team can re-run it.</li>"]
     if since == "<start>":
         steps.append("<li>Replace <code>&lt;start&gt;</code> and <code>&lt;end&gt;</code> with the UTC "
                      "times the report covers.</li>")
