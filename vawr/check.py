@@ -100,3 +100,45 @@ def render(res):
             lines.append("        the log has %d minute(s) with more than was billed to this key "
                          "(another key, or usage records still arriving)" % len(b["log_excess"]))
     return "\n".join(lines)
+
+
+def verify_report(log_path, report_path):
+    """Check a received report against the published log: the report's head hash
+    must be an entry of this log (so the log is the one the report was built from,
+    possibly with more entries added later), and rebuilding the report from the log
+    up to that entry, for the same window, must give the same tokens per category."""
+    import json
+    import os
+    import tempfile
+    from datetime import datetime
+    from . import report as report_mod
+    with open(report_path) as fh:
+        pub = json.load(fh)
+    head = (pub.get("log") or {}).get("head")
+    upto = []
+    found = False
+    for _, e in chainlog.read_entries(log_path):
+        upto.append(e)
+        if e.get("hash") == head:
+            found = True
+            break
+    if not found:
+        return {"ok": False, "head_found": False, "head": head,
+                "note": "the report's head hash is not in this log: it was built from a different log"}
+    with tempfile.TemporaryDirectory() as d:
+        prefix = os.path.join(d, "prefix.jsonl")
+        with open(prefix, "w") as fh:
+            for e in upto:
+                fh.write(chainlog.canonical(e) + "\n")
+        w = pub.get("window") or [None, None]
+        parse = lambda s: datetime.fromisoformat(s) if s else None  # noqa: E731
+        fresh = report_mod.build(prefix, start=parse(w[0]), end=parse(w[1]))
+    pub_t = {c["category"]: c["tokens"] for c in pub.get("categories", [])}
+    new_t = {c["category"]: c["tokens"] for c in fresh["categories"]}
+    diffs = {cat: {t: [pub_t.get(cat, {}).get(t, 0), new_t.get(cat, {}).get(t, 0)] for t in TOKEN_TYPES
+                   if pub_t.get(cat, {}).get(t, 0) != new_t.get(cat, {}).get(t, 0)}
+             for cat in set(pub_t) | set(new_t)}
+    diffs = {k: v for k, v in diffs.items() if v}
+    return {"ok": not diffs and fresh["log"]["chain_ok"], "head_found": True, "head": head,
+            "entries_at_head": len(upto), "chain_ok_to_head": fresh["log"]["chain_ok"],
+            "differences": diffs}

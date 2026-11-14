@@ -61,6 +61,21 @@ def cmd_batch(args):
                 list(ex.map(one, group, [i * stagger for i in range(len(group))]))
 
 
+def cmd_verify_report(args):
+    from . import check
+    res = check.verify_report(args.log, args.report)
+    if not res["head_found"]:
+        print("FAIL  %s" % res["note"])
+        return 1
+    print("%s  report matches the log: head %s… is entry %d; chain %s up to it; %s" % (
+        "PASS" if res["ok"] else "FAIL", res["head"][:16], res["entries_at_head"],
+        "intact" if res["chain_ok_to_head"] else "BROKEN",
+        "same tokens per category" if not res["differences"] else "differences: %s" % res["differences"]))
+    print("Next: with an Admin key for the account, `vawr check --no-coverage --log %s --since <start> --until <end>` "
+          "checks the log against Anthropic's records." % args.log)
+    return 0 if res["ok"] else 1
+
+
 def cmd_check(args):
     from datetime import datetime, timedelta, timezone
     from . import billcheck, check, paths
@@ -328,6 +343,11 @@ def main(argv=None):
         epilog="Start here: `vawr billcheck --since 7d` (needs ANTHROPIC_ADMIN_KEY and ANTHROPIC_API_KEY). "
                "Then `vawr setup --write`, `vawr start`, work as usual, and `vawr check`.")
     sub = p.add_subparsers(dest="cmd", required=True, metavar="command")
+
+    s = sub.add_parser("verify-report", help="for whoever receives a report: does it match the published log")
+    s.add_argument("report", help="the report JSON (`vawr report --out`)")
+    s.add_argument("--log", default=LOG_PATH, help="the published log")
+    s.set_defaults(func=cmd_verify_report)
 
     s = sub.add_parser("billcheck", help="what Anthropic billed an API key vs what this machine's Claude Code session files record")
     s.add_argument("--since", default="24h", help="how far back: 90m, 24h, 7d, or a UTC ISO time (default 24h)")

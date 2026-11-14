@@ -69,5 +69,29 @@ class CheckCoverageTest(unittest.TestCase):
             self.assertEqual(res["coverage"]["unlogged_sessions"][0]["requests"], 1)
 
 
+class VerifyReportTest(unittest.TestCase):
+    def test_matches_then_catches_an_edited_total(self):
+        from vawr import report
+        with tempfile.TemporaryDirectory() as d:
+            log = os.path.join(d, "events.jsonl")
+            cl = chainlog.ChainLog(log)
+            t = (T0 + timedelta(minutes=1)).isoformat()
+            for i in range(3):
+                cl.append({"name": "api_request", "time": t, "attributes": {
+                    "request_id": "r%d" % i, "session.id": "s", "model": "m", "input_tokens": 10,
+                    "output_tokens": 5, "cache_read_tokens": 0, "cache_creation_tokens": 0,
+                    "category": "safety"}, "resource": {}})
+            rep = report.build(log)
+            path = os.path.join(d, "report.json")
+            json.dump(rep, open(path, "w"))
+            cl.append({"name": "api_request", "time": t, "attributes": {"request_id": "late", "input_tokens": 99,
+                       "output_tokens": 0, "cache_read_tokens": 0, "cache_creation_tokens": 0,
+                       "category": "safety"}, "resource": {}})  # added after the report
+            self.assertTrue(check.verify_report(log, path)["ok"])
+            rep["categories"][0]["tokens"]["output"] += 1
+            json.dump(rep, open(path, "w"))
+            self.assertFalse(check.verify_report(log, path)["ok"])
+
+
 if __name__ == "__main__":
     unittest.main()
