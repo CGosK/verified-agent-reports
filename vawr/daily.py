@@ -19,7 +19,7 @@ subscription, Bedrock or Vertex).
 from collections import Counter
 from datetime import date, datetime, timedelta, timezone
 
-from . import usage_api
+from . import chainlog, usage_api
 from .logdata import api_requests, sessions as log_sessions
 
 LAG = timedelta(hours=1)  # Anthropic leaves out data younger than this
@@ -85,26 +85,43 @@ def log_days(log_paths, days, only_projects=None):
 
     def cell(d, term):
         return out[d]["cells"].setdefault(term, {"sessions": set(), "tokens": Counter()})
+    seen = set()  # (log ID, entry seq): two bundles from one log share requests
     for path, only in log_paths:
         keep = lambda mode, project: mode in API_KEY_MODES and (not only or project in only)  # noqa: E731
         sess = log_sessions(path)
+        lid = next((e.get("hash") for _, e in chainlog.read_entries(path) if isinstance(e, dict)), path)
         for sid, s in sess.items():
-            if keep(s["mode"], s["project"]) and (s["first"] or "")[:10] in out:
-                out[s["first"][:10]]["sessions"].add(sid)
-                cell(s["first"][:10], s["terminal"])["sessions"].add(sid)
+            d = _day(s["first"])
+            if keep(s["mode"], s["project"]) and d in out:
+                out[d]["sessions"].add(sid)
+                cell(d, s["terminal"])["sessions"].add(sid)
         for r in api_requests(path):
-            t = r.get("time") or ""
-            if keep(r.get("mode"), r.get("project")) and t[:10] in out:
+            d = _day(r.get("time"))
+            if keep(r.get("mode"), r.get("project")) and d in out and (lid, r.get("seq")) not in seen:
+                seen.add((lid, r.get("seq")))
                 n = sum(r["tokens"].values())
-                out[t[:10]]["tokens"][r.get("model") or "?"] += n
-                cell(t[:10], (sess.get(r.get("session_id")) or {}).get("terminal"))["tokens"][r.get("model") or "?"] += n
-        starts = [s["first"] for s in sess.values() if s["first"]]
-        first.append(min(starts) if starts else None)
+                out[d]["tokens"][r.get("model") or "?"] += n
+                cell(d, (sess.get(r.get("session_id")) or {}).get("terminal"))["tokens"][r.get("model") or "?"] += n
+        starts = [_parse(s["first"]) for s in sess.values()]
+        starts = [t for t in starts if t]
+        first.append(min(starts).isoformat() if starts else None)
     return out, first
 
 
 def _parse(s):
-    return datetime.fromisoformat(s.replace("Z", "+00:00")) if s else None
+    """Aware UTC datetime, or None for anything that isn't an ISO time (logs are untrusted)."""
+    if not isinstance(s, str) or not s:
+        return None
+    try:
+        t = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+
+
+def _day(s):
+    t = _parse(s)
+    return t.astimezone(timezone.utc).date().isoformat() if t else None
 
 
 RANK = {"fail": 5, "pending": 4, "partial": 3, "pass_so_far": 2, "pass": 1, "before_log": 0}

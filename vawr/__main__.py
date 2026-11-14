@@ -121,8 +121,8 @@ def cmd_receive(args):
     admin, _ = (None, None) if args.no_bill else billcheck.admin_and_key()
     try:
         out = bundle.receive(args.bundle, admin_key=admin, key_id=args.key_id, record=not args.no_record)
-    except (ValueError, OSError, __import__("zipfile").BadZipFile) as exc:
-        print("FAILED  can't read %s: %s" % (args.bundle, exc))
+    except Exception as exc:  # an untrusted file: any failure to read it is a FAILED, not a traceback
+        print("FAILED  can't check %s: %s" % (bundle.clean(args.bundle), bundle.clean(exc, 400)))
         return 1
     if args.json:
         with open(args.json, "w") as fh:
@@ -148,14 +148,14 @@ def cmd_team(args):
     end = billcheck.parse_when(args.until, now) if args.until else None
     try:
         res = team.run(args.bundles, admin, start=start, end=end, record=not args.no_record)
-    except (ValueError, OSError) as exc:
+    except Exception as exc:
         print("FAILED  %s" % exc)
         return 1
     if args.json:
         with open(args.json, "w") as fh:
             json.dump(res, fh, indent=1, default=str)
     print(team.render(res))
-    return 0 if all(r["status"] == "pass" for r in res["keys"]) else 1
+    return 0 if all(r["status"] == "pass" for r in res["keys"]) and not res["unreadable"] else 1
 
 
 def cmd_check(args):

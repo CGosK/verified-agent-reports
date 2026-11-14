@@ -30,8 +30,9 @@ def level(res):
     bill check passed against Anthropic's records), "tamper-evident" (chain intact,
     no bill check: a Claude subscription, or no Admin key) or "failed"."""
     sess = res.get("sessions")
-    if (res["chain"]["ok"] is False or res["coverage"]["ok"] is False
-            or (res.get("bill") and res["bill"]["gaps"]) or (sess and sess.get("ok") is False)):
+    bill = res.get("bill")
+    if (res["chain"]["ok"] is False or (res.get("coverage") or {}).get("ok") is False
+            or (bill and (bill["gaps"] or bill.get("log_excess"))) or (sess and sess.get("ok") is False)):
         return "failed"
     return "provider" if res.get("bill") is not None else "tamper-evident"
 
@@ -129,15 +130,18 @@ def render(res):
         gap = sum(sum(g["tokens"].values()) for g in b["gaps"])
         bg = sum(b["background_tokens"].values())
         lines.append("%s  bill         %s tokens billed: %s logged, %s Claude Code background, %s unexplained" % (
-            mark[not b["gaps"]], "{:,}".format(prov), "{:,}".format(prov - bg - gap), "{:,}".format(bg),
+            mark[not b["gaps"] and not b.get("log_excess")], "{:,}".format(prov), "{:,}".format(prov - bg - gap), "{:,}".format(bg),
             "{:,}".format(gap)))
         for g in b["gaps"]:
             lines.append("        unexplained %s-%s: %s tokens (%s)" % (
                 g["start"][11:16], g["end"][11:16], "{:,}".format(sum(g["tokens"].values())),
                 ", ".join(sorted(g["by_model"]))))
         if b["log_excess"]:
-            lines.append("        the log has %d minute(s) with more than was billed to this key "
-                         "(another key, or usage records still arriving)" % len(b["log_excess"]))
+            lines.append("        the log has %d minute(s) with %s tokens more than was billed to this key "
+                         "(work on another key, usage records still arriving, or entries that don't match real "
+                         "usage; --project limits the check to one project's work)" % (
+                             len(b["log_excess"]), "{:,}".format(sum(sum(x["tokens"].values()) if isinstance(
+                                 x.get("tokens"), dict) else 0 for x in b["log_excess"]))))
     s = res.get("sessions")
     if s is None:
         if b is not None:
@@ -153,43 +157,78 @@ def render(res):
     return "\n".join(lines)
 
 
-def verify_report(log_path, report_path):
+def verify_report(log_path, report_path, expect=None):
     """Check a received report against the published log: the report's head hash
     must be an entry of this log (so the log is the one the report was built from,
     possibly with more entries added later), and rebuilding the report from the log
-    up to that entry, for the same window, must give the same tokens per category."""
+    up to that entry, for the same window, must give the same tokens per category.
+
+    `expect` ({"window", "only_projects", "head"}, from a bundle's manifest) pins what
+    the report must cover: a report.json claiming a narrower window, other projects
+    or an earlier head fails, and the rebuild uses the expected values."""
     import json
     import os
     import tempfile
-    from datetime import datetime
+    from datetime import datetime, timezone
     from . import report as report_mod
-    with open(report_path) as fh:
-        pub = json.load(fh)
+
+    def bad(note):
+        return {"ok": False, "head_found": False, "head": None, "note": note, "differences": {}}
+    try:
+        with open(report_path) as fh:
+            pub = json.load(fh)
+    except (OSError, ValueError) as exc:
+        return bad("report.json can't be read: %s" % exc)
+    if not isinstance(pub, dict) or not isinstance(pub.get("categories", []), list) or not isinstance(
+            pub.get("log", {}), dict):
+        return bad("report.json isn't a vawr report")
     head = (pub.get("log") or {}).get("head")
-    upto = []
-    found = False
-    for _, e in chainlog.read_entries(log_path):
-        upto.append(e)
-        if e.get("hash") == head:
-            found = True
-            break
-    if not found:
-        return {"ok": False, "head_found": False, "head": head,
-                "note": "the report's head hash is not in this log: it was built from a different log"}
+    window = pub.get("window") or [None, None]
+    only = pub.get("only_projects")
+    if expect is not None:
+        mism = []
+        if head != expect.get("head"):
+            mism.append("head %s… instead of the log's %s…" % (str(head)[:16], str(expect.get("head"))[:16]))
+        if list(window) != list(expect.get("window") or [None, None]):
+            mism.append("window %s instead of the bundle's %s" % (window, expect.get("window")))
+        if (sorted(only) if isinstance(only, list) else only) != expect.get("only_projects"):
+            mism.append("projects %s instead of the bundle's %s" % (only, expect.get("only_projects")))
+        if mism:
+            return dict(bad("report.json covers something other than the bundle says: " + "; ".join(mism)),
+                        head=head)
+        window, only = expect.get("window") or [None, None], expect.get("only_projects")
+
+    def parse(s):
+        if not s:
+            return None
+        t = datetime.fromisoformat(str(s).replace("Z", "+00:00"))
+        return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+    try:
+        start, end = parse(window[0]), parse(window[1])
+    except (ValueError, TypeError, IndexError):
+        return bad("report.json has no readable window")
+    if only is not None and not (isinstance(only, list) and all(isinstance(x, str) for x in only)):
+        return bad("report.json's project list isn't a list of names")
     with tempfile.TemporaryDirectory() as d:
         prefix = os.path.join(d, "prefix.jsonl")
+        found, n = False, 0
         with open(prefix, "w") as fh:
-            for e in upto:
+            for _, e in chainlog.read_entries(log_path):
                 fh.write(chainlog.canonical(e) + "\n")
-        w = pub.get("window") or [None, None]
-        parse = lambda s: datetime.fromisoformat(s) if s else None  # noqa: E731
-        fresh = report_mod.build(prefix, start=parse(w[0]), end=parse(w[1]), only_projects=pub.get("only_projects"))
-    pub_t = {c["category"]: c["tokens"] for c in pub.get("categories", [])}
+                n += 1
+                if isinstance(e, dict) and head and e.get("hash") == head:
+                    found = True
+                    break
+        if not found:
+            return {"ok": False, "head_found": False, "head": head, "differences": {},
+                    "note": "the report's head hash is not in this log: it was built from a different log"}
+        fresh = report_mod.build(prefix, start=start, end=end, only_projects=only)
+    pub_t = {c.get("category"): c.get("tokens") or {} for c in pub.get("categories", []) if isinstance(c, dict)}
     new_t = {c["category"]: c["tokens"] for c in fresh["categories"]}
     diffs = {cat: {t: [pub_t.get(cat, {}).get(t, 0), new_t.get(cat, {}).get(t, 0)] for t in TOKEN_TYPES
                    if pub_t.get(cat, {}).get(t, 0) != new_t.get(cat, {}).get(t, 0)}
              for cat in set(pub_t) | set(new_t)}
-    diffs = {k: v for k, v in diffs.items() if v}
+    diffs = {str(k): v for k, v in diffs.items() if v}
     return {"ok": not diffs and fresh["log"]["chain_ok"], "head_found": True, "head": head,
-            "entries_at_head": len(upto), "chain_ok_to_head": fresh["log"]["chain_ok"],
+            "entries_at_head": n, "chain_ok_to_head": fresh["log"]["chain_ok"],
             "differences": diffs, "report": fresh}

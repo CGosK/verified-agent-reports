@@ -74,23 +74,35 @@ class ChainLog:
             return entry
 
 
-def verify(path):
-    """Recompute the chain. Returns (ok, problems, count, head_hash)."""
+def verify(path, max_problems=50):
+    """Recompute the chain, reading one line at a time. Returns (ok, problems, count, head_hash)."""
     problems = []
+    nproblems = 0
     prev = GENESIS
     expected_seq = 0
     count = 0
     head = GENESIS
     try:
-        entries = list(read_entries(path))
-    except ValueError as exc:
-        return False, ["unparsable line: %s" % exc], 0, None
-    for line_no, e in entries:
-        count += 1
+        for line_no, e in read_entries(path):
+            count += 1
+            before = len(problems)
+            prev, head, expected_seq = _check_entry(line_no, e, prev, head, expected_seq, problems)
+            nproblems += len(problems) - before
+            del problems[max_problems:]
+    except (ValueError, UnicodeDecodeError) as exc:
+        return False, (problems + ["unparsable line: %s" % exc])[:max_problems], count, None
+    return (not nproblems), problems, count, head
+
+
+def _check_entry(line_no, e, prev, head, expected_seq, problems):
+    if True:
+        if not isinstance(e, dict):
+            problems.append("line %d: not a log entry" % line_no)
+            return prev, head, expected_seq + 1
         missing = [k for k in ("seq", "prev", "recv_ts", "event", "hash") if k not in e]
         if missing:
             problems.append("line %d: missing fields %s" % (line_no, missing))
-            continue
+            return prev, head, expected_seq + 1
         if e["seq"] != expected_seq:
             problems.append("line %d: seq %s, expected %d" % (line_no, e["seq"], expected_seq))
         if e["prev"] != prev:
@@ -102,4 +114,4 @@ def verify(path):
         prev = e["hash"]
         head = e["hash"]
         expected_seq = e["seq"] + 1 if isinstance(e["seq"], int) else expected_seq + 1
-    return (not problems), problems, count, head
+    return prev, head, expected_seq

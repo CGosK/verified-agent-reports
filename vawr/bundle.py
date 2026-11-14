@@ -5,9 +5,10 @@ payer's one-command check of it.
     vawr receive vawr-report-....zip                                       (the payer)
 
 A bundle is a zip of five files: bundle.json (what it covers), report.json (usage
-by category), check.json (the team's own `vawr check`), report.html (the page to
-read) and log.jsonl (the log up to the report's head hash, shared whole because
-the chain can only be checked whole).
+by category), check.json (the team's own `vawr check`), report.html (the team's
+page, for reading without vawr; `receive` doesn't check it and `receive --html`
+builds the recipient's own) and log.jsonl (the log up to the report's head hash,
+shared whole because the chain can only be checked whole).
 
 `receive` treats the bundle as untrusted. It reads only those five names, never
 extracts paths from the zip, and rebuilds the report from the log itself. With
@@ -19,6 +20,7 @@ head means history was rewritten between reports (continuity).
 """
 import json
 import os
+import re
 import shutil
 import tempfile
 import zipfile
@@ -29,7 +31,6 @@ from .logdata import sessions as log_sessions
 
 FORMAT = "vawr-bundle/1"
 MEMBERS = ("bundle.json", "report.json", "check.json", "report.html", "log.jsonl")
-MAX_MEMBER_BYTES = 2 * 1024 ** 3  # refuse absurd sizes (zip bombs) before reading
 SENT = os.path.join(paths.WORK, "sent.jsonl")
 RECEIVED = os.path.join(paths.WORK, "received.jsonl")
 # Event attributes that carry text people wrote or read: Claude Code sends them as
@@ -44,7 +45,7 @@ def bundle_log_id(bundle_path):
     receive() checks it against the log)."""
     with zipfile.ZipFile(bundle_path) as z:
         info = z.getinfo("bundle.json")
-        if info.file_size > MAX_MEMBER_BYTES:
+        if info.file_size > 1024 ** 2:
             raise ValueError("bundle.json is too large")
         m = json.loads(z.read(info))
     return ((m.get("log") or {}) if isinstance(m, dict) else {}).get("id")
@@ -167,18 +168,41 @@ def make(out_path, log_path, start, end, only_projects=None, title=None, admin_k
 
 # ---------- the payer's side ----------
 
+MAX_LOG_BYTES = 1024 ** 3        # 1 GiB uncompressed
+MAX_OTHER_BYTES = 64 * 1024 ** 2
+MAX_RATIO = 200                  # our logs compress about 10:1; far more is a zip bomb
+KEY_ID = re.compile(r"^apikey_[A-Za-z0-9]{1,64}$")
+HASH = re.compile(r"^[0-9a-f]{64}$")
+
+
+def clean(value, limit=200):
+    """A sender-written string, safe to print: no control characters (no fake lines,
+    no terminal escapes), at most `limit` characters."""
+    text = "".join(ch for ch in str(value) if ch.isprintable())
+    return text if len(text) <= limit else text[:limit - 1] + "…"
+
+
 def _read_bundle(path, into):
     """Copy the five known members of the zip into `into` under fixed names; nothing
-    else in the archive is read. Returns {name: path}."""
+    else in the archive is read and no path from it is used. Returns {name: path}."""
     out = {}
     with zipfile.ZipFile(path) as z:
-        infos = {i.filename: i for i in z.infolist()}
+        infos = {}
+        for info in z.infolist():
+            if info.filename in MEMBERS:
+                if info.filename in infos:
+                    raise ValueError("the bundle has %s twice" % info.filename)
+                infos[info.filename] = info
         for name in MEMBERS:
             info = infos.get(name)
             if info is None:
                 continue
-            if info.file_size > MAX_MEMBER_BYTES:
+            cap = MAX_LOG_BYTES if name == "log.jsonl" else MAX_OTHER_BYTES
+            if info.file_size > cap:
                 raise ValueError("%s in the bundle is %d bytes; refusing to read it" % (name, info.file_size))
+            if info.file_size > 1024 ** 2 and info.file_size > MAX_RATIO * max(info.compress_size, 1):
+                raise ValueError("%s in the bundle expands %d-fold; refusing to read it" % (
+                    name, info.file_size // max(info.compress_size, 1)))
             dest = os.path.join(into, name)
             with z.open(info) as src, open(dest, "wb") as dst:
                 copied = 0
@@ -187,7 +211,7 @@ def _read_bundle(path, into):
                     if not chunk:
                         break
                     copied += len(chunk)
-                    if copied > MAX_MEMBER_BYTES:
+                    if copied > cap:
                         raise ValueError("%s in the bundle is larger than it claims; refusing to read it" % name)
                     dst.write(chunk)
             out[name] = dest
@@ -197,98 +221,151 @@ def _read_bundle(path, into):
     return out
 
 
-def continuity(lid, log_path, known, head=None, key_id=None, only_projects=None, siblings=()):
+def read_manifest(path):
+    """bundle.json, checked field by field; raises ValueError on anything malformed."""
+    try:
+        with open(path) as fh:
+            m = json.load(fh)
+    except ValueError as exc:
+        raise ValueError("bundle.json isn't JSON: %s" % exc)
+    if not isinstance(m, dict) or m.get("format") != FORMAT:
+        raise ValueError("not a %s bundle" % FORMAT)
+    w = m.get("window")
+    if not (isinstance(w, list) and len(w) == 2 and all(isinstance(x, str) for x in w)):
+        raise ValueError("bundle.json has no window")
+    try:
+        start, end = _parse(w[0]), _parse(w[1])
+    except ValueError:
+        raise ValueError("bundle.json's window isn't two ISO times")
+    if not start < end:
+        raise ValueError("bundle.json's window ends before it starts")
+    only = m.get("only_projects")
+    if only is not None:
+        if not (isinstance(only, list) and only and all(isinstance(x, str) for x in only)):
+            raise ValueError("bundle.json's only_projects isn't a list of names")
+        m["only_projects"] = sorted(set(only))
+    if m.get("key_id") is not None and not (isinstance(m["key_id"], str) and KEY_ID.match(m["key_id"])):
+        raise ValueError("bundle.json's key_id isn't an API key ID")
+    log = m.get("log")
+    if not (isinstance(log, dict) and all(isinstance(log.get(k), str) and HASH.match(log[k]) for k in ("id", "head"))):
+        raise ValueError("bundle.json doesn't name its log's first and last hashes")
+    if m.get("previous_head") is not None and not (isinstance(m["previous_head"], str)
+                                                   and HASH.match(m["previous_head"])):
+        m["previous_head"] = None
+    for k in ("title", "note"):
+        m[k] = clean(m[k]) if m.get(k) is not None else None
+    return m, start, end
+
+
+def continuity(lid, log_path, known, head=None, key_id=None, entries=None, siblings=()):
     """Does this log contain every head hash already received from the same log?
-    `known`: earlier ledger records. Returns a dict with ok True/False/None. Reports
-    received before for the same API key and projects from a different log fail too:
-    a log rebuilt from its first entry looks like a new log."""
+    `known`: ledger records from earlier receives (failed ones don't count as history).
+    Returns a dict with ok True/False/None. A report for the same API key from a
+    different log fails too: a log rebuilt from its first entry looks like a new log."""
+    known = [r for r in known if isinstance(r, dict) and r.get("verdict") != "failed"]
     same = [r for r in known if r.get("log_id") == lid and head and r.get("head") == head]
     earlier = [r for r in known if r.get("log_id") == lid and r.get("head") != head]
     other_logs = [r for r in known if r.get("log_id") != lid and r.get("log_id") not in siblings and key_id
-                  and r.get("key_id") == key_id and r.get("only_projects") == only_projects]
+                  and r.get("key_id") == key_id]
     if other_logs and not earlier:
         r = max(other_logs, key=lambda x: x.get("received") or "")
         return {"ok": False, "short": "a different log from your earlier reports for this key",
-                "note": "Your earlier reports for API key %s%s (last received %s) came from a different log; this "
-                        "one doesn't extend it. Either the team started a new log, or the old one was rebuilt "
-                        "from its first entry. Ask which before relying on the earlier figures." % (
-                            key_id, " and projects %s" % ", ".join(only_projects) if only_projects else "",
-                            (r.get("received") or "")[:16].replace("T", " ")),
-                "earlier": 0, "other_logs": sorted({x.get("log_id") for x in other_logs})}
+                "note": "Your earlier reports for API key %s (last received %s) came from a different log; this one "
+                        "doesn't extend it. Either the team started a new log, or the old one was rebuilt from its "
+                        "first entry. Ask which before relying on the earlier figures." % (
+                            key_id, clean(r.get("received") or "")[:16].replace("T", " ")),
+                "earlier": 0, "other_logs": sorted({str(x.get("log_id")) for x in other_logs})}
     if not earlier and same:
-        return {"ok": None, "short": "same report you received %s" % (same[0].get("received") or "")[:16].replace("T", " "),
-                "note": "You received this exact log before, and no other report from it.", "earlier": 0}
-    if not earlier:
-        return {"ok": None, "short": "first report from this log",
-                "note": "This is the first report you have received from this log, so there is nothing earlier "
-                        "to compare it with. Its head hash is now recorded for the next one.",
+        return {"ok": None, "short": "same report you received %s" % clean(same[0].get("received") or "")[:16]
+                .replace("T", " "), "note": "You received this exact log before, and no other report from it.",
                 "earlier": 0}
+    if not earlier:
+        note = ("This is the first report you have received from this log, so there is nothing earlier to compare "
+                "it with. Its head hash is now recorded for the next one.")
+        if not key_id:
+            note += (" The bundle names no API key, so a later log rebuilt from scratch can't be told from a new "
+                     "one; pass --key-id with the key you issued.")
+        return {"ok": None, "short": "first report from this log", "note": note, "earlier": 0}
     hashes = set()
     for _, e in chainlog.read_entries(log_path):
-        hashes.add(e.get("hash"))
-    lost = [r for r in earlier if r.get("head") not in hashes]
+        if isinstance(e, dict):
+            hashes.add(e.get("hash"))
+    missing = [r for r in earlier if r.get("head") not in hashes]
+    # a report from further along the log than this one can't be in it: an older report arriving late
+    older = [r for r in missing if entries is not None and isinstance(r.get("entries"), int) and r["entries"] > entries]
+    lost = [r for r in missing if r not in older]
     if lost:
         r = lost[0]
         return {"ok": False, "short": "history changed since an earlier report",
                 "note": "The report received %s (head %s…) was built from this log, but its head hash is no longer "
                         "in it: entries up to that point were changed and the chain rebuilt." % (
-                            (r.get("received") or "")[:16].replace("T", " "), (r.get("head") or "")[:16]),
+                            clean(r.get("received") or "")[:16].replace("T", " "), clean(r.get("head") or "")[:16]),
                 "earlier": len(earlier), "lost": [x.get("head") for x in lost]}
-    last = max(earlier, key=lambda r: r.get("received") or "")
-    gap = None
-    if last.get("window") and last["window"][1]:
-        gap = last["window"][1]
+    if older and len(older) == len(earlier):
+        return {"ok": None, "short": "older than a report you already have from this log",
+                "note": "This log ends before a report you already received from the same log, so it can't contain "
+                        "that one's head; nothing to compare.", "earlier": len(earlier)}
+    last = max((r for r in earlier if r not in older), key=lambda r: r.get("received") or "")
+    end = last.get("window")[1] if isinstance(last.get("window"), list) and len(last["window"]) == 2 else None
     return {"ok": True, "short": "extends the %d earlier report%s from this log" % (
-                len(earlier), "" if len(earlier) == 1 else "s"),
-            "note": "This log contains the head hash of every earlier report you received from it (%d), so "
-                    "nothing before those points changed. The last one covered up to %s." % (
-                        len(earlier), (gap or "?")[:16].replace("T", " ")),
-            "earlier": len(earlier), "previous_window_end": gap}
+                len(earlier) - len(older), "" if len(earlier) - len(older) == 1 else "s"),
+            "note": "This log contains the head hash of every earlier report you received from it, so nothing "
+                    "before those points changed. The last one covered up to %s." % (
+                        clean(end or "?")[:16].replace("T", " ")),
+            "earlier": len(earlier) - len(older), "previous_window_end": end}
 
 
 def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=True, workdir=None, known=None,
             siblings=()):
-    """Check a bundle. Returns a result dict with "verdict": "verified" (everything
-    passed, including the bill and sessions checks against the payer's own records),
-    "consistent" (the log and report hold together, but no Admin key could check them
-    against a bill) or "failed"."""
-    tmp = workdir or tempfile.mkdtemp(prefix="vawr-receive-")
-    files = _read_bundle(bundle_path, tmp)
-    with open(files["bundle.json"]) as fh:
-        manifest = json.load(fh)
-    if not isinstance(manifest, dict) or manifest.get("format") != FORMAT:
-        raise ValueError("not a %s bundle (format %r)" % (FORMAT, manifest.get("format") if isinstance(
-            manifest, dict) else None))
+    """Check a bundle. Returns a result dict with "verdict":
+    - "verified": the log and report hold together, continuity holds, and with the
+      payer's own Admin key the bill check passed (nothing billed missing from the
+      log, nothing in the log that wasn't billed) and the sessions check didn't fail;
+    - "consistent": the log and report hold together, but nothing was checked against
+      Anthropic's records (no Admin key, or the check couldn't run);
+    - "failed": anything failed.
+    Raises ValueError for a file that isn't a readable bundle. Without `workdir`, the
+    bundle's files are deleted before returning."""
+    if workdir is None:
+        with tempfile.TemporaryDirectory(prefix="vawr-receive-") as tmp:
+            out = receive(bundle_path, admin_key, key_id, ledger, record, tmp, known, siblings)
+            out.pop("files", None)
+            return out
+    files = _read_bundle(bundle_path, workdir)
+    manifest, start, end = read_manifest(files["bundle.json"])
+    if key_id is not None and not KEY_ID.match(key_id):
+        raise ValueError("--key-id isn't an API key ID")
     log = files["log.jsonl"]
     out = {"bundle": os.path.abspath(bundle_path), "manifest": manifest, "files": files}
 
     ok, problems, entries, head = chainlog.verify(log)
-    lid = log_id(log)
-    m_log = manifest.get("log") or {}
-    chain = {"ok": ok and head == m_log.get("head") and lid == m_log.get("id"), "entries": entries, "head": head,
+    lid = log_id(log) if ok else None
+    m_log = manifest["log"]
+    chain = {"ok": ok and head == m_log["head"] and lid == m_log["id"], "entries": entries, "head": head,
              "problems": problems[:5]}
-    if ok and head != m_log.get("head"):
-        chain["problems"].append("the log ends at %s…, but the bundle says %s…" % (
-            (head or "")[:16], (m_log.get("head") or "")[:16]))
+    if ok and head != m_log["head"]:
+        chain["problems"].append("the log ends at %s…, but the bundle says %s…" % ((head or "")[:16], m_log["head"][:16]))
+    if ok and lid != m_log["id"]:
+        chain["problems"].append("the log starts at %s…, but the bundle says %s…" % ((lid or "")[:16], m_log["id"][:16]))
     out["chain"] = chain
 
-    vr = check.verify_report(log, files["report.json"])
+    vr = check.verify_report(log, files["report.json"], expect={
+        "window": manifest["window"], "only_projects": manifest["only_projects"], "head": head})
     out["report"] = {"ok": vr["ok"], "head_found": vr.get("head_found"), "differences": vr.get("differences"),
                      "note": vr.get("note")}
     rebuilt = vr.get("report")
+    out["log_contents"] = log_contents(log) if ok else []
 
+    key = key_id or manifest.get("key_id")
     known = _ledger(ledger) if known is None else known
-    out["continuity"] = continuity(lid, log, known, head, key_id or manifest.get("key_id"),
-                                   manifest.get("only_projects"), siblings=set(siblings) - {lid})
-    if manifest.get("previous_head") and not any(r.get("head") == manifest["previous_head"] for r in known):
+    out["continuity"] = continuity(lid, log, known, head, key, entries, siblings=set(siblings) - {lid})
+    if manifest.get("previous_head") and not any(r.get("head") == manifest["previous_head"] for r in known
+                                                 if isinstance(r, dict)):
         out["continuity"]["unseen_previous"] = manifest["previous_head"]
 
-    w = manifest.get("window") or [None, None]
-    start, end = _parse(w[0]), _parse(w[1])
-    only = manifest.get("only_projects")
-    key = key_id or manifest.get("key_id")
+    only = manifest["only_projects"]
     res = None
-    if admin_key and key and start and end:
+    if admin_key and key and chain["ok"]:
         try:
             res = check.run(start, end, log, None, admin_key=admin_key, key_id=key, coverage=False,
                             only_projects=only)
@@ -296,25 +373,27 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
             out["provider_error"] = "%s: %s" % (type(exc).__name__, exc)
     elif admin_key and not key:
         out["provider_error"] = "the bundle names no API key; pass --key-id with the key you issued"
-    elif admin_key and not (start and end):
-        out["provider_error"] = "the bundle gives no time window"
     out["check"] = res
 
+    bill = (res or {}).get("bill")
+    sess = (res or {}).get("sessions")
     failed = (not chain["ok"] or not out["report"]["ok"] or out["continuity"]["ok"] is False
-              or (res is not None and res["level"] == "failed"))
+              or (bill is not None and not bill.get("ok"))
+              or (isinstance(sess, dict) and sess.get("ok") is False))
     if failed:
         verdict = "failed"
-    elif res is not None and res.get("bill") is not None and (res.get("sessions") or {}).get("ok") is not False:
+    elif bill is not None and not (isinstance(sess, dict) and sess.get("error")):
         verdict = "verified"
     else:
         verdict = "consistent"
     out["verdict"] = verdict
     out["rebuilt_report"] = rebuilt
 
-    if record and chain["ok"] and not any(r.get("head") == head and r.get("log_id") == lid for r in known):
+    if record and chain["ok"] and not any(isinstance(r, dict) and r.get("head") == head and r.get("log_id") == lid
+                                          for r in known):
         _append(ledger, {"received": _iso(datetime.now(timezone.utc)), "log_id": lid, "head": head,
-                         "window": w, "key_id": key, "only_projects": only, "verdict": verdict,
-                         "bundle": os.path.basename(bundle_path)})
+                         "entries": entries, "window": manifest["window"], "key_id": key, "only_projects": only,
+                         "verdict": verdict, "bundle": clean(os.path.basename(bundle_path))})
     return out
 
 
@@ -328,45 +407,55 @@ VERDICTS = {
 def render_receive(out):
     m = out["manifest"]
     mark = {True: "PASS", False: "FAIL", None: "SKIP"}
-    lines = ["vawr receive %s" % os.path.basename(out["bundle"]), ""]
+    lines = ["vawr receive %s" % clean(os.path.basename(out["bundle"])), ""]
     w = m.get("window") or [None, None]
     lines.append("Report: %s, %s to %s UTC%s" % (
-        m.get("title") or "untitled", (w[0] or "?")[:16].replace("T", " "), (w[1] or "?")[:16].replace("T", " "),
-        ", projects %s" % ", ".join(m["only_projects"]) if m.get("only_projects") else ""))
+        m.get("title") or "untitled", clean(w[0] or "?")[:16].replace("T", " "),
+        clean(w[1] or "?")[:16].replace("T", " "),
+        ", projects %s" % clean(", ".join(m["only_projects"])) if m.get("only_projects") else ""))
     if m.get("key_id"):
         lines.append("API key: %s" % m["key_id"])
     lines.append("")
     c = out["chain"]
     lines.append("%s  chain        %d entries, head %s%s" % (mark[c["ok"]], c["entries"], (c["head"] or "")[:16],
-                                                       "; " + c["problems"][0] if c["problems"] else ""))
+                                                       "; " + clean(c["problems"][0]) if c["problems"] else ""))
     r = out["report"]
     lines.append("%s  report       %s" % (mark[r["ok"]], "rebuilt from the log: same tokens per category"
-                                         if r["ok"] else (r.get("note") or "differs from the log: %s" % r["differences"])))
+                                         if r["ok"] else clean(r.get("note") or "differs from the log: %s"
+                                                               % r["differences"], 400)))
     co = out["continuity"]
     lines.append("%s  continuity   %s" % (mark[co["ok"]], co["short"]))
-    if co["ok"] is False:
+    if co["ok"] is False or "no API key" in co.get("note", ""):
         lines.append("        " + co["note"])
     if co.get("unseen_previous"):
         lines.append("        the team says its previous report had head %s…, which you haven't received here"
                      % co["unseen_previous"][:16])
     res = out.get("check")
     if res is None:
-        lines.append("SKIP  bill         %s" % (out.get("provider_error") or
+        lines.append("SKIP  bill         %s" % (clean(out.get("provider_error") or "", 300) or
                                                 "set ANTHROPIC_ADMIN_KEY (yours, for the account that owns the key) "
                                                 "to check against Anthropic's records"))
     else:
         for line in check.render(res).splitlines():
             if line.startswith(("PASS  bill", "FAIL  bill", "SKIP  bill", "PASS  sessions", "FAIL  sessions",
                                 "SKIP  sessions", "        ", "          ")):
-                lines.append(line)
+                lines.append(clean(line, 400))
+        s = res.get("sessions")
+        if isinstance(s, dict) and s.get("ok") is not False and any(
+                d.get("status") in ("pass_so_far", "pending") for d in s.get("days") or []):
+            lines.append("        the last day isn't over: run `vawr receive` again an hour after it ends (UTC) "
+                         "for the final count")
     lines += ["", VERDICTS[out["verdict"]]]
     if out["verdict"] == "consistent":
         lines.append("Nothing was edited after the fact, but the usage figures rest on the team's log. If you own "
                      "the API key's organization, add your Admin key to check them against Anthropic's records.")
-    other = [x for x in m.get("log_contents") or [] if m.get("only_projects") and x["project"] not in m["only_projects"]]
+    other = [x for x in out.get("log_contents") or [] if m.get("only_projects")
+             and x["project"] not in m["only_projects"]]
     if other:
         lines.append("The log also holds %d session(s) from other projects, which the report leaves out."
                      % sum(x["sessions"] for x in other))
+    lines.append("Figures: the report rebuilt from the log (--html writes it as a page); the team's own "
+                 "report.html in the bundle is not checked.")
     return "\n".join(lines)
 
 
@@ -374,14 +463,13 @@ def receive_html(out, title=None):
     """A fresh page built on the recipient's machine from the log itself and the
     recipient's own checks (not the page the team sent)."""
     from . import html_report
-    rep = dict(out["rebuilt_report"] or {})
+    rep = dict(out["rebuilt_report"] or {"categories": [], "log": {}})
     rep["log"] = dict(rep.get("log") or {}, path="log.jsonl")
     res = dict(out["check"]) if out.get("check") else {
-        "window": (out["manifest"].get("window") or [None, None]),
-        "chain": out["chain"], "coverage": {"ok": None, "local_requests": 0, "logged_requests_in_window": 0,
-                                            "token_mismatches": 0, "unlogged_sessions": []},
+        "window": out["manifest"].get("window") or [None, None], "chain": out["chain"], "coverage": None,
         "bill": None, "sessions": None}
     res["chain"] = out["chain"]
+    res["coverage"] = None  # only the team can run it, on its own session files
     res["continuity"] = out["continuity"]
     res["level"] = ("failed" if out["verdict"] == "failed" else
                     "provider" if out["verdict"] == "verified" else "tamper-evident")

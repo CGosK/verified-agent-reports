@@ -5,6 +5,23 @@ from . import chainlog, paths
 TOKEN_TYPES = ("input", "output", "cache_read", "cache_creation")
 
 
+# A received log is untrusted: anything that isn't the expected type is treated as missing.
+def _dict(v):
+    return v if isinstance(v, dict) else {}
+
+
+def _event(e):
+    return _dict(_dict(e).get("event"))
+
+
+def _str(v):
+    return v if isinstance(v, str) else None
+
+
+def _num(v):
+    return v if isinstance(v, (int, float)) and not isinstance(v, bool) and v == v and abs(v) < 1e15 else 0
+
+
 METRIC_TYPES = {"input": "input", "output": "output", "cacheRead": "cache_read",
                 "cacheCreation": "cache_creation"}
 
@@ -28,28 +45,28 @@ def api_requests(log_path=paths.LOG_PATH):
     out = []
     aux = {}
     for _, e in chainlog.read_entries(log_path):
-        ev = e.get("event") or {}
+        ev = _event(e)
         if ev.get("name") == "metric":
-            a = ev.get("attributes") or {}
+            a = _dict(ev.get("attributes"))
             if ev.get("metric") == "claude_code.token.usage" and a.get("query_source") == "auxiliary":
-                r = ev.get("resource") or {}
-                key = (ev.get("time"), a.get("model"), a.get("session.id"))
+                r = _dict(ev.get("resource"))
+                key = (_str(ev.get("time")), a.get("model"), a.get("session.id"))
                 rec = aux.setdefault(key, {
                     "seq": e.get("seq"), "request_id": None, "session_id": a.get("session.id"),
                     "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
                     "category": a.get("category") or r.get("category") or "untagged",
                     "project": a.get("project") or r.get("project"),
-                    "mode": a.get("run.mode") or r.get("run.mode") or _auth(a), "time": ev.get("time"),
+                    "mode": a.get("run.mode") or r.get("run.mode") or _auth(a), "time": _str(ev.get("time")),
                     "model": a.get("model"), "query_source": "auxiliary", "cost_usd": 0.0,
                     "tokens": {t: 0 for t in TOKEN_TYPES}})
                 t = METRIC_TYPES.get(a.get("type"))
                 if t:
-                    rec["tokens"][t] += int(ev.get("value") or 0)
+                    rec["tokens"][t] += int(_num(ev.get("value")))
             continue
         if ev.get("name") not in ("api_request", "claude_code.api_request"):
             continue
-        a = ev.get("attributes") or {}
-        r = ev.get("resource") or {}
+        a = _dict(ev.get("attributes"))
+        r = _dict(ev.get("resource"))
         out.append({
             "seq": e.get("seq"),
             "request_id": a.get("request_id"),
@@ -58,15 +75,15 @@ def api_requests(log_path=paths.LOG_PATH):
             "category": a.get("category") or r.get("category") or "untagged",
             "project": a.get("project") or r.get("project"),
             "mode": a.get("run.mode") or r.get("run.mode") or _auth(a),
-            "time": a.get("event.timestamp") or ev.get("time"),
+            "time": _str(a.get("event.timestamp") or ev.get("time")),
             "model": a.get("model"),
             "query_source": a.get("query_source"),
-            "cost_usd": a.get("cost_usd") or 0.0,
+            "cost_usd": _num(a.get("cost_usd")),
             "tokens": {
-                "input": a.get("input_tokens") or 0,
-                "output": a.get("output_tokens") or 0,
-                "cache_read": a.get("cache_read_tokens") or 0,
-                "cache_creation": a.get("cache_creation_tokens") or 0,
+                "input": int(_num(a.get("input_tokens"))),
+                "output": int(_num(a.get("output_tokens"))),
+                "cache_read": int(_num(a.get("cache_read_tokens"))),
+                "cache_creation": int(_num(a.get("cache_creation_tokens"))),
             },
         })
     # Interactive sessions report auxiliary requests (titles, prompt suggestions,
@@ -105,13 +122,13 @@ def sessions(log_path=paths.LOG_PATH):
     earliest event time (UTC ISO); "mode" is the run.mode tag or how it was billed."""
     out = {}
     for _, e in chainlog.read_entries(log_path):
-        ev = e.get("event") or {}
-        a = ev.get("attributes") or {}
-        r = ev.get("resource") or {}
+        ev = _event(e)
+        a = _dict(ev.get("attributes"))
+        r = _dict(ev.get("resource"))
         sid = a.get("session.id")
-        if not sid:
+        if not isinstance(sid, str) or not sid:
             continue
-        t = a.get("event.timestamp") or ev.get("time")
+        t = _str(a.get("event.timestamp") or ev.get("time"))
         s = out.setdefault(sid, {"first": t, "terminal": None, "mode": None, "project": None, "category": None})
         if t and (not s["first"] or t < s["first"]):
             s["first"] = t

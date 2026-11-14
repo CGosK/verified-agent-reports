@@ -65,7 +65,7 @@ class Home(unittest.TestCase):
 
     def make(self, name, log=None, **kw):
         out = os.path.join(self.d, name)
-        kw.setdefault("key_id", "k1")
+        kw.setdefault("key_id", "apikey_k1")
         bundle.make(out, log or self.log, T0, T0 + timedelta(hours=1), claude_projects=self.projects, **kw)
         return out
 
@@ -115,7 +115,7 @@ class SessionsOnLogTest(Home):
         write_log(self.log, SESSIONS)
         recs = cc_records({"non-interactive": (1, {"claude-sonnet-5-5": 150}),
                            "xterm-256color": (1, {"claude-haiku-5-5": 30})})
-        res = daily.check(None, "k1", T0, T0 + timedelta(hours=1), [self.log], only_projects=["grant"], now=NOW,
+        res = daily.check(None, "apikey_k1", T0, T0 + timedelta(hours=1), [self.log], only_projects=["grant"], now=NOW,
                           key_name="grant key", fetch=lambda d: recs)
         self.assertEqual(res["days"][0]["status"], "pass")  # equal counts pass even on the log's first day
         self.assertEqual([c["status"] for c in res["days"][0]["by_terminal"]], ["pass", "pass"])
@@ -125,7 +125,7 @@ class SessionsOnLogTest(Home):
         write_log(self.log, SESSIONS)
         recs = cc_records({"non-interactive": (2, {"claude-sonnet-5-5": 190}),
                            "xterm-256color": (1, {"claude-haiku-5-5": 30})})
-        res = daily.check(None, "k1", T0, T0 + timedelta(hours=1), [self.log], only_projects=["grant"], now=NOW,
+        res = daily.check(None, "apikey_k1", T0, T0 + timedelta(hours=1), [self.log], only_projects=["grant"], now=NOW,
                           key_name="grant key", fetch=lambda d: recs)
         cells = {c["terminal"]: c for c in res["days"][0]["by_terminal"]}
         self.assertEqual(cells["non-interactive"]["token_difference"], {"claude-sonnet-5-5": 40})
@@ -235,16 +235,16 @@ class TeamTest(Home):
         path = self.make("a.zip", only_projects=["grant"])
         minute = lambda m: iso(T0 + timedelta(minutes=m))  # noqa: E731
         tok = lambda n: {"input": n, "output": 0, "cache_read": 0, "cache_creation": 0}  # noqa: E731
-        org = {"k1": {minute(1): {"claude-sonnet-5-5": tok(100)}, minute(2): {"claude-sonnet-5-5": tok(50)},
+        org = {"apikey_k1": {minute(1): {"claude-sonnet-5-5": tok(100)}, minute(2): {"claude-sonnet-5-5": tok(50)},
                       minute(5): {"claude-haiku-5-5": tok(30)}},
-               "k2": {minute(9): {"claude-opus-5-5": tok(500)}}}
-        keys = [{"id": "k1", "name": "grant key"}, {"id": "k2", "name": "intern key"}]
+               "apikey_k2": {minute(9): {"claude-opus-5-5": tok(500)}}}
+        keys = [{"id": "apikey_k1", "name": "grant key"}, {"id": "apikey_k2", "name": "intern key"}]
         recs = cc_records({"non-interactive": (1, {"claude-sonnet-5-5": 150}),
                            "xterm-256color": (1, {"claude-haiku-5-5": 30})})
         res = team.run([path], None, ledger=self.ledger, org_minutes=org, keys=keys, fetch=lambda d: recs, now=NOW)
         by = {r["key_id"]: r for r in res["keys"]}
-        self.assertEqual(by["k1"]["status"], "pass")
-        self.assertEqual(by["k2"]["status"], "no report")
+        self.assertEqual(by["apikey_k1"]["status"], "pass")
+        self.assertEqual(by["apikey_k2"]["status"], "no report")
         self.assertEqual(res["billed_tokens"], 680)
         self.assertEqual(res["accounted_tokens"], 180)
         self.assertIn("NO REPORT", team.render(res))
@@ -276,3 +276,164 @@ class LevelAndHtmlTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def rewrite(src, dst, change):
+    """Copy a bundle, passing each member's bytes through change(name, data)."""
+    with zipfile.ZipFile(src) as a, zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as b:
+        for name in a.namelist():
+            b.writestr(name, change(name, a.read(name)))
+    return dst
+
+
+def edit_json(name_wanted, fn):
+    def change(name, data):
+        if name != name_wanted:
+            return data
+        obj = json.loads(data)
+        fn(obj)
+        return json.dumps(obj)
+    return change
+
+
+class ReviewRegressionTest(Home):
+    """One test per problem the independent review found."""
+
+    def test_narrower_report_window_fails(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        bad = rewrite(path, os.path.join(self.d, "narrow.zip"), edit_json(
+            "report.json", lambda r: r.update(window=[iso(T0), iso(T0 + timedelta(minutes=3))])))
+        out = bundle.receive(bad, ledger=self.ledger)
+        self.assertEqual(out["verdict"], "failed")
+        self.assertIn("window", out["report"]["note"])
+
+    def test_report_from_an_earlier_head_fails(self):
+        write_log(self.log, SESSIONS)
+        early = [e for _, e in chainlog.read_entries(self.log)][2]["hash"]
+        path = self.make("a.zip")
+        bad = rewrite(path, os.path.join(self.d, "prefix.zip"), edit_json(
+            "report.json", lambda r: r["log"].update(head=early)))
+        self.assertEqual(bundle.receive(bad, ledger=self.ledger)["verdict"], "failed")
+
+    def _with_check(self, res):
+        real = check.run
+        check.run = lambda *a, **k: res
+        self.addCleanup(setattr, check, "run", real)
+
+    def test_log_excess_is_not_verified(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        self._with_check({"bill": {"ok": False, "gaps": [], "log_excess": [{"tokens": {"input": 900000}}]},
+                          "sessions": {"ok": None, "days": []}, "chain": {"ok": True}, "coverage": {"ok": None},
+                          "level": "failed"})
+        self.assertEqual(bundle.receive(path, admin_key="x", ledger=self.ledger)["verdict"], "failed")
+
+    def test_sessions_error_is_not_verified(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        self._with_check({"bill": {"ok": True, "gaps": [], "log_excess": []}, "chain": {"ok": True},
+                          "sessions": {"ok": None, "error": "boom"}, "coverage": {"ok": None}, "level": "provider"})
+        self.assertEqual(bundle.receive(path, admin_key="x", ledger=self.ledger)["verdict"], "consistent")
+
+    def test_bad_timestamps_do_not_crash_the_sessions_check(self):
+        write_log(self.log, SESSIONS)
+        chainlog.ChainLog(self.log).append({"name": "user_prompt", "time": "0",
+                                            "attributes": {"session.id": "s9", "event.timestamp": "0"}})
+        recs = cc_records({"non-interactive": (1, {"claude-sonnet-5-5": 150})})
+        res = daily.check(None, "apikey_k1", T0, T0 + timedelta(hours=1), [self.log], only_projects=["grant"],
+                          now=NOW, key_name="grant key", fetch=lambda d: recs)
+        self.assertNotIn("error", res)
+
+    def test_control_characters_in_the_title_are_removed(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip", title="ok\n\nVERIFIED  all good\x1b[8m")
+        text = bundle.render_receive(bundle.receive(path, ledger=self.ledger))
+        self.assertNotIn("\x1b", text)
+        self.assertNotIn("\nVERIFIED", text)
+
+    def test_new_log_for_the_same_key_fails_whatever_its_projects(self):
+        write_log(self.log, SESSIONS)
+        bundle.receive(self.make("first.zip", only_projects=["grant"]), ledger=self.ledger)
+        other = os.path.join(self.d, "other.jsonl")
+        write_log(other, SESSIONS[:1])
+        out = bundle.receive(self.make("second.zip", log=other, only_projects=["grant", "decoy"]),
+                             ledger=self.ledger)
+        self.assertFalse(out["continuity"]["ok"])
+        again = os.path.join(self.d, "other2.zip")
+        write_log(other, SESSIONS[1:2])
+        out = bundle.receive(self.make("third.zip", log=other), ledger=self.ledger)
+        self.assertFalse(out["continuity"]["ok"])  # a failed report isn't history to extend
+
+    def test_older_report_arriving_late_is_not_a_rewrite(self):
+        write_log(self.log, SESSIONS[:1])
+        old = self.make("old.zip")
+        write_log(self.log, SESSIONS[1:])
+        new = self.make("new.zip")
+        bundle.receive(new, ledger=self.ledger)
+        out = bundle.receive(old, ledger=self.ledger)
+        self.assertIsNone(out["continuity"]["ok"])
+        self.assertNotEqual(out["verdict"], "failed")
+
+    def test_zip_bomb_is_refused(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        bomb = rewrite(path, os.path.join(self.d, "bomb.zip"),
+                       lambda name, data: data + b"\n" + b" " * (5 * 1024 ** 2) if name == "log.jsonl" else data)
+        with self.assertRaises(ValueError):
+            bundle.receive(bomb, ledger=self.ledger)
+
+    def test_malformed_parts_fail_without_tracebacks(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        numbers = rewrite(path, os.path.join(self.d, "numbers.zip"),
+                          lambda name, data: data + b"42\n" if name == "log.jsonl" else data)
+        self.assertEqual(bundle.receive(numbers, ledger=self.ledger)["verdict"], "failed")
+        for fn in (lambda m: m.update(window=[1, 2]), lambda m: m.update(only_projects="grant"),
+                   lambda m: m.update(key_id="../../x"), lambda m: m.pop("log")):
+            bad = rewrite(path, os.path.join(self.d, "m.zip"), edit_json("bundle.json", fn))
+            with self.assertRaises(ValueError):
+                bundle.receive(bad, ledger=self.ledger)
+        listy = rewrite(path, os.path.join(self.d, "listy.zip"),
+                        lambda name, data: b"[]" if name == "report.json" else data)
+        self.assertEqual(bundle.receive(listy, ledger=self.ledger)["verdict"], "failed")
+
+    def test_other_projects_line_comes_from_the_log(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip", only_projects=["grant"])
+        bad = rewrite(path, os.path.join(self.d, "hide.zip"), edit_json(
+            "bundle.json", lambda m: m.update(log_contents=[])))
+        self.assertIn("other projects", bundle.render_receive(bundle.receive(bad, ledger=self.ledger)))
+
+
+class TeamRegressionTest(Home):
+    minute = staticmethod(lambda m: iso(T0 + timedelta(minutes=m)))
+    tok = staticmethod(lambda n: {"input": n, "output": 0, "cache_read": 0, "cache_creation": 0})
+
+    def test_two_bundles_from_one_log_are_not_double_counted(self):
+        write_log(self.log, SESSIONS)
+        a = os.path.join(self.d, "a.zip")
+        b = os.path.join(self.d, "b.zip")
+        bundle.make(a, self.log, T0, T0 + timedelta(minutes=4), claude_projects=self.projects, key_id="apikey_k1",
+                    only_projects=["grant"])
+        bundle.make(b, self.log, T0 + timedelta(minutes=4), T0 + timedelta(hours=1), claude_projects=self.projects,
+                    key_id="apikey_k1", only_projects=["grant"])
+        org = {"apikey_k1": {self.minute(1): {"claude-sonnet-5-5": self.tok(100)},
+                             self.minute(2): {"claude-sonnet-5-5": self.tok(50)},
+                             self.minute(5): {"claude-haiku-5-5": self.tok(30)}}}
+        recs = cc_records({"non-interactive": (1, {"claude-sonnet-5-5": 150}),
+                           "xterm-256color": (1, {"claude-haiku-5-5": 30})})
+        res = team.run([a, b], None, ledger=self.ledger, org_minutes=org, keys=[{"id": "apikey_k1", "name": "grant key"}],
+                       fetch=lambda d: recs, now=NOW)
+        self.assertEqual(res["keys"][0]["status"], "pass", team.render(res))
+
+    def test_unreadable_bundle_and_key_outside_the_org(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip", key_id="apikey_elsewhere")
+        junk = os.path.join(self.d, "junk.zip")
+        with open(junk, "wb") as fh:
+            fh.write(b"not a zip")
+        res = team.run([path, junk], None, ledger=self.ledger, org_minutes={}, keys=[{"id": "apikey_k1", "name": "x"}],
+                       fetch=lambda d: [], now=NOW)
+        self.assertEqual(len(res["unreadable"]), 1)
+        self.assertEqual(res["keys"][0]["status"], "fail")

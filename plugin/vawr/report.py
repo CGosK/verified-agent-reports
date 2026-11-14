@@ -13,9 +13,16 @@ def _in_window(r, start, end):
         return True
     from datetime import datetime
     t = r.get("time")
-    if not t:
+    if not isinstance(t, str) or not t:
         return False
-    t = datetime.fromisoformat(t.replace("Z", "+00:00"))
+    try:
+        t = datetime.fromisoformat(t.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    from datetime import timezone
+    t = t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+    start = start and (start if start.tzinfo else start.replace(tzinfo=timezone.utc))
+    end = end and (end if end.tzinfo else end.replace(tzinfo=timezone.utc))
     return (not start or t >= start) and (not end or t < end)
 
 

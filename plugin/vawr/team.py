@@ -22,8 +22,13 @@ def _parse(s):
 def run(bundle_paths, admin_key, start=None, end=None, ledger=bundle.RECEIVED, record=True, sessions=True,
         org_minutes=None, keys=None, fetch=None, now=None):
     """`org_minutes`, `keys` and `fetch` replace the Admin API calls in tests."""
-    work = tempfile.mkdtemp(prefix="vawr-team-")
-    members = []
+    with tempfile.TemporaryDirectory(prefix="vawr-team-") as work:
+        return _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, org_minutes, keys, fetch,
+                    now)
+
+
+def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, org_minutes, keys, fetch, now):
+    members, unreadable = [], []
     known = bundle._ledger(ledger)  # before this run, so bundles in it don't count as each other's history
     siblings = set()
     for path in bundle_paths:
@@ -32,20 +37,24 @@ def run(bundle_paths, admin_key, start=None, end=None, ledger=bundle.RECEIVED, r
         except Exception:
             pass
     for i, path in enumerate(bundle_paths):
-        out = bundle.receive(path, admin_key=None, ledger=ledger, record=record, known=known, siblings=siblings,
-                             workdir=tempfile.mkdtemp(prefix="m%d-" % i, dir=work))
+        try:
+            out = bundle.receive(path, admin_key=None, ledger=ledger, record=record, known=known, siblings=siblings,
+                                 workdir=tempfile.mkdtemp(prefix="m%d-" % i, dir=work))
+        except Exception as exc:  # one unreadable bundle shouldn't stop the others
+            unreadable.append({"bundle": path, "error": bundle.clean("%s: %s" % (type(exc).__name__, exc), 300)})
+            continue
         m = out["manifest"]
-        w = m.get("window") or [None, None]
         members.append({"bundle": path, "title": m.get("title"), "key_id": m.get("key_id"),
-                        "only_projects": m.get("only_projects"), "window": [_parse(w[0]), _parse(w[1])],
-                        "log": out["files"]["log.jsonl"], "chain_ok": out["chain"]["ok"],
+                        "only_projects": m.get("only_projects"),
+                        "window": [_parse(m["window"][0]), _parse(m["window"][1])],
+                        "log": out["files"]["log.jsonl"], "log_id": m["log"]["id"], "chain_ok": out["chain"]["ok"],
                         "report_ok": out["report"]["ok"], "continuity": out["continuity"]})
-    starts = [mb["window"][0] for mb in members if mb["window"][0]]
-    ends = [mb["window"][1] for mb in members if mb["window"][1]]
+    starts = [mb["window"][0] for mb in members]
+    ends = [mb["window"][1] for mb in members]
     start = start or (min(starts) if starts else None)
     end = end or (max(ends) if ends else None)
     if not (start and end):
-        raise ValueError("no time window: give --since and --until, or bundles that carry one")
+        raise ValueError("no time window: give --since and --until, or readable bundles that carry one")
 
     if org_minutes is None:
         org_minutes = usage_api.org_minute_usage(admin_key, start, end)
@@ -60,22 +69,30 @@ def run(bundle_paths, admin_key, start=None, end=None, ledger=bundle.RECEIVED, r
         mine = [mb for mb in members if mb["key_id"] == kid]
         minutes = {parse_ts(t): v for t, v in (org_minutes.get(kid) or {}).items()}
         billed = _total(org_minutes.get(kid))
-        row = {"key_id": kid, "key_name": names.get(kid), "billed_tokens": billed,
+        row = {"key_id": kid, "key_name": names.get(kid), "in_organization": kid in names, "billed_tokens": billed,
                "bundles": [mb["bundle"] for mb in mine], "bill": None, "sessions": None}
         if not mine:
             row["status"] = "no report"
             rows.append(row)
             continue
-        reqs = []
+        reqs, seen = [], set()  # two bundles cut from one log share entries: count each once
         for mb in mine:
             ws, we = mb["window"]
             for r in api_requests(mb["log"]):
                 t = r.get("time")
-                if (t and r.get("mode") in daily.API_KEY_MODES and ws <= parse_ts(t) < we
-                        and (not mb["only_projects"] or r.get("project") in mb["only_projects"])):
+                try:
+                    tt = parse_ts(t) if t else None
+                except (TypeError, ValueError):
+                    tt = None
+                if (tt and r.get("mode") in daily.API_KEY_MODES and ws <= tt < we
+                        and (not mb["only_projects"] or r.get("project") in mb["only_projects"])
+                        and (mb["log_id"], r.get("seq")) not in seen):
+                    seen.add((mb["log_id"], r.get("seq")))
                     reqs.append(dict(r, mode="api_key"))
         row["bill"] = auditor.check_provider(reqs, start, end, key_mode="api_key", provider_minutes=minutes)
-        if sessions and sum(1 for k in keys if k.get("name") == names.get(kid)) > 1:
+        if sessions and not row["in_organization"]:
+            row["sessions"] = {"ok": None, "error": "this key isn't in your organization"}
+        elif sessions and sum(1 for k in keys if k.get("name") == names.get(kid)) > 1:
             row["sessions"] = {"ok": None, "error": "more than one key is named %r; Anthropic's Claude Code "
                                "analytics names keys, not IDs, so it can't tell them apart" % names.get(kid)}
         elif sessions:
@@ -86,15 +103,20 @@ def run(bundle_paths, admin_key, start=None, end=None, ledger=bundle.RECEIVED, r
             except Exception as exc:
                 row["sessions"] = {"ok": None, "error": "%s: %s" % (type(exc).__name__, exc)}
         broken = [mb for mb in mine if not mb["chain_ok"] or not mb["report_ok"] or mb["continuity"]["ok"] is False]
-        row["status"] = ("fail" if broken or row["bill"]["gaps"] or (row["sessions"] or {}).get("ok") is False
-                         else "pass")
+        s = row["sessions"] or {}
+        if broken or not row["bill"]["ok"] or s.get("ok") is False or not row["in_organization"]:
+            row["status"] = "fail"
+        elif s.get("error"):
+            row["status"] = "check"  # the bill check passed; the session count couldn't run
+        else:
+            row["status"] = "pass"
         rows.append(row)
     total = sum(r["billed_tokens"] for r in rows)
-    reported = sum(r["billed_tokens"] - _gap(r) for r in rows if r["bundles"])
+    reported = sum(max(0, r["billed_tokens"] - _gap(r)) for r in rows if r["bundles"])
     return {"window": [start.isoformat(), end.isoformat()], "members": [
                 {k: (v if k != "window" else [x.isoformat() if x else None for x in v]) for k, v in mb.items()
                  if k != "log"} for mb in members],
-            "keys": rows, "billed_tokens": total, "accounted_tokens": reported,
+            "unreadable": unreadable, "keys": rows, "billed_tokens": total, "accounted_tokens": reported,
             "no_key_tokens": _total(org_minutes.get(None))}
 
 
@@ -112,19 +134,27 @@ def render(res):
                                           res["window"][1][:16].replace("T", " ")), ""]
     for mb in res["members"]:
         lines.append("  bundle %s: key %s, chain %s, report %s, continuity: %s" % (
-            mb["bundle"].rsplit("/", 1)[-1], mb["key_id"] or "?", "intact" if mb["chain_ok"] else "BROKEN",
+            bundle.clean(mb["bundle"].rsplit("/", 1)[-1]), mb["key_id"] or "?",
+            "intact" if mb["chain_ok"] else "BROKEN",
             "matches its log" if mb["report_ok"] else "DOES NOT match its log", mb["continuity"]["short"]))
+    for u in res.get("unreadable") or []:
+        lines.append("  bundle %s: UNREADABLE, %s" % (bundle.clean(u["bundle"].rsplit("/", 1)[-1]), u["error"]))
     lines.append("")
     for r in res["keys"]:
-        label = "%s (%s)" % (r["key_name"] or "unnamed key", r["key_id"])
+        label = "%s (%s)" % (bundle.clean(r["key_name"] or "unnamed key"), r["key_id"])
+        if not r.get("in_organization", True):
+            label += ", NOT IN YOUR ORGANIZATION"
         if r["status"] == "no report":
             lines.append("NO REPORT  %s: %s tokens billed, no bundle covers this key" % (
                 label, "{:,}".format(r["billed_tokens"])))
             continue
         gap = _gap(r)
-        lines.append("%s  %s: %s tokens billed, %s unexplained; %d bundle(s)" % (
-            "PASS" if r["status"] == "pass" else "FAIL", label, "{:,}".format(r["billed_tokens"]),
-            "{:,}".format(gap), len(r["bundles"])))
+        excess = sum(sum(x["tokens"].values()) for x in (r["bill"] or {}).get("log_excess") or []
+                     if isinstance(x.get("tokens"), dict))
+        lines.append("%s  %s: %s tokens billed, %s unexplained%s; %d bundle(s)" % (
+            {"pass": "PASS", "fail": "FAIL", "check": "CHECK"}[r["status"]], label,
+            "{:,}".format(r["billed_tokens"]), "{:,}".format(gap),
+            ", %s in the logs but not billed" % "{:,}".format(excess) if excess else "", len(r["bundles"])))
         s = r.get("sessions")
         if s and s.get("error"):
             lines.append("        sessions: %s" % s["error"])

@@ -200,6 +200,7 @@ SKIP  sessions     no whole day the log covers to compare yet
           non-interactive  partial     Anthropic 91, log 0; ...
           xterm            partial     Anthropic 2, log 0; ...
           xterm-256color   pass so far Anthropic 5, log 5
+        the last day isn't over: run `vawr receive` again an hour after it ends (UTC) for the final count
 
 VERIFIED  checked against your own Anthropic records
 ```
@@ -210,15 +211,22 @@ same bundle of our batch runs, which include 25 runs hidden from the log,
 fails both the bill check and the sessions check (non-interactive: Anthropic
 91, log 66).
 
-`receive` rebuilds the report from the log and compares, checks the chain,
-and keeps a ledger of the head hashes it has received (`~/.vawr/received.jsonl`).
-The next report from the same log must contain every earlier head (continuity),
-so history can't be rewritten between reports, and a report for the same key
-from a different log fails until someone explains why. `--html` builds a fresh
-report page on the recipient's machine from the log and their own checks. The
-zip is treated as untrusted: only its five known files are read, and no path
-from it is used. Without an Admin key the verdict is CONSISTENT (nothing edited
-after the fact, not checked against a bill).
+`receive` rebuilds the report from the log for exactly the window, projects
+and head the bundle states (a report.json claiming anything narrower fails),
+checks the chain, and keeps a ledger of the head hashes it has received
+(`~/.vawr/received.jsonl`). The next report from the same log must contain
+every earlier head (continuity), so history can't be rewritten between
+reports; a report for the same API key from a different log fails, and keeps
+failing, until someone explains why. VERIFIED needs the payer's Admin key and
+a bill check with nothing billed missing from the log and nothing in the log
+that wasn't billed; if the sessions check can't run, the verdict drops to
+CONSISTENT (nothing edited after the fact, not checked against a bill), as it
+is without an Admin key. `--html` builds a fresh report page on the
+recipient's machine from the log and their own checks; the team's own page in
+the bundle is for reading without vawr and isn't checked. The zip is treated as
+untrusted: only its five known files are read, no path from it is used, sizes
+and compression ratios are capped, and its strings are stripped of control
+characters before printing.
 
 ## Check a whole team
 
@@ -319,6 +327,13 @@ plugins, hooks and MCP servers stay out; API-key runs use `--bare`.
 - Continuity protects history only from the first report a recipient receives;
   edits after the last received head are caught by the other checks or not at
   all.
+- `vawr receive` checks the API key the bundle names unless you pass
+  `--key-id`; if you issued the key, pass it, so a sender holding two keys
+  can't point the check at the other one.
+- We haven't seen a session that runs past midnight UTC: vawr counts a session
+  on the day it starts and its tokens on the day of each request, and
+  Anthropic's daily records may split them differently. Treat the sessions
+  check on such days with care.
 
 - The bill check and the provider check cover one API key at per-minute
   resolution. Subscription usage has no provider-side record to check against.
