@@ -222,6 +222,7 @@ def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="spri
     # attribute background requests to logged sessions, one envelope each
     background = {t: 0 for t in TOKEN_TYPES}
     background_by_minute = {}
+    budgets = {}
     if background_model in unmatched_p and background_envelope:
         budgets = {sid: dict(background_envelope) for sid in sessions}
         spans = {sid: (a - timedelta(minutes=shift), b + timedelta(minutes=shift)) for sid, (a, b) in sessions.items()}
@@ -299,6 +300,10 @@ def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="spri
         "background_model": background_model,
         "logged_sessions": len(sessions),
         "per_session": per_session,
+        # background tokens credited to each logged session (its envelope minus what's left);
+        # between sessions minutes apart this is that session's own request
+        "background_by_session": {sid: {t: background_envelope[t] - b[t] for t in TOKEN_TYPES}
+                                  for sid, b in (budgets or {}).items()},
         "gaps": gaps,
         "log_excess": excess,
         "per_minute": per_minute,
