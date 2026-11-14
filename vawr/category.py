@@ -100,6 +100,19 @@ def classify(task_prompt, diff, model=MODEL):
     return {"category": structured["category"], "reason": structured.get("reason", "")}
 
 
+def classify_votes(task_prompt, diff, n=3, classify_fn=None):
+    """Majority of n independent picks. On generic code a single pick can change
+    from call to call; in our runs a majority of three cut flags on correctly
+    labeled runs from 6 to 4 of 54 and changed nothing on clear cases."""
+    classify_fn = classify_fn or classify
+    picks = [classify_fn(task_prompt, diff) for _ in range(n)]
+    cats = [p["category"] for p in picks]
+    top = max(set(cats), key=cats.count)
+    reason = next(p["reason"] for p in picks if p["category"] == top)
+    return {"category": top, "reason": "%s (%d of %d calls agreed)" % (reason, cats.count(top), n),
+            "votes": cats}
+
+
 def _load_cache(path=CACHE):
     try:
         with open(path) as fh:

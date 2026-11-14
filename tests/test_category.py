@@ -53,6 +53,15 @@ class CheckRunsTest(unittest.TestCase):
         self.assertFalse(caught[("b", "other")])
 
 
+class VotesTest(unittest.TestCase):
+    def test_majority_wins_and_reports_agreement(self):
+        seq = iter(["other", "capabilities", "capabilities"])
+        v = category.classify_votes("p", "d", n=3,
+                                    classify_fn=lambda p, d: {"category": next(seq), "reason": "r"})
+        self.assertEqual(v["category"], "capabilities")
+        self.assertIn("2 of 3", v["reason"])
+
+
 class VerdictTest(unittest.TestCase):
     def test_three_verdicts(self):
         self.assertEqual(category.verdict("safety", "safety"), "confirmed")

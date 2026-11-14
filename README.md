@@ -42,10 +42,15 @@ Two things stand out on any API-key account:
 
 - **Claude Code makes a billed request it doesn't record.** In every API-key
   session we checked, Claude Code 2.1.322 made one small-model (Haiku) request
-  that appears in none of its own records: not its telemetry events, its
-  metrics, its session files, or its cost totals. On small tasks it was about
-  half of each session's billed tokens. Tools that read session files can't
-  see it; the bill check shows it.
+  that we could not find in any of its own records: telemetry events, metrics,
+  session files or cost totals. On small tasks it was about half of each
+  session's billed tokens. Claude Code's background requests have been
+  described publicly before (for example
+  [anthropics/claude-code#3404](https://github.com/anthropics/claude-code/issues/3404)
+  and [#82274](https://github.com/anthropics/claude-code/issues/82274)), and
+  others have reported billed requests missing from one record or another; we
+  found no report of one missing from all four. Tools that read session files
+  can't see it; the bill check shows it.
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
   all show up as unexplained minutes.
@@ -171,4 +176,14 @@ plugins, hooks and MCP servers stay out; API-key runs use `--bare`.
   own purpose, and it needs the team to share prompts and diffs.
 - Claude Code's background request was measured on version 2.1.322; the
   allowance for it (`BACKGROUND_ENVELOPE` in `vawr/auditor.py`) may need
-  re-measuring for other versions.
+  re-measuring for other versions (Claude Code's cost reporting changed in
+  2.1.325).
+- Anthropic's minute buckets are per API key, not per session: concurrent
+  sessions, or another client using the same key, share a bucket.
+- The usage endpoint the bill check reads (`/v1/organizations/usage_report/messages`)
+  is now labelled legacy by Anthropic but still supported; its successor, the
+  Usage and Cost Analytics API (beta), has the same per-minute data with a
+  4–24 hour delay.
+- A proxy in front of Claude Code would also see every request it carries. The
+  bill check doesn't need one, works on past usage, and also covers other
+  clients using the same key.

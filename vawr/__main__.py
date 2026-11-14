@@ -103,9 +103,14 @@ def cmd_categories(args):
         sid = os.path.basename(path)[:-len(".jsonl")]
         if sid in declared or args.all:
             files.append(path)
-    cache_path = os.path.join(paths.WORK, "category_sessions", "verdicts.json")
+    if args.votes > 1:
+        cache_path = os.path.join(paths.WORK, "category_sessions", "verdicts_votes%d.json" % args.votes)
+        classify_fn = lambda p, d: category.classify_votes(p, d, n=args.votes)  # noqa: E731
+    else:
+        cache_path = os.path.join(paths.WORK, "category_sessions", "verdicts.json")
+        classify_fn = category.classify
     cache = category._load_cache(cache_path)
-    rows = session_category.check_sessions(sorted(files), declared, cache)
+    rows = session_category.check_sessions(sorted(files), declared, cache, classify_fn=classify_fn)
     category.save_cache(cache, cache_path)
     if args.json:
         with open(args.json, "w") as fh:
@@ -376,6 +381,7 @@ def main(argv=None):
     s.add_argument("--projects", default=None)
     s.add_argument("--match", action="append", default=None, help="only session folders whose path contains this")
     s.add_argument("--all", action="store_true", help="include sessions that aren't in the log (they count as untagged)")
+    s.add_argument("--votes", type=int, default=1, help="majority of this many model calls per session (3 steadies generic code)")
     s.add_argument("--json", default=None)
     s.set_defaults(func=cmd_categories)
 
