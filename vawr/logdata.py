@@ -68,4 +68,31 @@ def api_requests(log_path=paths.LOG_PATH):
                 "cache_creation": a.get("cache_creation_tokens") or 0,
             },
         })
-    return out + list(aux.values())
+    # Interactive sessions report auxiliary requests (titles, prompt suggestions,
+    # compaction) both as api_request events and in the auxiliary token metric;
+    # keep only metric usage beyond those events, so nothing is counted twice.
+    # (Headless runs in our batches sent no auxiliary metric points at all.)
+    in_events = {}
+    for r in out:
+        if is_auxiliary_source(r.get("query_source")):
+            acc = in_events.setdefault((r.get("session_id"), r.get("model")), {t: 0 for t in TOKEN_TYPES})
+            for t in TOKEN_TYPES:
+                acc[t] += r["tokens"][t]
+    extra = []
+    for rec in sorted(aux.values(), key=lambda r: r.get("time") or ""):
+        covered = in_events.get((rec.get("session_id"), rec.get("model")))
+        if covered:
+            for t in TOKEN_TYPES:
+                take = min(covered[t], rec["tokens"][t])
+                covered[t] -= take
+                rec["tokens"][t] -= take
+        if any(rec["tokens"].values()):
+            extra.append(rec)
+    return out + extra
+
+
+def is_auxiliary_source(query_source):
+    """Claude Code's query sources outside the main thread and subagents, which its
+    metrics count as "auxiliary": session titles, prompt suggestions, compaction..."""
+    qs = query_source or ""
+    return bool(qs) and qs not in ("repl_main_thread", "sdk") and not qs.startswith("agent:")

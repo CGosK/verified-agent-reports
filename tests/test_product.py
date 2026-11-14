@@ -69,6 +69,26 @@ class CheckCoverageTest(unittest.TestCase):
             self.assertEqual(res["coverage"]["unlogged_sessions"][0]["requests"], 1)
 
 
+class AuxiliaryNotDoubleCountedTest(unittest.TestCase):
+    def test_metric_usage_already_in_events_counts_once(self):
+        with tempfile.TemporaryDirectory() as d:
+            log = os.path.join(d, "events.jsonl")
+            cl = chainlog.ChainLog(log)
+            t = (T0 + timedelta(minutes=1)).isoformat()
+            # a title request reported as an event...
+            cl.append({"name": "api_request", "time": t, "attributes": {
+                "request_id": "r1", "session.id": "s", "model": "h", "query_source": "generate_session_title",
+                "input_tokens": 100, "output_tokens": 10, "cache_read_tokens": 0, "cache_creation_tokens": 0},
+                "resource": {}})
+            # ...and the same usage, plus 5 more output tokens, in the auxiliary metric
+            for typ, v in (("input", 100), ("output", 15)):
+                cl.append({"name": "metric", "metric": "claude_code.token.usage", "time": t, "value": v,
+                           "attributes": {"type": typ, "query_source": "auxiliary", "model": "h", "session.id": "s"},
+                           "resource": {}})
+            reqs = api_requests(log)
+            self.assertEqual(sum(sum(r["tokens"].values()) for r in reqs), 115)
+
+
 class VerifyReportTest(unittest.TestCase):
     def test_matches_then_catches_an_edited_total(self):
         from vawr import report
