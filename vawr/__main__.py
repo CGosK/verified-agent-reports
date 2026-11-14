@@ -70,13 +70,56 @@ def cmd_check(args):
            else now - timedelta(minutes=billcheck.LAG_MINUTES)).replace(second=0, microsecond=0)
     admin, api_key = (None, None) if args.no_bill else billcheck.admin_and_key()
     res = check.run(start, end, args.log, args.projects or paths.CLAUDE_PROJECTS,
-                    admin_key=admin, key_id=args.key_id, api_key=api_key, match=args.match)
+                    admin_key=admin, key_id=args.key_id, api_key=api_key, match=args.match,
+                    coverage=not args.no_coverage)
     if args.json:
         with open(args.json, "w") as fh:
             json.dump(res, fh, indent=1, default=str)
     print(check.render(res))
-    ok = res["chain"]["ok"] and res["coverage"]["ok"] and (res["bill"] is None or not res["bill"]["gaps"])
+    ok = res["chain"]["ok"] and res["coverage"]["ok"] is not False and (res["bill"] is None or not res["bill"]["gaps"])
     return 0 if ok else 1
+
+
+def cmd_categories(args):
+    import glob
+    import os
+    from datetime import datetime, timezone
+    from . import billcheck, category, paths, session_category
+    from .logdata import api_requests
+    now = datetime.now(timezone.utc)
+    start = billcheck.parse_when(args.since, now)
+    projects = args.projects or paths.CLAUDE_PROJECTS
+    labels = {}
+    for r in api_requests(args.log):
+        if r.get("session_id"):
+            labels.setdefault(r["session_id"], set()).add(r["category"])
+    declared = {sid: (next(iter(c)) if len(c) == 1 else "mixed") for sid, c in labels.items()}
+    files = []
+    for path in glob.glob(os.path.join(projects, "*", "*.jsonl")):
+        if datetime.fromtimestamp(os.path.getmtime(path), timezone.utc) < start:
+            continue
+        if args.match and not any(m in path for m in args.match):
+            continue
+        sid = os.path.basename(path)[:-len(".jsonl")]
+        if sid in declared or args.all:
+            files.append(path)
+    cache_path = os.path.join(paths.WORK, "category_sessions", "verdicts.json")
+    cache = category._load_cache(cache_path)
+    rows = session_category.check_sessions(sorted(files), declared, cache)
+    category.save_cache(cache, cache_path)
+    if args.json:
+        with open(args.json, "w") as fh:
+            json.dump(rows, fh, indent=1)
+    counts = {v: sum(1 for r in rows if r["verdict"] == v) for v in ("confirmed", "unconfirmed", "contradicted")}
+    print("Category check on %d sessions since %s: %d confirmed, %d unconfirmed, %d contradicted"
+          % (len(rows), start.isoformat()[:16], counts["confirmed"], counts["unconfirmed"], counts["contradicted"]))
+    for r in rows:
+        if r["verdict"] != "confirmed":
+            print("  %-12s session %s… tagged %s, reads as %s: %s" % (
+                r["verdict"], r["run_id"][:8], r["declared"], r["classified"], r["reason"][:140]))
+    print("unconfirmed: the work doesn't show a safety or capabilities purpose (often generic code); "
+          "contradicted: it shows a different one. A separate model reads each session's prompts and edits; "
+          "it runs through `claude -p`, so it uses your Claude Code sign-in.")
 
 
 def cmd_billcheck(args):
@@ -130,9 +173,9 @@ def cmd_status(args):
     from .runner import receiver_up
     print("receiver: %s on port %d" % ("running" if receiver_up(args.port) else "not running", args.port))
     if os.path.exists(args.log):
-        ok, problems = chainlog.verify(args.log)[:2]
-        n = sum(1 for _ in open(args.log))
+        ok, problems, n, head = chainlog.verify(args.log)
         print("log: %s, %d entries, chain %s" % (args.log, n, "intact" if ok else "BROKEN (%s)" % problems[:3]))
+        print("head: %s" % head)
     else:
         print("log: none yet at %s" % args.log)
 
@@ -148,6 +191,22 @@ def cmd_report(args):
         with open(args.out, "w") as fh:
             json.dump(rep, fh, indent=2)
     print(report.render(rep))
+    if args.html:
+        from . import html_report
+
+        def load(path):
+            if not path:
+                return None
+            with open(path) as fh:
+                d = json.load(fh)
+            return {"rows": d} if isinstance(d, list) else d  # `vawr categories --json` writes a list
+
+        page = html_report.render(rep, check=load(args.check), billcheck=load(args.billcheck),
+                                  categories=load(args.categories), claims=load(args.claims_summary),
+                                  title=args.title)
+        with open(args.html, "w") as fh:
+            fh.write(page)
+        print("HTML report: %s" % args.html)
 
 
 def cmd_audit(args):
@@ -304,10 +363,21 @@ def main(argv=None):
     s.add_argument("--projects", default=None)
     s.add_argument("--key-id", default=None)
     s.add_argument("--no-bill", action="store_true", help="skip the check against Anthropic's records")
+    s.add_argument("--no-coverage", action="store_true",
+                   help="skip the session-file check, e.g. when checking someone else's log on your machine")
     s.add_argument("--match", action="append", default=None,
                    help="only session folders whose name contains this (repeatable), e.g. a repo name")
     s.add_argument("--json", default=None)
     s.set_defaults(func=cmd_check)
+
+    s = sub.add_parser("categories", help="does each logged session's work match its category tag (a separate model reads its prompts and edits)")
+    s.add_argument("--since", default="7d")
+    s.add_argument("--log", default=LOG_PATH)
+    s.add_argument("--projects", default=None)
+    s.add_argument("--match", action="append", default=None, help="only session folders whose path contains this")
+    s.add_argument("--all", action="store_true", help="include sessions that aren't in the log (they count as untagged)")
+    s.add_argument("--json", default=None)
+    s.set_defaults(func=cmd_categories)
 
     s = sub.add_parser("report", help="allocation report from the chained log")
     s.add_argument("--log", default=LOG_PATH)
@@ -315,6 +385,12 @@ def main(argv=None):
     s.add_argument("--out", default=None, help="write the report JSON here")
     s.add_argument("--since", default=None, help="only requests from this time: 30d, or a UTC ISO time")
     s.add_argument("--until", default=None, help="only requests before this time")
+    s.add_argument("--html", default=None, help="also write a self-contained HTML report to share")
+    s.add_argument("--check", default=None, help="for --html: a `vawr check --json` result")
+    s.add_argument("--billcheck", default=None, help="for --html: a `vawr billcheck --json` result")
+    s.add_argument("--categories", default=None, help="for --html: a `vawr categories --json` result")
+    s.add_argument("--claims-summary", default=None, help="for --html: a claims summary JSON")
+    s.add_argument("--title", default=None, help="for --html: the report's title")
     s.set_defaults(func=cmd_report)
 
     s = sub.add_parser("serve", help="run the OTLP receiver that writes the chained log")

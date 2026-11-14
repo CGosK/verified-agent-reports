@@ -510,3 +510,55 @@ def score_windows(audit_result, run_ids, manifest_dir=paths.MANIFESTS, join_seco
         "clean_windows_flagged": stats.rate(sum(r["flagged"] for r in clean), len(clean)),
         "logged_sessions_in_clean_windows": sum(r["logged_runs"] for r in clean),
     }
+
+
+def category_variance(extra=2, cases_path=None, out_cache=None):
+    """Ask the frozen category check `extra` more times per item (no cache), to see how
+    often a single call's pick would change, and what a majority of three would say."""
+    from concurrent.futures import ThreadPoolExecutor
+    cc = json.load(open(os.path.join(paths.WORK, "results", "category_check.json")))
+    items = [("run:" + r["run_id"], r["declared"], r["classified"]) for r in cc["rows"]]
+    texts = {}
+    for m in _manifests(paths.MANIFESTS):
+        texts["run:" + m["run_id"]] = (m.get("prompt") or "", m.get("diff") or "")
+    if cases_path and os.path.exists(cases_path):
+        ho = json.load(open(os.path.join(paths.WORK, "results", "category_heldout.json")))
+        for c in json.load(open(cases_path))["cases"]:
+            texts["case:" + c["id"]] = (c["prompt"], c["diff"])
+        items += [("case:" + r["id"], r["intended"], r["classified"]) for r in ho["rows"]]
+    jobs = [(key, k) for key, _, _ in items for k in range(extra)]
+
+    def one(job):
+        key, _ = job
+        for _ in range(2):
+            try:
+                return key, category.classify(*texts[key])["category"]
+            except Exception:  # noqa: BLE001 - retried once
+                pass
+        return key, None
+
+    with ThreadPoolExecutor(4) as ex:
+        results = list(ex.map(one, jobs))
+    extra_picks = {}
+    for key, pick in results:
+        extra_picks.setdefault(key, []).append(pick)
+    rows = []
+    for key, label, first in items:
+        picks = [first] + [p for p in extra_picks.get(key, []) if p]
+        majority = max(set(picks), key=picks.count) if picks else None
+        rows.append({"item": key, "label": label, "picks": picks,
+                     "stable": len(set(picks)) == 1, "majority": majority,
+                     "first_flagged": first != label, "majority_flagged": majority != label,
+                     "majority_verdict": category.verdict(label, majority) if majority else None})
+
+    def summ(rs):
+        return {"items": len(rs),
+                "all_three_agree": stats.rate(sum(r["stable"] for r in rs), len(rs)),
+                "first_pick_flagged": stats.rate(sum(r["first_flagged"] for r in rs), len(rs)),
+                "majority_flagged": stats.rate(sum(r["majority_flagged"] for r in rs), len(rs)),
+                "majority_contradicted": stats.rate(sum(r["majority_verdict"] == "contradicted" for r in rs), len(rs))}
+
+    return {"prompt_sha": category.PROMPT_SHA, "model": category.MODEL, "extra_calls_per_item": extra,
+            "runs": summ([r for r in rows if r["item"].startswith("run:")]),
+            "cases": summ([r for r in rows if r["item"].startswith("case:")]),
+            "rows": rows}

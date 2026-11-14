@@ -17,13 +17,13 @@ from .sessions import parse_ts
 
 
 def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=None,
-        provider_minutes=None, shift=2, match=None):
+        provider_minutes=None, shift=2, match=None, coverage=True):
     ok_chain, problems, entries, head = chainlog.verify(log_path)
     reqs = [r for r in api_requests(log_path)
             if r.get("time") and start <= parse_ts(r["time"]) < end]
     logged_ids = {r["request_id"]: r for r in reqs if r.get("request_id")}
 
-    local = billcheck.local_requests(start, end, projects)
+    local = billcheck.local_requests(start, end, projects) if coverage else {}
     if match:  # only project folders whose name contains one of these
         local = {k: r for k, r in local.items() if any(m in r["project"] for m in match)}
     missing = defaultdict(lambda: {"requests": 0, "tokens": 0, "auth": None, "first": None})
@@ -57,7 +57,7 @@ def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=Non
     return {
         "window": [start.isoformat(), end.isoformat()],
         "chain": {"ok": ok_chain, "entries": entries, "head": head, "problems": problems[:5]},
-        "coverage": {"ok": not missing and not mismatched, "local_requests": len(local),
+        "coverage": {"ok": (not missing and not mismatched) if coverage else None, "local_requests": len(local),
                      "logged_requests_in_window": len(reqs), "token_mismatches": mismatched,
                      "unlogged_sessions": [dict(v, project=k[0], session=k[1]) for k, v in
                                            sorted(missing.items(), key=lambda kv: kv[1]["first"] or "")]},
@@ -71,9 +71,12 @@ def render(res):
     lines = ["vawr check, %s to %s UTC" % (res["window"][0][:16].replace("T", " "), res["window"][1][11:16]), ""]
     lines.append("%s  chain        %d entries, head %s" % (
         mark[res["chain"]["ok"]], res["chain"]["entries"], (res["chain"]["head"] or "")[:16]))
-    lines.append("%s  coverage     %d requests in session files, %d in the log%s" % (
-        mark[c["ok"]], c["local_requests"], c["logged_requests_in_window"],
-        "; %d token mismatches" % c["token_mismatches"] if c["token_mismatches"] else ""))
+    if c["ok"] is None:
+        lines.append("SKIP  coverage     not run (--no-coverage); %d requests in the log" % c["logged_requests_in_window"])
+    else:
+        lines.append("%s  coverage     %d requests in session files, %d in the log%s" % (
+            mark[c["ok"]], c["local_requests"], c["logged_requests_in_window"],
+            "; %d token mismatches" % c["token_mismatches"] if c["token_mismatches"] else ""))
     for s in c["unlogged_sessions"][:10]:
         lines.append("        not logged: %s session %s… (%s), %d requests, %s tokens, from %s" % (
             s["project"][-40:], (s["session"] or "?")[:8], s["auth"], s["requests"],
