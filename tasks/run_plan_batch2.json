@@ -1,0 +1,218 @@
+{
+ "note": "Batch 2 (Nov 14, 2026): same design as batch 1 at a larger size, to tighten the confidence intervals. Sprint-key runs alternate logged and off-log runs 180 s apart; off-log runs rotate plant (with and without session files) and model (haiku, sonnet, opus). Subscription runs repeat each task once, logged, for the session-file check and the claim checker.",
+ "sprint": {
+  "gap_seconds": 180,
+  "runs": [
+   {
+    "task": "s1_refusals"
+   },
+   {
+    "task": "c3_batching",
+    "plant": "off_log",
+    "model": "haiku"
+   },
+   {
+    "task": "s2_agreement"
+   },
+   {
+    "task": "c4_cache",
+    "plant": "off_log_no_files",
+    "model": "sonnet"
+   },
+   {
+    "task": "s3_contamination"
+   },
+   {
+    "task": "c5_ngrams",
+    "plant": "off_log",
+    "model": "opus"
+   },
+   {
+    "task": "s4_redact"
+   },
+   {
+    "task": "o1_slugify",
+    "plant": "off_log_no_files",
+    "model": "haiku"
+   },
+   {
+    "task": "s5_monitor"
+   },
+   {
+    "task": "o2_durations",
+    "plant": "off_log",
+    "model": "sonnet"
+   },
+   {
+    "task": "c1_sampling"
+   },
+   {
+    "task": "o3_table",
+    "plant": "off_log_no_files",
+    "model": "opus"
+   },
+   {
+    "task": "c2_schedule"
+   },
+   {
+    "task": "o4_config",
+    "plant": "off_log",
+    "model": "haiku"
+   },
+   {
+    "task": "c3_batching"
+   },
+   {
+    "task": "o5_versions",
+    "plant": "off_log_no_files",
+    "model": "sonnet"
+   },
+   {
+    "task": "c4_cache"
+   },
+   {
+    "task": "s1_refusals",
+    "plant": "off_log",
+    "model": "opus"
+   },
+   {
+    "task": "c5_ngrams"
+   },
+   {
+    "task": "s2_agreement",
+    "plant": "off_log_no_files",
+    "model": "haiku"
+   },
+   {
+    "task": "o1_slugify"
+   },
+   {
+    "task": "s3_contamination",
+    "plant": "off_log",
+    "model": "sonnet"
+   },
+   {
+    "task": "o2_durations"
+   },
+   {
+    "task": "s4_redact",
+    "plant": "off_log_no_files",
+    "model": "opus"
+   },
+   {
+    "task": "o3_table"
+   },
+   {
+    "task": "s5_monitor",
+    "plant": "off_log",
+    "model": "haiku"
+   },
+   {
+    "task": "o4_config"
+   },
+   {
+    "task": "c1_sampling",
+    "plant": "off_log_no_files",
+    "model": "sonnet"
+   },
+   {
+    "task": "o5_versions"
+   },
+   {
+    "task": "c2_schedule",
+    "plant": "off_log",
+    "model": "opus"
+   },
+   {
+    "task": "s1_refusals"
+   },
+   {
+    "task": "o1_slugify",
+    "plant": "off_log_no_files",
+    "model": "haiku"
+   },
+   {
+    "task": "s2_agreement"
+   },
+   {
+    "task": "o2_durations",
+    "plant": "off_log",
+    "model": "sonnet"
+   },
+   {
+    "task": "s3_contamination"
+   },
+   {
+    "task": "o3_table",
+    "plant": "off_log_no_files",
+    "model": "opus"
+   },
+   {
+    "task": "s4_redact"
+   },
+   {
+    "task": "o4_config",
+    "plant": "off_log",
+    "model": "haiku"
+   },
+   {
+    "task": "s5_monitor"
+   },
+   {
+    "task": "o5_versions",
+    "plant": "off_log_no_files",
+    "model": "sonnet"
+   }
+  ]
+ },
+ "subscription": {
+  "gap_seconds": 0,
+  "runs": [
+   {
+    "task": "s1_refusals"
+   },
+   {
+    "task": "s2_agreement"
+   },
+   {
+    "task": "s3_contamination"
+   },
+   {
+    "task": "s4_redact"
+   },
+   {
+    "task": "s5_monitor"
+   },
+   {
+    "task": "c1_sampling"
+   },
+   {
+    "task": "c2_schedule"
+   },
+   {
+    "task": "c3_batching"
+   },
+   {
+    "task": "c4_cache"
+   },
+   {
+    "task": "c5_ngrams"
+   },
+   {
+    "task": "o1_slugify"
+   },
+   {
+    "task": "o2_durations"
+   },
+   {
+    "task": "o3_table"
+   },
+   {
+    "task": "o4_config"
+   },
+   {
+    "task": "o5_versions"
+   }
+  ]
+ }
+}

@@ -39,13 +39,26 @@ def cmd_batch(args):
     for i, r in enumerate(runs):
         if i and plan.get("gap_seconds"):
             time.sleep(plan["gap_seconds"])
-        try:
-            m = run_task(r["task"], mode=args.set, plant=r.get("plant"), model=r.get("model", "sonnet"))
-            print("%s %s plant=%s exit=%s test=%s cost=%s turns=%s" % (
-                m["run_id"], m["task"], m["plant"], m["exit_code"], m["test_exit"],
-                m["cost_estimate_usd"], m["num_turns"]), flush=True)
-        except Exception as exc:  # keep going; the manifest list shows what ran
-            print("FAILED %s: %s" % (r, exc), flush=True)
+        group = r.get("group") or [r]
+
+        def one(item, delay):
+            time.sleep(delay)  # stagger starts so worktree creation doesn't collide
+            try:
+                m = run_task(item["task"], mode=args.set, plant=item.get("plant"),
+                             model=item.get("model", "sonnet"))
+                print("%s %s plant=%s exit=%s test=%s cost=%s turns=%s" % (
+                    m["run_id"], m["task"], m["plant"], m["exit_code"], m["test_exit"],
+                    m["cost_estimate_usd"], m["num_turns"]), flush=True)
+            except Exception as exc:  # keep going; the manifest list shows what ran
+                print("FAILED %s: %s" % (item, exc), flush=True)
+
+        if len(group) == 1:
+            one(group[0], 0)
+        else:  # runs that overlap in time, for the concurrency test
+            from concurrent.futures import ThreadPoolExecutor
+            stagger = r.get("stagger_seconds", 5)
+            with ThreadPoolExecutor(len(group)) as ex:
+                list(ex.map(one, group, [i * stagger for i in range(len(group))]))
 
 
 def cmd_report(args):
@@ -127,6 +140,18 @@ def cmd_validate(args):
         print("unassigned gaps: %d; log excess: %d; background attributed: %s over %d logged sessions"
               % (len(scored["unassigned_gaps"]), len(scored["log_excess"]), scored["background_tokens"],
                  scored["logged_sessions"]))
+    if args.what in ("category", "all"):
+        import os
+        hist = os.path.join(validate.paths.WORK, "category_dev", "history.json")
+        dev_ids = json.load(open(hist)).get("dev_run_ids") if os.path.exists(hist) else []
+        res = validate.category_check(dev_ids=dev_ids)
+        _save("category_check.json", res)
+        print("category:", json.dumps(res["summary"], indent=2))
+        cases = os.path.join(validate.paths.WORK, "category_heldout", "cases.json")
+        if os.path.exists(cases):
+            ho = validate.category_heldout(cases)
+            _save("category_heldout.json", ho)
+            print("category held-out:", json.dumps(ho["summary"], indent=2))
     if args.what in ("claims", "all"):
         real = claims.check_all(out_path=_save("claims_real.json", {}))
         cases = validate.claim_injections()
@@ -171,7 +196,7 @@ def main(argv=None):
     s.set_defaults(func=cmd_provider_cache)
 
     s = sub.add_parser("validate", help="planted-failure experiments")
-    s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "all"))
+    s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "all"))
     s.set_defaults(func=cmd_validate)
 
     s = sub.add_parser("results", help="write work/results/summary.md from the experiment files")

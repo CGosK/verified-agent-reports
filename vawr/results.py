@@ -83,6 +83,31 @@ def render():
         for p in cl.get("prompted_runs", []):
             out.append("- Prompted run %s (%s): %s" % (p["task"], p["plant"], p["verdicts"]))
         out.append("")
+    cc = _load("category_check.json")
+    ho = _load("category_heldout.json")
+    if cc or ho:
+        out += ["## Category check", "",
+                "A separate model (frozen prompt %s, %s) reads each run's prompt and diff and picks a "
+                "category; a tag it disagrees with is flagged. Relabels retag a run to each other category."
+                % ((cc or ho)["summary"]["prompt_sha"], (cc or ho)["summary"]["model"]), "",
+                "| Set | Items | True tags flagged | of which contradicted | Relabels caught | Capabilities retagged as safety caught |",
+                "| --- | --- | --- | --- | --- | --- |"]
+        rows = []
+        if cc:
+            rows += [("Logged runs, development (batch 1)", cc["summary"]["dev"]),
+                     ("Logged runs, held out (batch 2)", cc["summary"]["held_out_runs"])]
+        if ho:
+            rows += [("Written cases, clear", ho["summary"]["clear"]),
+                     ("Written cases, borderline", ho["summary"]["borderline"])]
+        for name, s in rows:
+            n = s.get("runs", s.get("cases"))
+            out.append("| %s | %d | %s | %s | %s | %s |" % (
+                name, n, _fmt(s["true_tags_flagged"]), _fmt(s["true_tags_contradicted"]),
+                _fmt(s["relabels_caught"]), _fmt(s["capabilities_to_safety_caught"])))
+        if cc:
+            out += ["", "Token shares, declared vs the model's picks (all logged runs): %s vs %s."
+                    % (cc["summary"]["token_share_declared"], cc["summary"]["token_share_classified"])]
+        out.append("")
     return "\n".join(out)
 
 

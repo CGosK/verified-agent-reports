@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 from datetime import datetime, timedelta, timezone
 
-from . import auditor, chainlog, claims, paths, runner, stats
+from . import auditor, category, chainlog, claims, paths, runner, stats
 from .logdata import TOKEN_TYPES, api_requests
 
 PROVIDER_CACHE = os.path.join(paths.WORK, "provider_minutes.json")
@@ -356,3 +356,107 @@ def summarize_claims(cases, real_detail=None):
         out["prompted_runs"] = [{"task": r["task"], "plant": r["plant"],
                                  "verdicts": [(c["type"], c["verdict"]) for c in r["claims"]]} for r in prompted]
     return out
+
+
+# ---------- category check ----------
+
+def _manifests(manifest_dir):
+    return [json.load(open(os.path.join(manifest_dir, n)))
+            for n in sorted(os.listdir(manifest_dir)) if n.endswith(".json")]
+
+
+def _shares(rows, tokens_by_run, key):
+    totals = {c: 0 for c in category.CATEGORIES}
+    for r in rows:
+        if r[key] in totals:
+            totals[r[key]] += tokens_by_run.get(r["run_id"], 0)
+    all_tokens = sum(totals.values()) or 1
+    return {c: round(v / all_tokens, 4) for c, v in totals.items()}
+
+
+def category_check(log_path=paths.LOG_PATH, manifest_dir=paths.MANIFESTS, dev_ids=None,
+                   cache_path=category.CACHE):
+    """Run the category check on every logged run and score it.
+
+    dev_ids: run ids used while writing the prompt (batch 1); the rest are scored
+    as held out. All runs here come from the same 15 tasks, whose file paths name
+    their category's folder, so this is the easy case; see category_heldout."""
+    reqs = api_requests(log_path)
+    declared = category.declared_labels(reqs)
+    ms = [m for m in _manifests(manifest_dir) if m.get("run_id") in declared]
+    cache = category._load_cache(cache_path)
+    category.classify_many([(m["run_id"], m.get("prompt") or "", m.get("diff") or "") for m in ms], cache)
+    category.save_cache(cache, cache_path)
+    rows = category.check_runs(ms, declared, cache)
+    category.save_cache(cache, cache_path)
+    trials = category.relabel_trials(rows)
+    tokens_by_run = {}
+    for r in reqs:
+        if r.get("run_id"):
+            tokens_by_run[r["run_id"]] = tokens_by_run.get(r["run_id"], 0) + sum(r["tokens"].values())
+    dev_ids = set(dev_ids or ())
+
+    def score(subset_rows):
+        ids = {r["run_id"] for r in subset_rows}
+        t = [x for x in trials if x["run_id"] in ids]
+        c2s = [x for x in t if x["from"] == "capabilities" and x["to"] == "safety"]
+        return {
+            "runs": len(subset_rows),
+            "true_tags_flagged": stats.rate(sum(r["flagged"] for r in subset_rows), len(subset_rows)),
+            "relabels_caught": stats.rate(sum(x["caught"] for x in t), len(t)),
+            "capabilities_to_safety_caught": stats.rate(sum(x["caught"] for x in c2s), len(c2s)),
+            "true_tags_contradicted": stats.rate(sum(r["verdict"] == "contradicted" for r in subset_rows), len(subset_rows)),
+            "relabels_contradicted": stats.rate(sum(x["verdict"] == "contradicted" for x in t), len(t)),
+            "flagged_tasks": sorted({"%s->%s" % (r["task"], r["classified"]) for r in subset_rows if r["flagged"]}),
+        }
+
+    summary = {
+        "prompt_sha": category.PROMPT_SHA, "model": category.MODEL,
+        "all": score(rows),
+        "dev": score([r for r in rows if r["run_id"] in dev_ids]),
+        "held_out_runs": score([r for r in rows if r["run_id"] not in dev_ids]),
+        "token_share_declared": _shares(rows, tokens_by_run, "declared"),
+        "token_share_classified": _shares(rows, tokens_by_run, "classified"),
+    }
+    return {"summary": summary, "rows": rows, "trials": trials}
+
+
+def category_heldout(cases_path, cache_path=category.CACHE):
+    """Score the check on cases written by a separate agent from the definitions alone."""
+    with open(cases_path) as fh:
+        cases = json.load(fh)["cases"]
+    cache = category._load_cache(cache_path)
+    category.classify_many([("heldout:" + c["id"], c["prompt"], c["diff"]) for c in cases], cache)
+    category.save_cache(cache, cache_path)
+    rows = []
+    for c in cases:
+        v = category.classify_cached("heldout:" + c["id"], c["prompt"], c["diff"], cache)
+        rows.append({"id": c["id"], "intended": c["intended"], "borderline": bool(c.get("borderline")),
+                     "classified": v["category"], "reason": v["reason"],
+                     "agrees": v["category"] == c["intended"],
+                     "verdict": category.verdict(c["intended"], v["category"])})
+    category.save_cache(cache, cache_path)
+    trials = [{"id": r["id"], "from": r["intended"], "to": new, "borderline": r["borderline"],
+               "caught": r["classified"] != new, "verdict": category.verdict(new, r["classified"])}
+              for r in rows for new in category.CATEGORIES if new != r["intended"]]
+
+    def score(rs):
+        ids = {r["id"] for r in rs}
+        t = [x for x in trials if x["id"] in ids]
+        c2s = [x for x in t if x["from"] == "capabilities" and x["to"] == "safety"]
+        return {"cases": len(rs),
+                "true_tags_flagged": stats.rate(sum(not r["agrees"] for r in rs), len(rs)),
+                "relabels_caught": stats.rate(sum(x["caught"] for x in t), len(t)),
+                "capabilities_to_safety_caught": stats.rate(sum(x["caught"] for x in c2s), len(c2s)),
+                "true_tags_contradicted": stats.rate(sum(r["verdict"] == "contradicted" for r in rs), len(rs)),
+                "relabels_contradicted": stats.rate(sum(x["verdict"] == "contradicted" for x in t), len(t))}
+
+    confusion = {}
+    for r in rows:
+        key = "%s->%s" % (r["intended"], r["classified"])
+        confusion[key] = confusion.get(key, 0) + 1
+    summary = {"prompt_sha": category.PROMPT_SHA, "model": category.MODEL,
+               "all": score(rows), "clear": score([r for r in rows if not r["borderline"]]),
+               "borderline": score([r for r in rows if r["borderline"]]),
+               "confusion": dict(sorted(confusion.items()))}
+    return {"summary": summary, "rows": rows, "trials": trials}
