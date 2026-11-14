@@ -130,10 +130,23 @@ do and what it changed, and flags labels it disagrees with.
 
 ## How well it works
 
-We tested every check against failures we planted on purpose: runs hidden
-from the log, edited and rebuilt logs, relabeled runs, and false claims by
-agents. Results with exact 95% intervals are in `work/results/summary.md`
-and the Sprint report.
+We planted failures on purpose and counted what each check caught, over 131
+Claude Code runs on a dedicated API key and a Claude subscription (Nov 13–14,
+2026, Claude Code 2.1.322) plus four real interactive sessions. Exact 95%
+intervals are in `work/results/summary.md` and the Sprint report.
+
+| What we planted or checked | Result |
+| --- | --- |
+| Runs hidden from the log (telemetry off, some with session files off too) | 26 of 26 caught by the bill (provider) check; 0 of 36 logged runs flagged |
+| Hidden runs that still wrote session files | 13 of 13 caught by the session-file check |
+| Hidden runs among three overlapping logged sessions | 5 of 5 windows caught |
+| Edits to a copy of the log that change recorded usage | 207 of 207 caught, even with the hash chain rebuilt |
+| A run relabeled (say, capabilities work as safety) and the chain rebuilt | 0 of 50 caught by the log checks; the category check caught 157 of 162 relabels of held-out runs, and every relabel of capabilities work as safety |
+| Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
+
+Session files from those interactive sessions left out about a third of
+what Anthropic billed (prompt suggestions, session titles, compaction); the
+bill check credits it from each session's own cost totals.
 
 ## What the log keeps
 
