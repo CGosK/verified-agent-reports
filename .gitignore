@@ -21,3 +21,6 @@ work/receiver.out
 work/daytest/claude-config/
 work/daytest/sessions/*.screen.log
 work/daytest/receiver.out
+work/midnight/claude-config/
+work/midnight/*.screen.log
+work/midnight/receiver.out

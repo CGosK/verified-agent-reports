@@ -420,6 +420,10 @@ def cmd_validate(args):
         _save("continuity_trials.json", r)
         print("continuity: edits before the earlier head caught %s; after it %s" % (
             r["caught_before_earlier_head"], r["caught_after_earlier_head"]))
+    if args.what == "underperform":
+        r = validate.underperform()
+        _save("underperform.json", r)
+        print("underperform:", json.dumps(r["summary"], indent=2))
     if args.what == "cc-analytics":  # needs the Admin key; not part of "all"
         from . import billcheck
         admin, _ = billcheck.admin_and_key()
@@ -599,7 +603,8 @@ def main(argv=None):
     s.add_argument("--task", required=True)
     s.add_argument("--mode", choices=("subscription", "sprint"), default="subscription")
     s.add_argument("--plant", default=None,
-                   choices=("off_log", "off_log_no_files", "prompt_overstate", "prompt_blocker"))
+                   choices=("off_log", "off_log_no_files", "prompt_overstate", "prompt_blocker",
+                            "prompt_underperform"))
     s.add_argument("--model", default="sonnet")
     s.add_argument("--max-budget", type=float, default=1.0, help="per-run cap for sprint mode, USD")
     s.add_argument("--category", default=None, help="override the category tag (mislabel test)")
@@ -618,7 +623,7 @@ def main(argv=None):
 
     s = sub.add_parser("validate", help="[research] planted-failure experiments")
     s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "concurrency",
-                                    "continuity", "cc-analytics", "all"))
+                                    "continuity", "cc-analytics", "underperform", "all"))
     s.set_defaults(func=cmd_validate)
 
     s = sub.add_parser("results", help="[research] write work/results/summary.md from the experiment files")

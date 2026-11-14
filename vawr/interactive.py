@@ -211,7 +211,44 @@ def demo_report_when_ready(expected=5, key_var=KEY_VAR, poll=180, max_wait=6 * 3
     print("gave up waiting", flush=True)
 
 
+def midnight_test(start_at, port=4321, key_var="ANTHROPIC_API_KEY"):
+    """One interactive session that spans 00:00 UTC, logged to its own log, to see how
+    Anthropic's daily records split a session across two days. Runs only if the
+    machine is awake within three minutes of start_at; otherwise records a skip."""
+    import sys
+    import time
+    home = os.path.join(paths.WORK, "midnight")
+    cfg = os.path.join(home, "claude-config")
+    log = os.path.join(home, "log", "events.jsonl")
+    os.makedirs(os.path.dirname(log), exist_ok=True)
+    while datetime.now(timezone.utc) < start_at:
+        time.sleep(min(60, max(1, (start_at - datetime.now(timezone.utc)).total_seconds())))
+    if datetime.now(timezone.utc) > start_at + timedelta(minutes=3):
+        print("MIDNIGHT_SKIPPED: woke at %s" % datetime.now(timezone.utc).isoformat(), flush=True)
+        return "skipped"
+    rlog = open(os.path.join(home, "receiver.out"), "a")
+    recv = subprocess.Popen([sys.executable, "-u", "-m", "vawr", "serve", "--log", log, "--port", str(port)],
+                            cwd=paths.REPO, stdout=rlog, stderr=rlog)
+    time.sleep(3)
+    try:
+        task, cat, model, turns = SESSIONS[0]
+        print(json.dumps(run_session(task, cat, model, [(100, None), (90, turns[1][1]),
+                                                        (60, "Summarize your change in one sentence.")],
+                                     home=home, cfg=cfg, port=port, project="midnight-test",
+                                     key_var=key_var)), flush=True)
+        time.sleep(60)
+    finally:
+        recv.terminate()
+    print("MIDNIGHT_DONE", flush=True)
+    return "done"
+
+
 if __name__ == "__main__":
     import sys
-    {"report": demo_report, "report-when-ready": demo_report_when_ready}.get(
-        (sys.argv[1:] or [""])[0], demo_day)()
+    if sys.argv[1:2] == ["midnight"]:  # one or more start times; stops after the first that runs
+        for when in sys.argv[2:]:
+            if midnight_test(datetime.fromisoformat(when.replace("Z", "+00:00"))) == "done":
+                break
+    else:
+        {"report": demo_report, "report-when-ready": demo_report_when_ready}.get(
+            (sys.argv[1:] or [""])[0], demo_day)()

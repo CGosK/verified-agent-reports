@@ -140,8 +140,10 @@ def check_manifest(manifest, message=None, worktree=None):
     return check(claims, worktree or manifest["cwd"], task)
 
 
-def summarize_runs(results):
-    """{run_id: {claims, held, failed, unverifiable}} for the allocation report."""
+def summarize_runs(results, outcomes=None):
+    """{run_id: {claims, held, failed, unverifiable, outcome_pass}} for the allocation report.
+    outcome_pass: the run's tests pass on its final state, whatever it claimed (None if not run).
+    It catches weaker work that makes no false claim, which the claims alone can't."""
     out = {}
     for run_id, claims in results.items():
         out[run_id] = {
@@ -149,12 +151,13 @@ def summarize_runs(results):
             "held": len([c for c in claims if c["verdict"] == "held"]),
             "failed": len([c for c in claims if c["verdict"] == "failed"]),
             "unverifiable": len([c for c in claims if c["verdict"] == "unverifiable"]),
+            "outcome_pass": (outcomes or {}).get(run_id),
         }
     return out
 
 
 def check_all(manifest_dir=paths.MANIFESTS, out_path=None):
-    results, detail = {}, {}
+    results, detail, outcomes = {}, {}, {}
     for name in sorted(os.listdir(manifest_dir)):
         if not name.endswith(".json"):
             continue
@@ -164,9 +167,11 @@ def check_all(manifest_dir=paths.MANIFESTS, out_path=None):
             continue  # not in the log, so not in the report's claims column
         verdicts = check_manifest(m)
         results[m["run_id"]] = verdicts
+        outcomes[m["run_id"]] = _test_passes(m["cwd"], load_tasks()[m["task"]]["test"]) \
+            if os.path.isdir(m.get("cwd") or "") else None
         detail[m["run_id"]] = {"task": m["task"], "category": m["category"], "plant": m.get("plant"),
-                               "claims": verdicts}
-    payload = {"runs": summarize_runs(results), "detail": detail}
+                               "claims": verdicts, "outcome_pass": outcomes[m["run_id"]]}
+    payload = {"runs": summarize_runs(results, outcomes), "detail": detail}
     out_path = out_path or os.path.join(paths.WORK, "claims.json")
     with open(out_path, "w") as fh:
         json.dump(payload, fh, indent=2)

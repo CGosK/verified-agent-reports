@@ -62,7 +62,8 @@ def build(log_path=paths.LOG_PATH, claims_path=None, start=None, end=None, only_
     for run in runs.values():
         c = cats.setdefault(run["category"], {"category": run["category"], "runs": 0, "requests": 0,
                                               "cost_usd": 0.0, "tokens": {t: 0 for t in TOKEN_TYPES},
-                                              "claims": 0, "claims_held": 0})
+                                              "claims": 0, "claims_held": 0,
+                                              "outcomes": 0, "outcomes_passed": 0})
         c["runs"] += 1
         c["requests"] += run["requests"]
         c["cost_usd"] += run["cost_usd"]
@@ -72,6 +73,9 @@ def build(log_path=paths.LOG_PATH, claims_path=None, start=None, end=None, only_
         if rc:
             c["claims"] += rc.get("claims", 0)
             c["claims_held"] += rc.get("held", 0)
+            if rc.get("outcome_pass") is not None:
+                c["outcomes"] += 1
+                c["outcomes_passed"] += 1 if rc["outcome_pass"] else 0
 
     grand = sum(sum(c["tokens"].values()) for c in cats.values()) or 1
     for c in cats.values():
@@ -104,13 +108,14 @@ def build(log_path=paths.LOG_PATH, claims_path=None, start=None, end=None, only_
 
 
 def render(rep):
-    lines = ["| Category | Runs | Requests | Total tokens | Share | Est. cost (USD) | Claims held up |",
-             "| --- | --- | --- | --- | --- | --- | --- |"]
+    lines = ["| Category | Runs | Requests | Total tokens | Share | Est. cost (USD) | Claims held up | Work passing its tests |",
+             "| --- | --- | --- | --- | --- | --- | --- | --- |"]
     for c in rep["categories"]:
         held = ("%d of %d" % (c["claims_held"], c["claims"])) if c["claims"] else "n/a"
-        lines.append("| %s | %d | %d | %s | %.1f%% | %.4f | %s |" % (
+        outc = ("%d of %d" % (c.get("outcomes_passed", 0), c["outcomes"])) if c.get("outcomes") else "n/a"
+        lines.append("| %s | %d | %d | %s | %.1f%% | %.4f | %s | %s |" % (
             c["category"], c["runs"], c["requests"], format(c["total_tokens"], ","),
-            100 * c["token_share"], c["cost_usd"], held))
+            100 * c["token_share"], c["cost_usd"], held, outc))
     if rep.get("projects"):
         lines += ["", "| Project | Category | Sessions | Total tokens | Est. cost (USD) |", "| --- | --- | --- | --- | --- |"]
         for pr in rep["projects"]:
