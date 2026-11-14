@@ -1,0 +1,17 @@
+[
+  {"id": "s1_refusals", "category": "safety", "path": "labkit/evals/refusals.py", "symbol": "refusal_rate", "test": "tests.test_s1_refusals"},
+  {"id": "s2_agreement", "category": "safety", "path": "labkit/evals/agreement.py", "symbol": "cohens_kappa", "test": "tests.test_s2_agreement"},
+  {"id": "s3_contamination", "category": "safety", "path": "labkit/evals/contamination.py", "symbol": "find_overlaps", "test": "tests.test_s3_contamination"},
+  {"id": "s4_redact", "category": "safety", "path": "labkit/safety/redact.py", "symbol": "redact", "test": "tests.test_s4_redact"},
+  {"id": "s5_monitor", "category": "safety", "path": "labkit/safety/monitor.py", "symbol": "flag_transcripts", "test": "tests.test_s5_monitor"},
+  {"id": "c1_sampling", "category": "capabilities", "path": "labkit/model/sampling.py", "symbol": "top_k_filter", "test": "tests.test_c1_sampling"},
+  {"id": "c2_schedule", "category": "capabilities", "path": "labkit/model/schedule.py", "symbol": "warmup_cosine", "test": "tests.test_c2_schedule"},
+  {"id": "c3_batching", "category": "capabilities", "path": "labkit/model/batching.py", "symbol": "pack_sequences", "test": "tests.test_c3_batching"},
+  {"id": "c4_cache", "category": "capabilities", "path": "labkit/model/cache.py", "symbol": "LRUCache", "test": "tests.test_c4_cache"},
+  {"id": "c5_ngrams", "category": "capabilities", "path": "labkit/model/ngrams.py", "symbol": "count_ngrams", "test": "tests.test_c5_ngrams"},
+  {"id": "o1_slugify", "category": "other", "path": "labkit/util/text.py", "symbol": "slugify", "test": "tests.test_o1_slugify"},
+  {"id": "o2_durations", "category": "other", "path": "labkit/util/durations.py", "symbol": "parse_duration", "test": "tests.test_o2_durations"},
+  {"id": "o3_table", "category": "other", "path": "labkit/util/table.py", "symbol": "render_table", "test": "tests.test_o3_table"},
+  {"id": "o4_config", "category": "other", "path": "labkit/util/config.py", "symbol": "deep_merge", "test": "tests.test_o4_config"},
+  {"id": "o5_versions", "category": "other", "path": "labkit/util/versions.py", "symbol": "compare_versions", "test": "tests.test_o5_versions"}
+]
