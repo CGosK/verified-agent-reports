@@ -123,7 +123,7 @@ def admin_and_key(env=None):
 
 
 def check(start, end, admin_key=None, key_id=None, api_key=None, provider_minutes=None,
-          projects=paths.CLAUDE_PROJECTS, shift=2):
+          projects=paths.CLAUDE_PROJECTS, shift=2, source="auto"):
     if provider_minutes is None:
         if not admin_key:
             raise SystemExit("set ANTHROPIC_ADMIN_KEY (an Admin key) to read the usage records")
@@ -133,15 +133,19 @@ def check(start, end, admin_key=None, key_id=None, api_key=None, provider_minute
             key_id = usage_api.find_key_id(admin_key, api_key)
             if not key_id:
                 raise SystemExit("that API key isn't in the Admin key's organization")
-        raw = usage_api.minute_usage(admin_key, key_id, start, end)
+        raw, source, refreshed = usage_api.minute_usage_any(admin_key, key_id, start, end, source)
         provider_minutes = {parse_ts(k): v for k, v in raw.items()}
+    else:
+        source, refreshed = "saved", None
     pad = timedelta(minutes=shift + 1)
     local = local_requests(start - pad, end + pad, projects)
     key_reqs = [dict(r, mode="api_key") for r in local.values() if r["auth"] == "api_key"]
     res = auditor.check_provider(key_reqs, start, end, shift=shift, key_mode="api_key",
                                  provider_minutes=provider_minutes)
     sessions = {r["session_id"] for r in key_reqs if start <= parse_ts(r["time"]) < end}
-    res.update(key_id=key_id, local_api_key_requests=len(key_reqs),
+    res.update(key_id=key_id, source=source,
+               data_refreshed_at=refreshed.isoformat() if hasattr(refreshed, "isoformat") else refreshed,
+               local_api_key_requests=len(key_reqs),
                local_api_key_sessions=len(sessions),
                local_account_requests=sum(1 for r in local.values() if r["auth"] == "account"))
     return res
@@ -180,5 +184,9 @@ def render(res):
     else:
         lines.append("Every billed token is accounted for by this machine's session files, apart from "
                      "Claude Code's own background requests.")
-    lines.append("Usage records can lag about %d minutes; the newest minutes may be incomplete." % LAG_MINUTES)
+    if res.get("source") == "analytics":
+        lines.append("Records came from the Usage and Cost Analytics API, which can run 4-24 hours behind; "
+                     "recent minutes may be missing.")
+    else:
+        lines.append("Usage records can lag about %d minutes; the newest minutes may be incomplete." % LAG_MINUTES)
     return "\n".join(lines)

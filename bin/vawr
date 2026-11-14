@@ -1,0 +1,13 @@
+#!/bin/sh
+# Run the vawr package bundled next to this script with the first Python 3.9+
+# that actually runs (some machines have an old or broken python3 first on PATH).
+# Data goes to ~/.vawr unless VAWR_HOME is set.
+here="$(cd "$(dirname "$0")/.." && pwd)"
+export VAWR_HOME="${VAWR_HOME:-$HOME/.vawr}"
+for p in python3.14 python3.13 python3.12 python3.11 python3.10 python3.9 python3 /usr/bin/python3; do
+  if "$p" -c 'import sys; sys.exit(sys.version_info < (3, 9))' >/dev/null 2>&1; then
+    PYTHONPATH="$here${PYTHONPATH:+:$PYTHONPATH}" exec "$p" -m vawr "$@"
+  fi
+done
+echo "vawr needs Python 3.9 or newer on PATH" >&2
+exit 1

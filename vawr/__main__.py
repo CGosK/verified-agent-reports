@@ -80,13 +80,13 @@ def cmd_check(args):
     from datetime import datetime, timedelta, timezone
     from . import billcheck, check, paths
     now = datetime.now(timezone.utc)
-    start = billcheck.parse_when(args.since, now).replace(second=0, microsecond=0)
+    start = billcheck.parse_when(args.since or "24h", now).replace(second=0, microsecond=0)
     end = (billcheck.parse_when(args.until, now) if args.until
            else now - timedelta(minutes=billcheck.LAG_MINUTES)).replace(second=0, microsecond=0)
     admin, api_key = (None, None) if args.no_bill else billcheck.admin_and_key()
     res = check.run(start, end, args.log, args.projects or paths.CLAUDE_PROJECTS,
                     admin_key=admin, key_id=args.key_id, api_key=api_key, match=args.match,
-                    coverage=not args.no_coverage)
+                    coverage=not args.no_coverage, source=args.source)
     if args.json:
         with open(args.json, "w") as fh:
             json.dump(res, fh, indent=1, default=str)
@@ -102,7 +102,7 @@ def cmd_categories(args):
     from . import billcheck, category, paths, session_category
     from .logdata import api_requests
     now = datetime.now(timezone.utc)
-    start = billcheck.parse_when(args.since, now)
+    start = billcheck.parse_when(args.since or "7d", now)
     projects = args.projects or paths.CLAUDE_PROJECTS
     labels = {}
     for r in api_requests(args.log):
@@ -146,11 +146,11 @@ def cmd_billcheck(args):
     from datetime import datetime, timedelta, timezone
     from . import billcheck
     now = datetime.now(timezone.utc)
-    start = billcheck.parse_when(args.since, now)
+    start = billcheck.parse_when(args.since or "24h", now)
     end = billcheck.parse_when(args.until, now) if args.until else now - timedelta(minutes=billcheck.LAG_MINUTES)
     admin, api_key = billcheck.admin_and_key()
     res = billcheck.check(start.replace(second=0, microsecond=0), end.replace(second=0, microsecond=0),
-                          admin_key=admin, key_id=args.key_id, api_key=api_key,
+                          admin_key=admin, key_id=args.key_id, api_key=api_key, source=args.source,
                           **({"projects": args.projects} if args.projects else {}))
     if args.json:
         with open(args.json, "w") as fh:
@@ -175,6 +175,13 @@ def cmd_tag(args):
     path = configure.project_settings_path(os.getcwd())
     changes, _ = configure.merge_env(path, configure.tag_env(args.category, project), write=args.write)
     print(configure.describe(path, changes, args.write))
+
+
+def cmd_session_start(args):
+    from . import configure
+    out = configure.session_start(args.port)
+    if out:
+        print(json.dumps(out))
 
 
 def cmd_start(args):
@@ -354,6 +361,9 @@ def main(argv=None):
     s.add_argument("--until", default=None, help="end time (default: now minus the usage records' lag)")
     s.add_argument("--key-id", default=None, help="API key ID to check (default: the key in ANTHROPIC_API_KEY)")
     s.add_argument("--json", default=None, help="also write the full result here")
+    s.add_argument("--source", choices=("auto", "legacy", "analytics"), default="auto",
+                   help="Anthropic usage records to read: the Usage and Cost API (legacy, ~5 min behind) or the "
+                        "Analytics API (beta, 4-24 h behind); auto uses legacy and falls back if it's retired")
     s.add_argument("--projects", default=None, help="Claude Code's projects folder (default: ~/.claude/projects, or under CLAUDE_CONFIG_DIR)")
     s.set_defaults(func=cmd_billcheck)
 
@@ -373,6 +383,10 @@ def main(argv=None):
     s.add_argument("--port", type=int, default=4318)
     s.set_defaults(func=cmd_start)
 
+    s = sub.add_parser("session-start", help="[plugin hook] start the receiver if telemetry is set up, else say how")
+    s.add_argument("--port", type=int, default=4318)
+    s.set_defaults(func=cmd_session_start)
+
     s = sub.add_parser("stop", help="stop the background receiver")
     s.set_defaults(func=cmd_stop)
 
@@ -388,6 +402,9 @@ def main(argv=None):
     s.add_argument("--projects", default=None)
     s.add_argument("--key-id", default=None)
     s.add_argument("--no-bill", action="store_true", help="skip the check against Anthropic's records")
+    s.add_argument("--source", choices=("auto", "legacy", "analytics"), default="auto",
+                   help="Anthropic usage records to read: the Usage and Cost API (legacy, ~5 min behind) or the "
+                        "Analytics API (beta, 4-24 h behind); auto uses legacy and falls back if it's retired")
     s.add_argument("--no-coverage", action="store_true",
                    help="skip the session-file check, e.g. when checking someone else's log on your machine")
     s.add_argument("--match", action="append", default=None,

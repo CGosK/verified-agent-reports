@@ -17,7 +17,7 @@ from .sessions import parse_ts
 
 
 def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=None,
-        provider_minutes=None, shift=2, match=None, coverage=True):
+        provider_minutes=None, shift=2, match=None, coverage=True, source="auto"):
     ok_chain, problems, entries, head = chainlog.verify(log_path)
     reqs = [r for r in api_requests(log_path)
             if r.get("time") and start <= parse_ts(r["time"]) < end]
@@ -45,7 +45,7 @@ def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=Non
             if not key_id and api_key:
                 key_id = usage_api.find_key_id(admin_key, api_key)
             if key_id:
-                raw = usage_api.minute_usage(admin_key, key_id, start, end)
+                raw, source, _ = usage_api.minute_usage_any(admin_key, key_id, start, end, source)
                 provider_minutes = {parse_ts(k): v for k, v in raw.items()}
         if provider_minutes is not None:
             # requests billed to an API key: tagged runs ("sprint") or auth=api_key
@@ -53,6 +53,7 @@ def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=Non
             bill = auditor.check_provider(key_reqs, start, end, shift=shift, key_mode="api_key",
                                           provider_minutes=provider_minutes)
             bill["key_id"] = key_id
+            bill["source"] = source
 
     return {
         "window": [start.isoformat(), end.isoformat()],

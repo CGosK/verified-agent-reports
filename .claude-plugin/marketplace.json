@@ -1,0 +1,12 @@
+{
+  "name": "vawr",
+  "owner": {"name": "Chris Graham"},
+  "description": "vawr: checkable usage reports for Claude Code.",
+  "plugins": [
+    {
+      "name": "vawr",
+      "source": "./",
+      "description": "Bill check against Anthropic's usage records, a tamper-evident session log, and verifiable usage reports."
+    }
+  ]
+}

@@ -121,3 +121,34 @@ def stop():
         pass
     os.remove(_pid_path())
     return "Stopped the receiver (pid %d)." % pid
+
+
+def telemetry_status(port=4318):
+    """(configured, detail) from the user's Claude Code settings: is telemetry on and
+    pointed at the local receiver? Claude Code reads these only from user settings
+    (or the shell), not from project settings or plugins."""
+    path = user_settings_path()
+    try:
+        with open(path) as fh:
+            env = (json.load(fh) or {}).get("env") or {}
+    except (OSError, ValueError):
+        env = {}
+    env = dict(env, **{k: v for k, v in os.environ.items() if k.startswith(("OTEL_", "CLAUDE_CODE_ENABLE_TELEMETRY"))})
+    want = otel_env(port)
+    missing = [k for k in ("CLAUDE_CODE_ENABLE_TELEMETRY", "OTEL_LOGS_EXPORTER", "OTEL_EXPORTER_OTLP_ENDPOINT")
+               if str(env.get(k)) != want[k]]
+    return (not missing), missing
+
+
+def session_start(port=4318):
+    """For the plugin's SessionStart hook: start the receiver when telemetry is set
+    up; otherwise say once, briefly, how to set it up. Prints hook JSON or nothing."""
+    ok, missing = telemetry_status(port)
+    if not ok:
+        return {"systemMessage": "vawr: Claude Code isn't sending its usage events to vawr yet. "
+                                 "Run /vawr:setup once and restart Claude Code. (/vawr:billcheck works without it.)"}
+    if not receiver_up(port):
+        msg = start(port)
+        if not receiver_up(port):
+            return {"systemMessage": "vawr: couldn't start the receiver: %s" % msg}
+    return None

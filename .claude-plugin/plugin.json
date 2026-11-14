@@ -1,0 +1,8 @@
+{
+  "name": "vawr",
+  "version": "0.1.0",
+  "description": "Check what Anthropic billed your API key against what Claude Code recorded, keep a tamper-evident log of your sessions, and share a usage report by category that someone else can verify.",
+  "author": {"name": "Chris Graham"},
+  "license": "MIT",
+  "keywords": ["usage", "billing", "audit", "telemetry", "opentelemetry", "cost", "verification"]
+}

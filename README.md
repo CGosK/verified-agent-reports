@@ -57,6 +57,17 @@ Two things stand out on any API-key account:
 
 ## Install
 
+As a Claude Code plugin (slash commands, and a hook that keeps the receiver running):
+
+```
+/plugin install vawr --marketplace <owner>/<repo>
+```
+
+Then `/vawr:billcheck`, `/vawr:setup` (once), `/vawr:tag safety`, `/vawr:check`,
+`/vawr:report`. Python 3.9+ must be on PATH.
+
+Or as a command-line tool:
+
 ```bash
 git clone <this repository> vawr && cd vawr
 pipx install .        # or: pip install .
