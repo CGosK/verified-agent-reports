@@ -70,6 +70,14 @@ class BillCheckTest(unittest.TestCase):
         self.assertEqual(len(res["gaps"]), 1)
         self.assertEqual(res["local_account_requests"], 1)
 
+    def test_keys_from_env_then_files(self):
+        d = self.projects
+        f1, f2 = os.path.join(d, "a.env"), os.path.join(d, "b.env")
+        open(f1, "w").write("ANTHROPIC_API_KEY=from-first\n")
+        open(f2, "w").write("export ANTHROPIC_ADMIN_KEY='from-second'\nANTHROPIC_API_KEY=ignored\n")
+        self.assertEqual(billcheck.admin_and_key(env={}, files=[f1, f2]), ("from-second", "from-first"))
+        self.assertEqual(billcheck.admin_and_key(env={"ANTHROPIC_API_KEY": "env"}, files=[f1])[1], "env")
+
     def test_parse_when(self):
         now = T0
         self.assertEqual(billcheck.parse_when("90m", now), T0 - timedelta(minutes=90))

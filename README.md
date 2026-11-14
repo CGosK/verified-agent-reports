@@ -85,7 +85,8 @@ The bill check reads Anthropic's usage records, which needs:
   organization; ours returned 403 on every usage call until we did.
 - `ANTHROPIC_API_KEY`: the key to check (or pass `--key-id`).
 
-Put them in your environment or in a `.env` file in the folder you run from.
+Put them in your environment, in a `.env` file in the folder you run from, or in
+`~/.vawr/.env` (works from any project; `chmod 600` it).
 Never commit them.
 
 ## Check your bill

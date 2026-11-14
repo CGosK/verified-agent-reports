@@ -109,13 +109,18 @@ def local_requests(start, end, projects=paths.CLAUDE_PROJECTS):
     return out
 
 
-def admin_and_key(env=None):
-    """(admin_key, api_key) from the environment, then from a .env file here."""
+def admin_and_key(env=None, files=None):
+    """(admin_key, api_key) from the environment, then a .env file in this folder,
+    then .env in vawr's data folder (~/.vawr/.env), which works from any project."""
     env = dict(env if env is not None else os.environ)
-    if os.path.exists(".env"):
-        with open(".env") as fh:
+    for path in files if files is not None else (".env", os.path.join(paths.WORK, ".env")):
+        if not os.path.exists(path):
+            continue
+        with open(path) as fh:
             for line in fh:
                 line = line.strip()
+                if line.startswith("export "):
+                    line = line[len("export "):]
                 if line and not line.startswith("#") and "=" in line:
                     k, v = line.split("=", 1)
                     env.setdefault(k.strip(), v.strip().strip('"').strip("'"))
@@ -126,10 +131,12 @@ def check(start, end, admin_key=None, key_id=None, api_key=None, provider_minute
           projects=paths.CLAUDE_PROJECTS, shift=2, source="auto"):
     if provider_minutes is None:
         if not admin_key:
-            raise SystemExit("set ANTHROPIC_ADMIN_KEY (an Admin key) to read the usage records")
+            raise SystemExit("set ANTHROPIC_ADMIN_KEY (an Admin key for your Console organization) in your "
+                             "environment or in ~/.vawr/.env to read Anthropic's usage records")
         if not key_id:
             if not api_key:
-                raise SystemExit("pass --key-id, or set ANTHROPIC_API_KEY to the key to check")
+                raise SystemExit("pass --key-id, or set ANTHROPIC_API_KEY (the key to check) in your "
+                                 "environment or in ~/.vawr/.env")
             key_id = usage_api.find_key_id(admin_key, api_key)
             if not key_id:
                 raise SystemExit("that API key isn't in the Admin key's organization")
