@@ -420,6 +420,11 @@ def cmd_validate(args):
         _save("continuity_trials.json", r)
         print("continuity: edits before the earlier head caught %s; after it %s" % (
             r["caught_before_earlier_head"], r["caught_after_earlier_head"]))
+    if args.what == "version":  # needs the Admin key; not part of "all"
+        r = validate.version_ab()
+        _save("version_2_1_325.json", r)
+        print("version:", json.dumps(r.get("ab", {}).get("by_env"), indent=1),
+              json.dumps({k: v for k, v in (r.get("check") or {}).items() if k in ("chain_ok", "bill_ok", "level")}))
     if args.what == "underperform":
         r = validate.underperform()
         h = validate.underperform_hidden()
@@ -626,7 +631,7 @@ def main(argv=None):
 
     s = sub.add_parser("validate", help="[research] planted-failure experiments")
     s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "concurrency",
-                                    "continuity", "cc-analytics", "underperform", "all"))
+                                    "continuity", "cc-analytics", "underperform", "version", "all"))
     s.set_defaults(func=cmd_validate)
 
     s = sub.add_parser("results", help="[research] write work/results/summary.md from the experiment files")

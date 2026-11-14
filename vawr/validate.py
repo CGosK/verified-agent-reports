@@ -756,3 +756,32 @@ def underperform_hidden(manifest_dir=paths.MANIFESTS):
         "planted_passing_visible_but_failing_hidden": stats.rate(
             sum(1 for r in weak_visible_pass if not r["hidden_pass"]), len(weak_visible_pass)),
     }}
+
+
+def version_ab(bin_marker="cc-2.1.325", version="2.1.325"):
+    """The environment A/B on another Claude Code build: does the unrecorded small-model
+    request still follow the desktop entrypoint, and do the log, session-file and bill
+    checks still hold? Reads Anthropic's records, so run it 30+ minutes after the runs."""
+    from . import billcheck, check, usage_api
+    ms = sorted((m for m in _manifests(paths.MANIFESTS) if bin_marker in (m.get("claude_bin") or "")),
+                key=lambda m: m["start"])
+    if not ms:
+        return {"error": "no runs with %s" % bin_marker}
+    start = auditor.minute_of(parse_ts(ms[0]["start"])) - timedelta(minutes=2)
+    end = auditor.minute_of(parse_ts(ms[-1]["end"])) + timedelta(minutes=3)
+    admin, api_key = billcheck.admin_and_key()
+    key_id = usage_api.find_key_id(admin, api_key)
+    prov = {parse_ts(k): v for k, v in usage_api.minute_usage(admin, key_id, start, end).items()}
+    ab = env_ab([m["run_id"] for m in ms], prov)
+    projects = os.path.join(paths.WORK, bin_marker, "config", "projects")
+    chk = check.run(start, end, paths.LOG_PATH, projects, admin_key=admin, key_id=key_id, provider_minutes=prov,
+                    sessions=False, match=["cc-2.1.325", "runs"])
+    bill = chk["bill"] or {}
+    return {"claude_version": version, "window": [start.isoformat(), end.isoformat()], "key_id": key_id,
+            "runs": [{"run_id": m["run_id"], "task": m["task"], "env_mode": m.get("env_mode"),
+                      "test_pass": m.get("test_exit") == 0} for m in ms],
+            "ab": ab,
+            "check": {"chain_ok": chk["chain"]["ok"], "coverage": chk["coverage"],
+                      "bill_ok": bill.get("ok"), "gaps": bill.get("gaps"), "log_excess": bill.get("log_excess"),
+                      "provider_tokens": bill.get("provider_tokens"), "background_tokens": bill.get("background_tokens"),
+                      "level": chk["level"]}}
