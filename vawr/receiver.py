@@ -44,16 +44,29 @@ def any_value(v):
     return None
 
 
-# Identity fields Claude Code attaches to every event. They are dropped before
-# hashing so the log can be published; nothing the checks use depends on them.
+# Identity fields Claude Code attaches to every event, plus the account's plan
+# and seat type. They are dropped before hashing so the log can be published;
+# nothing the checks use depends on them. (Logs written before Nov 14, 2026
+# 08:30 UTC still carry anthropic.plan and anthropic.seat_type.)
 DROPPED_ATTRIBUTES = frozenset({
     "user.email", "user.account_uuid", "user.account_id", "user.id", "organization.id",
+    "anthropic.plan", "anthropic.seat_type",
 })
 
 
 def attrs(kvs):
-    return {kv.get("key"): any_value(kv.get("value")) for kv in (kvs or [])
-            if kv.get("key") not in DROPPED_ATTRIBUTES}
+    """Attributes minus the dropped ones. Claude Code sends a plan attribute only
+    for sessions signed in with a Claude account; that is kept as auth=account
+    (otherwise auth=api_key) so the provider check knows which requests were
+    billed to an API key, without recording the plan itself."""
+    kvs = kvs or []
+    out = {kv.get("key"): any_value(kv.get("value")) for kv in kvs
+           if kv.get("key") not in DROPPED_ATTRIBUTES}
+    if any(kv.get("key") == "anthropic.plan" for kv in kvs):
+        out["auth"] = "account"
+    elif any(kv.get("key") == "anthropic.provider" for kv in kvs):
+        out["auth"] = "api_key"
+    return out
 
 
 def nanos_to_iso(n):

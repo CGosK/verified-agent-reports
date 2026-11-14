@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vawr"
+version = "0.1.0"
+description = "Check what Anthropic billed your API key against what Claude Code recorded, keep a tamper-evident log of agent work, and report it by category with checks an outsider can rerun."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+vawr = "vawr.__main__:main"
+
+[tool.setuptools]
+packages = ["vawr"]

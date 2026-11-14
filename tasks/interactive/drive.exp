@@ -1,0 +1,48 @@
+#!/usr/bin/expect -f
+# Drive one interactive Claude Code session the way a person would.
+# usage: drive.exp <workdir> <model> <wait_s> <prompt> [<wait_s> <prompt> ...]
+# Startup dialogs (API key, folder trust) are accepted; any permission prompt
+# during the session is declined with Escape, so the agent stays inside the
+# tools it was allowed on the command line.
+set workdir [lindex $argv 0]
+set model [lindex $argv 1]
+set timeout 20
+log_user 1
+cd $workdir
+spawn claude --model $model --permission-mode acceptEdits --allowedTools "Bash(python3 -m unittest *)"
+set ready 0
+set tries 0
+while {!$ready} {
+  incr tries
+  if {$tries > 12} { puts "\nSTARTUP_TIMEOUT"; exit 2 }
+  expect {
+    -re {(?i)use this API key} { sleep 0.5; send "\033\[A"; sleep 0.5; send "\r"; sleep 1 }
+    -re {(?i)trust (the files|this folder)} { sleep 0.5; send "\r"; sleep 1 }
+    -re {(?i)for shortcuts|accept edits on|bypass permissions} { set ready 1 }
+    timeout { }
+    eof { puts "\nEOF_AT_STARTUP"; exit 3 }
+  }
+}
+sleep 3
+for {set i 2} {$i < [llength $argv]} {incr i 2} {
+  set wait [lindex $argv $i]
+  set prompt [lindex $argv [expr {$i + 1}]]
+  send -- $prompt
+  sleep 1
+  send "\r"
+  set end [expr {[clock seconds] + $wait}]
+  while {[clock seconds] < $end} {
+    expect {
+      -re {(?i)do you want to (proceed|make this edit|create|allow)} { sleep 0.5; send "\033"; exp_continue }
+      timeout { }
+      eof { puts "\nEOF_MID_SESSION"; exit 4 }
+    }
+  }
+}
+send "/exit\r"
+set timeout 30
+expect {
+  eof { }
+  timeout { send "\003"; sleep 1; send "\003"; expect eof }
+}
+puts "\nSESSION_DONE"

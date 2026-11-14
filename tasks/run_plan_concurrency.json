@@ -1,0 +1,173 @@
+{
+ "note": "Concurrency test (Nov 14, 2026): 10 windows, each three logged runs started 5 s apart, five of them with an off-log run started among them. Windows are 4 minutes apart after each group finishes, so the provider check sees overlapping sessions inside a window and clean minutes between windows.",
+ "sprint": {
+  "gap_seconds": 240,
+  "runs": [
+   {
+    "group": [
+     {
+      "task": "s1_refusals"
+     },
+     {
+      "task": "o2_durations",
+      "plant": "off_log",
+      "model": "haiku"
+     },
+     {
+      "task": "s2_agreement"
+     },
+     {
+      "task": "s3_contamination"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "s4_redact"
+     },
+     {
+      "task": "s5_monitor"
+     },
+     {
+      "task": "c1_sampling"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "c2_schedule"
+     },
+     {
+      "task": "c1_sampling",
+      "plant": "off_log_no_files",
+      "model": "sonnet"
+     },
+     {
+      "task": "c3_batching"
+     },
+     {
+      "task": "c4_cache"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "c5_ngrams"
+     },
+     {
+      "task": "o1_slugify"
+     },
+     {
+      "task": "o2_durations"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "o3_table"
+     },
+     {
+      "task": "s4_redact",
+      "plant": "off_log",
+      "model": "opus"
+     },
+     {
+      "task": "o4_config"
+     },
+     {
+      "task": "o5_versions"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "s1_refusals"
+     },
+     {
+      "task": "s2_agreement"
+     },
+     {
+      "task": "s3_contamination"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "s4_redact"
+     },
+     {
+      "task": "o5_versions",
+      "plant": "off_log_no_files",
+      "model": "haiku"
+     },
+     {
+      "task": "s5_monitor"
+     },
+     {
+      "task": "c1_sampling"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "c2_schedule"
+     },
+     {
+      "task": "c3_batching"
+     },
+     {
+      "task": "c4_cache"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "c5_ngrams"
+     },
+     {
+      "task": "c3_batching",
+      "plant": "off_log",
+      "model": "sonnet"
+     },
+     {
+      "task": "o1_slugify"
+     },
+     {
+      "task": "o2_durations"
+     }
+    ],
+    "stagger_seconds": 5
+   },
+   {
+    "group": [
+     {
+      "task": "o3_table"
+     },
+     {
+      "task": "o4_config"
+     },
+     {
+      "task": "o5_versions"
+     }
+    ],
+    "stagger_seconds": 5
+   }
+  ]
+ }
+}

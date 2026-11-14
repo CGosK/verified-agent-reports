@@ -9,6 +9,17 @@ METRIC_TYPES = {"input": "input", "output": "output", "cacheRead": "cache_read",
                 "cacheCreation": "cache_creation"}
 
 
+def _auth(a):
+    """How a request was billed when the run carries no mode tag: an API key or
+    a Claude account. Logs from before the receiver kept auth= still carry the
+    plan attribute, which only account sessions send."""
+    if a.get("auth"):
+        return a["auth"]
+    if "anthropic.plan" in a:
+        return "account"
+    return "api_key" if "anthropic.provider" in a else None
+
+
 def api_requests(log_path=paths.LOG_PATH):
     """Request records from claude_code.api_request events, plus one pseudo-request
     per auxiliary token-usage metric data point (background requests Claude Code
@@ -25,9 +36,9 @@ def api_requests(log_path=paths.LOG_PATH):
                 key = (ev.get("time"), a.get("model"), a.get("session.id"))
                 rec = aux.setdefault(key, {
                     "seq": e.get("seq"), "request_id": None, "session_id": a.get("session.id"),
-                    "run_id": a.get("run.id") or r.get("run.id"),
+                    "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
                     "category": a.get("category") or r.get("category") or "untagged",
-                    "mode": a.get("run.mode") or r.get("run.mode"), "time": ev.get("time"),
+                    "mode": a.get("run.mode") or r.get("run.mode") or _auth(a), "time": ev.get("time"),
                     "model": a.get("model"), "query_source": "auxiliary", "cost_usd": 0.0,
                     "tokens": {t: 0 for t in TOKEN_TYPES}})
                 t = METRIC_TYPES.get(a.get("type"))
@@ -42,9 +53,9 @@ def api_requests(log_path=paths.LOG_PATH):
             "seq": e.get("seq"),
             "request_id": a.get("request_id"),
             "session_id": a.get("session.id"),
-            "run_id": a.get("run.id") or r.get("run.id"),
+            "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
             "category": a.get("category") or r.get("category") or "untagged",
-            "mode": a.get("run.mode") or r.get("run.mode"),
+            "mode": a.get("run.mode") or r.get("run.mode") or _auth(a),
             "time": a.get("event.timestamp") or ev.get("time"),
             "model": a.get("model"),
             "query_source": a.get("query_source"),

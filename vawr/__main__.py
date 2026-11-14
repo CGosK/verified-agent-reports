@@ -61,6 +61,82 @@ def cmd_batch(args):
                 list(ex.map(one, group, [i * stagger for i in range(len(group))]))
 
 
+def cmd_check(args):
+    from datetime import datetime, timedelta, timezone
+    from . import billcheck, check, paths
+    now = datetime.now(timezone.utc)
+    start = billcheck.parse_when(args.since, now).replace(second=0, microsecond=0)
+    end = (billcheck.parse_when(args.until, now) if args.until
+           else now - timedelta(minutes=billcheck.LAG_MINUTES)).replace(second=0, microsecond=0)
+    admin, api_key = (None, None) if args.no_bill else billcheck.admin_and_key()
+    res = check.run(start, end, args.log, args.projects or paths.CLAUDE_PROJECTS,
+                    admin_key=admin, key_id=args.key_id, api_key=api_key, match=args.match)
+    if args.json:
+        with open(args.json, "w") as fh:
+            json.dump(res, fh, indent=1, default=str)
+    print(check.render(res))
+    ok = res["chain"]["ok"] and res["coverage"]["ok"] and (res["bill"] is None or not res["bill"]["gaps"])
+    return 0 if ok else 1
+
+
+def cmd_billcheck(args):
+    from datetime import datetime, timedelta, timezone
+    from . import billcheck
+    now = datetime.now(timezone.utc)
+    start = billcheck.parse_when(args.since, now)
+    end = billcheck.parse_when(args.until, now) if args.until else now - timedelta(minutes=billcheck.LAG_MINUTES)
+    admin, api_key = billcheck.admin_and_key()
+    res = billcheck.check(start.replace(second=0, microsecond=0), end.replace(second=0, microsecond=0),
+                          admin_key=admin, key_id=args.key_id, api_key=api_key,
+                          **({"projects": args.projects} if args.projects else {}))
+    if args.json:
+        with open(args.json, "w") as fh:
+            json.dump(res, fh, indent=1, default=str)
+    print(billcheck.render(res))
+
+
+def cmd_setup(args):
+    import os
+    from . import configure
+    path = configure.project_settings_path(os.getcwd()) if args.project else configure.user_settings_path()
+    changes, _ = configure.merge_env(path, configure.otel_env(args.port), write=args.write)
+    print(configure.describe(path, changes, args.write))
+    if args.write:
+        print("New Claude Code sessions will send their events to the receiver. Start it with `vawr start`.")
+
+
+def cmd_tag(args):
+    import os
+    from . import configure
+    project = args.project or os.path.basename(os.getcwd())
+    path = configure.project_settings_path(os.getcwd())
+    changes, _ = configure.merge_env(path, configure.tag_env(args.category, project), write=args.write)
+    print(configure.describe(path, changes, args.write))
+
+
+def cmd_start(args):
+    from . import configure
+    print(configure.start(args.port))
+
+
+def cmd_stop(args):
+    from . import configure
+    print(configure.stop())
+
+
+def cmd_status(args):
+    import os
+    from . import chainlog
+    from .runner import receiver_up
+    print("receiver: %s on port %d" % ("running" if receiver_up(args.port) else "not running", args.port))
+    if os.path.exists(args.log):
+        ok, problems = chainlog.verify(args.log)[:2]
+        n = sum(1 for _ in open(args.log))
+        print("log: %s, %d entries, chain %s" % (args.log, n, "intact" if ok else "BROKEN (%s)" % problems[:3]))
+    else:
+        print("log: none yet at %s" % args.log)
+
+
 def cmd_report(args):
     from . import report
     rep = report.build(args.log, claims_path=args.claims)
@@ -201,6 +277,50 @@ def main(argv=None):
 
     s = sub.add_parser("results", help="write work/results/summary.md from the experiment files")
     s.set_defaults(func=lambda a: print(__import__("vawr.results", fromlist=["write"]).write()[1]))
+
+    s = sub.add_parser("setup", help="point Claude Code's telemetry at the local receiver (shows the change; --write applies it)")
+    s.add_argument("--project", action="store_true", help="this project's .claude/settings.local.json instead of your user settings")
+    s.add_argument("--port", type=int, default=4318)
+    s.add_argument("--write", action="store_true")
+    s.set_defaults(func=cmd_setup)
+
+    s = sub.add_parser("tag", help="tag this project's Claude Code sessions with a category")
+    s.add_argument("category", choices=("safety", "capabilities", "other"))
+    s.add_argument("--project", default=None, help="project name to record (default: this folder's name)")
+    s.add_argument("--write", action="store_true")
+    s.set_defaults(func=cmd_tag)
+
+    s = sub.add_parser("start", help="run the receiver in the background")
+    s.add_argument("--port", type=int, default=4318)
+    s.set_defaults(func=cmd_start)
+
+    s = sub.add_parser("stop", help="stop the background receiver")
+    s.set_defaults(func=cmd_stop)
+
+    s = sub.add_parser("status", help="is the receiver up, and is the log's chain intact")
+    s.add_argument("--port", type=int, default=4318)
+    s.add_argument("--log", default=LOG_PATH)
+    s.set_defaults(func=cmd_status)
+
+    s = sub.add_parser("check", help="audit the log: chain intact, every local session logged, bill accounted for")
+    s.add_argument("--since", default="24h")
+    s.add_argument("--until", default=None)
+    s.add_argument("--log", default=LOG_PATH)
+    s.add_argument("--projects", default=None)
+    s.add_argument("--key-id", default=None)
+    s.add_argument("--no-bill", action="store_true", help="skip the check against Anthropic's records")
+    s.add_argument("--match", action="append", default=None,
+                   help="only session folders whose name contains this (repeatable), e.g. a repo name")
+    s.add_argument("--json", default=None)
+    s.set_defaults(func=cmd_check)
+
+    s = sub.add_parser("billcheck", help="what Anthropic billed an API key vs what this machine's Claude Code session files record")
+    s.add_argument("--since", default="24h", help="how far back: 90m, 24h, 7d, or a UTC ISO time (default 24h)")
+    s.add_argument("--until", default=None, help="end time (default: now minus the usage records' lag)")
+    s.add_argument("--key-id", default=None, help="API key ID to check (default: the key in ANTHROPIC_API_KEY)")
+    s.add_argument("--json", default=None, help="also write the full result here")
+    s.add_argument("--projects", default=None, help="Claude Code's projects folder (default: ~/.claude/projects, or under CLAUDE_CONFIG_DIR)")
+    s.set_defaults(func=cmd_billcheck)
 
     s = sub.add_parser("report", help="allocation report from the chained log")
     s.add_argument("--log", default=LOG_PATH)

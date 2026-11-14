@@ -88,7 +88,8 @@ def classify(task_prompt, diff, model=MODEL):
            "--output-format", "json", "--json-schema", json.dumps(SCHEMA), "--max-turns", "3",
            "--setting-sources", "project", "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
            "--disable-slash-commands", "--permission-mode", "dontAsk"]
-    proc = subprocess.run(cmd, cwd=paths.REPO, env=env, capture_output=True, text=True, timeout=300)
+    os.makedirs(paths.CHECK_CWD, exist_ok=True)
+    proc = subprocess.run(cmd, cwd=paths.CHECK_CWD, env=env, capture_output=True, text=True, timeout=300)
     try:
         out = json.loads(proc.stdout)
     except ValueError:
