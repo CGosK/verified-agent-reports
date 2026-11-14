@@ -13,9 +13,10 @@ from records you already have:
    local session files, and Anthropic's billing records. You can hand the
    result to a funder or a reviewer, and they can rerun the checks.
 
-Built for the Apart Research AI x Epistemics Sprint (Nov 13–15, 2026), Track 2
-(Trust Infrastructure). All code here was written during the Sprint. Python
-3.9+, standard library only.
+Chris Graham, AI x Epistemics Research Sprint (Track 2, Trust Infrastructure),
+Apart Research, November 2026. Python 3.9+, standard library only. MIT license.
+
+**Paper:** the Sprint report (link to be added on submission).
 
 ## What you'll see
 
@@ -122,6 +123,20 @@ Claude Code's events and token and cost metrics, with prompts redacted
 `organization.id`, `anthropic.plan` and `anthropic.seat_type`, keeping only
 whether a session used an API key or a Claude account (`auth`). Logs written
 before Nov 14, 2026 08:30 UTC still carry the plan and seat type.
+
+## What predates the sprint
+
+Nothing in this repository: all code, tasks and data were made during the
+Sprint (Nov 13–15, 2026).
+
+## Data
+
+`work/` holds everything the results come from: the hash-chained logs
+(`work/log/`, `work/pilot/log/`, `work/interactive/log/`), one manifest per run
+(`work/manifests/`), Anthropic's saved per-minute usage records for the test
+key (`work/provider_minutes.json`), and every result file (`work/results/`).
+Identity attributes are dropped before hashing; file paths in manifests show
+the machine's username.
 
 ## Reproducing the Sprint results
 
