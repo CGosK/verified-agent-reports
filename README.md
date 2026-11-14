@@ -48,8 +48,10 @@ Two things stand out on any API-key account:
   same runs with a clean environment made no such request (0 of 4, against 4
   of 4). In interactive terminal sessions, session files leave out session
   titles, prompt suggestions and compaction, which Claude Code's cost totals
-  and telemetry do include; prompt suggestions alone were a quarter to a third
-  of each session's tokens. Background requests have been described publicly
+  and telemetry do include, as others have reported
+  ([#104358](https://github.com/anthropics/claude-code/issues/104358),
+  [#106219](https://github.com/anthropics/claude-code/issues/106219)); in our
+  sessions that was a third of billed tokens. Background requests have been described publicly
   before (for example
   [anthropics/claude-code#3404](https://github.com/anthropics/claude-code/issues/3404)
   and [#82274](https://github.com/anthropics/claude-code/issues/82274)). The
