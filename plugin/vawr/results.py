@@ -130,6 +130,32 @@ def render():
             out += ["", "Token shares, declared vs the model's picks (all logged runs): %s vs %s."
                     % (cc["summary"]["token_share_declared"], cc["summary"]["token_share_classified"])]
         out.append("")
+    cca = _load("cc_analytics.json")
+    if cca:
+        out += ["## Anthropic's Claude Code analytics vs the log and the bill", "",
+                "Anthropic's Claude Code Analytics API (Admin API) counts each API key's Claude Code sessions "
+                "and tokens by model, per UTC day and terminal type. Key %s (%s)." % (cca["key_name"], cca["key_id"]), "",
+                "| Day | Terminal | Anthropic's sessions | Log's sessions | Result | Tokens, Anthropic minus log |",
+                "| --- | --- | --- | --- | --- | --- |"]
+        for d, v in sorted(cca["days"].items()):
+            for c in v["comparison"]["by_terminal"]:
+                out.append("| %s | %s | %d | %d | %s | %s |" % (
+                    d, c["terminal"], c["anthropic_sessions"], c["log_sessions"], c["status"].replace("_", " "),
+                    ", ".join("%s %+d" % (m, x) for m, x in sorted(c["token_difference"].items())) or "none"))
+        out.append("")
+        for d, v in sorted(cca["days"].items()):
+            out.append("- %s: %d runs on the key in the manifests, %d of them hidden from the log; billed minus "
+                       "Anthropic's count: %s." % (d, v["sprint_key_runs_in_manifests"], v["hidden_runs_in_manifests"],
+                                                   ", ".join("%s %+d" % kv for kv in sorted(v["billed_minus_anthropic"].items()))
+                                                   or "none"))
+        out.append("")
+    ct = _load("continuity_trials.json")
+    if ct:
+        out += ["## Continuity (relabel and rebuild after an earlier report)", "",
+                "%d trials on a copy of %s (%d entries): an earlier report's head at a random point, one API "
+                "request relabeled at a random point and the chain rebuilt." % (ct["trials"], ct["log"], ct["entries"]), "",
+                "- Edits at or before the earlier head caught: %s" % _fmt(ct["caught_before_earlier_head"]),
+                "- Edits after it caught (by design, none): %s" % _fmt(ct["caught_after_earlier_head"]), ""]
     return "\n".join(out)
 
 

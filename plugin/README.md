@@ -2,7 +2,8 @@
 
 The Claude Code plugin for [vawr](../README.md): slash commands
 `/vawr:billcheck`, `/vawr:setup`, `/vawr:tag`, `/vawr:check`, `/vawr:report`,
-`/vawr:status`, and a session-start hook that keeps the receiver running once
+`/vawr:bundle`, `/vawr:receive`, `/vawr:team`, `/vawr:status`, and a
+session-start hook that keeps the receiver running once
 telemetry is set up. Needs Python 3.9+ on PATH; data goes to `~/.vawr`.
 
 `plugin/vawr/` is a copy of the repository's `vawr/` package, so the plugin

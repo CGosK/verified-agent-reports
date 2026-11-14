@@ -19,10 +19,21 @@ def _in_window(r, start, end):
     return (not start or t >= start) and (not end or t < end)
 
 
-def build(log_path=paths.LOG_PATH, claims_path=None, start=None, end=None):
+API_KEY_MODES = ("api_key", "sprint")
+SUBSCRIPTION_MODES = ("account", "subscription")
+
+
+def build(log_path=paths.LOG_PATH, claims_path=None, start=None, end=None, only_projects=None):
     """start/end (UTC datetimes) limit the report to requests in that window,
-    e.g. one month of a grant; the chain is still verified over the whole log."""
-    reqs = [r for r in api_requests(log_path) if _in_window(r, start, end)]
+    e.g. one month of a grant, and `only_projects` to those project tags (one client's
+    or grant's work); the chain is still verified over the whole log."""
+    reqs = [r for r in api_requests(log_path) if _in_window(r, start, end)
+            and (not only_projects or r.get("project") in only_projects)]
+    billing = {"api_key": 0, "subscription": 0, "unknown": 0}
+    for r in reqs:
+        kind = ("api_key" if r.get("mode") in API_KEY_MODES else
+                "subscription" if r.get("mode") in SUBSCRIPTION_MODES else "unknown")
+        billing[kind] += sum(r["tokens"].values())
     runs = {}
     for r in reqs:
         key = r["run_id"] or "untagged"
@@ -76,6 +87,8 @@ def build(log_path=paths.LOG_PATH, claims_path=None, start=None, end=None):
     return {
         "log": {"path": log_path, "entries": count, "head": head, "chain_ok": ok},
         "window": [start.isoformat() if start else None, end.isoformat() if end else None],
+        "only_projects": sorted(only_projects) if only_projects else None,
+        "billing": billing,
         "categories": sorted(cats.values(), key=lambda c: c["category"]),
         "projects": sorted(projects.values(), key=lambda p: -p["total_tokens"]),
         "runs": sorted(runs.values(), key=lambda r: r["run_id"]),

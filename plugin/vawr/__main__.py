@@ -76,6 +76,88 @@ def cmd_verify_report(args):
     return 0 if res["ok"] else 1
 
 
+def cmd_bundle(args):
+    import os
+    from datetime import datetime, timedelta, timezone
+    from . import billcheck, bundle, paths
+    now = datetime.now(timezone.utc)
+    start = billcheck.parse_when(args.since, now)
+    end = (billcheck.parse_when(args.until, now) if args.until
+           else now - timedelta(minutes=billcheck.LAG_MINUTES)).replace(second=0, microsecond=0)
+    admin, api_key = (None, None) if args.no_bill else billcheck.admin_and_key()
+    out = args.out or "vawr-report-%s_%s.zip" % (start.strftime("%Y%m%dT%H%M"), end.strftime("%Y%m%dT%H%M"))
+    try:
+        m = bundle.make(out, args.log, start, end, only_projects=args.project, title=args.title,
+                        admin_key=admin, key_id=args.key_id, api_key=api_key,
+                        claude_projects=args.projects or paths.CLAUDE_PROJECTS,
+                        previous="" if args.no_previous else None, allow_text=args.allow_text, note=args.note)
+    except ValueError as exc:
+        print("Not written: %s" % exc)
+        return 1
+    with __import__("zipfile").ZipFile(out) as z:
+        res = json.loads(z.read("check.json")) if "check.json" in z.namelist() else None
+    if res:
+        print(__import__("vawr.check", fromlist=["render"]).render(res))
+        print("")
+    print("Wrote %s (%s)" % (out, "{:,} bytes".format(os.path.getsize(out))))
+    print("Covers %s to %s UTC%s; log head %s…, %d entries%s." % (
+        m["window"][0][:16].replace("T", " "), m["window"][1][:16].replace("T", " "),
+        ", projects " + ", ".join(m["only_projects"]) if m["only_projects"] else "", m["log"]["head"][:16],
+        m["log"]["entries"], "; continues from %s…" % m["previous_head"][:16] if m["previous_head"] else ""))
+    others = [x for x in m["log_contents"] if m["only_projects"] and x["project"] not in m["only_projects"]]
+    print("The recipient gets the whole log (the chain can only be checked whole): token counts, models, times, "
+          "session IDs, tool names, project tags and categories; prompts and responses are not in it.")
+    if others:
+        print("It also holds these other projects' sessions, which the report leaves out: %s." % ", ".join(
+            "%s (%d)" % (x["project"], x["sessions"]) for x in others))
+    if not m.get("key_id"):
+        print("No API key ID recorded (no Admin key here): tell the recipient which key, or pass --key-id.")
+    print("The recipient runs: vawr receive %s" % os.path.basename(out))
+    return 0
+
+
+def cmd_receive(args):
+    from . import billcheck, bundle
+    admin, _ = (None, None) if args.no_bill else billcheck.admin_and_key()
+    try:
+        out = bundle.receive(args.bundle, admin_key=admin, key_id=args.key_id, record=not args.no_record)
+    except (ValueError, OSError, __import__("zipfile").BadZipFile) as exc:
+        print("FAILED  can't read %s: %s" % (args.bundle, exc))
+        return 1
+    if args.json:
+        with open(args.json, "w") as fh:
+            json.dump({k: v for k, v in out.items() if k not in ("files",)}, fh, indent=1, default=str)
+    if args.html:
+        with open(args.html, "w") as fh:
+            fh.write(bundle.receive_html(out))
+    print(bundle.render_receive(out))
+    if args.html:
+        print("Page built here from the log and your checks: %s" % args.html)
+    return 0 if out["verdict"] != "failed" else 1
+
+
+def cmd_team(args):
+    from datetime import datetime, timezone
+    from . import billcheck, team
+    admin, _ = billcheck.admin_and_key()
+    if not admin:
+        print("vawr team needs the organization's Admin key in ANTHROPIC_ADMIN_KEY")
+        return 1
+    now = datetime.now(timezone.utc)
+    start = billcheck.parse_when(args.since, now) if args.since else None
+    end = billcheck.parse_when(args.until, now) if args.until else None
+    try:
+        res = team.run(args.bundles, admin, start=start, end=end, record=not args.no_record)
+    except (ValueError, OSError) as exc:
+        print("FAILED  %s" % exc)
+        return 1
+    if args.json:
+        with open(args.json, "w") as fh:
+            json.dump(res, fh, indent=1, default=str)
+    print(team.render(res))
+    return 0 if all(r["status"] == "pass" for r in res["keys"]) else 1
+
+
 def cmd_check(args):
     from datetime import datetime, timedelta, timezone
     from . import billcheck, check, paths
@@ -86,13 +168,12 @@ def cmd_check(args):
     admin, api_key = (None, None) if args.no_bill else billcheck.admin_and_key()
     res = check.run(start, end, args.log, args.projects or paths.CLAUDE_PROJECTS,
                     admin_key=admin, key_id=args.key_id, api_key=api_key, match=args.match,
-                    coverage=not args.no_coverage, source=args.source)
+                    coverage=not args.no_coverage, source=args.source, only_projects=args.project)
     if args.json:
         with open(args.json, "w") as fh:
             json.dump(res, fh, indent=1, default=str)
     print(check.render(res))
-    ok = res["chain"]["ok"] and res["coverage"]["ok"] is not False and (res["bill"] is None or not res["bill"]["gaps"])
-    return 0 if ok else 1
+    return 0 if res["level"] != "failed" else 1
 
 
 def cmd_categories(args):
@@ -213,7 +294,7 @@ def cmd_report(args):
     now = datetime.now(timezone.utc)
     start = billcheck.parse_when(args.since, now) if args.since else None
     end = billcheck.parse_when(args.until, now) if args.until else None
-    rep = report.build(args.log, claims_path=args.claims, start=start, end=end)
+    rep = report.build(args.log, claims_path=args.claims, start=start, end=end, only_projects=args.project)
     if args.out:
         with open(args.out, "w") as fh:
             json.dump(rep, fh, indent=2)
@@ -332,6 +413,28 @@ def cmd_validate(args):
             ho = validate.category_heldout(cases)
             _save("category_heldout.json", ho)
             print("category held-out:", json.dumps(ho["summary"], indent=2))
+    if args.what in ("continuity", "all"):
+        import os
+        prefix = os.path.join(validate.paths.WORK, "log", "events_upto_20261114T0917Z.jsonl")
+        r = validate.continuity_trials(prefix if os.path.exists(prefix) else validate.paths.LOG_PATH)
+        _save("continuity_trials.json", r)
+        print("continuity: edits before the earlier head caught %s; after it %s" % (
+            r["caught_before_earlier_head"], r["caught_after_earlier_head"]))
+    if args.what == "cc-analytics":  # needs the Admin key; not part of "all"
+        from . import billcheck
+        admin, _ = billcheck.admin_and_key()
+        window, _ = validate.load_provider()
+        key = json.load(open(validate.PROVIDER_CACHE))["key_id"]
+        r = validate.cc_analytics(admin, key)
+        _save("cc_analytics.json", r)
+        for d, v in r["days"].items():
+            c = v["comparison"]
+            print(d, "Anthropic sessions", v["anthropic_sessions_by_terminal"], "| log", c["log_sessions"],
+                  "| runs in manifests", v["sprint_key_runs_in_manifests"], "of which hidden",
+                  v["hidden_runs_in_manifests"], "| billed minus Anthropic", v["billed_minus_anthropic"])
+            for cell in c["by_terminal"]:
+                print("   ", cell["terminal"], cell["status"], cell["anthropic_sessions"], cell["log_sessions"],
+                      cell["token_difference"])
     if args.what in ("claims", "all"):
         real = claims.check_all(out_path=_save("claims_real.json", {}))
         cases = validate.claim_injections()
@@ -355,6 +458,39 @@ def main(argv=None):
     s.add_argument("report", help="the report JSON (`vawr report --out`)")
     s.add_argument("--log", default=LOG_PATH, help="the published log")
     s.set_defaults(func=cmd_verify_report)
+
+    s = sub.add_parser("bundle", help="write one file to send whoever pays for the API key: report, checks and log")
+    s.add_argument("--since", required=True, help="start: 30d, or a UTC ISO time such as 2026-11-01")
+    s.add_argument("--until", default=None, help="end (default: now minus the usage records' lag)")
+    s.add_argument("--project", action="append", default=None,
+                   help="only this project tag's work (repeatable), e.g. one grant or client")
+    s.add_argument("--key-id", default=None, help="the API key the work ran on (default: the key in ANTHROPIC_API_KEY)")
+    s.add_argument("--title", default=None)
+    s.add_argument("--note", default=None, help="a line for the recipient")
+    s.add_argument("--out", default=None, help="file to write (default: vawr-report-<start>_<end>.zip)")
+    s.add_argument("--log", default=LOG_PATH)
+    s.add_argument("--projects", default=None, help="Claude Code's projects folder, for the coverage check")
+    s.add_argument("--no-bill", action="store_true", help="don't check against Anthropic's records first")
+    s.add_argument("--no-previous", action="store_true", help="don't link this report to the last one sent")
+    s.add_argument("--allow-text", action="store_true", help="share the log even if it holds prompt or response text")
+    s.set_defaults(func=cmd_bundle)
+
+    s = sub.add_parser("receive", help="for whoever receives a bundle: check it, with your own Admin key if you own the API key")
+    s.add_argument("bundle", help="the .zip from `vawr bundle`")
+    s.add_argument("--key-id", default=None, help="the API key you issued (default: the one the bundle names)")
+    s.add_argument("--html", default=None, help="also write a report page built from the log and your checks")
+    s.add_argument("--json", default=None)
+    s.add_argument("--no-bill", action="store_true", help="don't check against Anthropic's records")
+    s.add_argument("--no-record", action="store_true", help="don't add this report's head hash to your ledger")
+    s.set_defaults(func=cmd_receive)
+
+    s = sub.add_parser("team", help="for an organization admin: everyone's bundles against the organization's records, key by key")
+    s.add_argument("bundles", nargs="+", help="bundles from `vawr bundle`, one or more per person")
+    s.add_argument("--since", default=None, help="start (default: the earliest bundle's)")
+    s.add_argument("--until", default=None, help="end (default: the latest bundle's)")
+    s.add_argument("--json", default=None)
+    s.add_argument("--no-record", action="store_true", help="don't add the bundles' head hashes to your ledger")
+    s.set_defaults(func=cmd_team)
 
     s = sub.add_parser("billcheck", help="what Anthropic billed an API key vs what this machine's Claude Code session files record")
     s.add_argument("--since", default="24h", help="how far back: 90m, 24h, 7d, or a UTC ISO time (default 24h)")
@@ -409,6 +545,8 @@ def main(argv=None):
                    help="skip the session-file check, e.g. when checking someone else's log on your machine")
     s.add_argument("--match", action="append", default=None,
                    help="only session folders whose name contains this (repeatable), e.g. a repo name")
+    s.add_argument("--project", action="append", default=None,
+                   help="only requests tagged with this project (repeatable; see `vawr tag`)")
     s.add_argument("--json", default=None)
     s.set_defaults(func=cmd_check)
 
@@ -434,6 +572,8 @@ def main(argv=None):
     s.add_argument("--categories", default=None, help="for --html: a `vawr categories --json` result")
     s.add_argument("--claims-summary", default=None, help="for --html: a claims summary JSON")
     s.add_argument("--title", default=None, help="for --html: the report's title")
+    s.add_argument("--project", action="append", default=None,
+                   help="only requests tagged with this project (repeatable; see `vawr tag`)")
     s.set_defaults(func=cmd_report)
 
     s = sub.add_parser("serve", help="run the OTLP receiver that writes the chained log")
@@ -477,7 +617,8 @@ def main(argv=None):
     s.set_defaults(func=cmd_provider_cache)
 
     s = sub.add_parser("validate", help="[research] planted-failure experiments")
-    s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "concurrency", "all"))
+    s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "concurrency",
+                                    "continuity", "cc-analytics", "all"))
     s.set_defaults(func=cmd_validate)
 
     s = sub.add_parser("results", help="[research] write work/results/summary.md from the experiment files")

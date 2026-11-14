@@ -17,3 +17,7 @@ work/interactive/*.screen.log
 # receiver runtime files
 work/receiver.pid
 work/receiver.out
+# the full-day test (Nov 15): same reasons as the interactive test
+work/demo-20261115/claude-config/
+work/demo-20261115/sessions/*.screen.log
+work/demo-20261115/receiver.out

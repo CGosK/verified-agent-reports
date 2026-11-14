@@ -1,6 +1,6 @@
 # vawr: checkable usage reports for Claude Code
 
-`vawr` answers two questions about AI agent work that nothing else answers
+`vawr` answers three questions about AI agent work that nothing else answers
 from records you already have:
 
 1. **Is everything Anthropic billed you accounted for?** `vawr billcheck`
@@ -12,6 +12,12 @@ from records you already have:
    capabilities, other), and audits it three ways: the log's hash chain, your
    local session files, and Anthropic's billing records. You can hand the
    result to a funder or a reviewer, and they can rerun the checks.
+3. **Can whoever pays check it without taking your word for it?** `vawr bundle`
+   puts the report, the checks and the log in one file. Whoever owns the API
+   key's account runs `vawr receive` on it with their own Admin key, and checks
+   it against Anthropic's records for that key: the bill minute by minute, and
+   Anthropic's own daily count of Claude Code sessions. An organization admin can
+   check everyone's bundles at once with `vawr team`.
 
 Chris Graham, AI x Epistemics Research Sprint (Track 2, Trust Infrastructure),
 Apart Research, November 2026. Python 3.9+, standard library only. MIT license.
@@ -64,6 +70,16 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
   all show up as unexplained minutes.
+- **Anthropic counts Claude Code sessions on its side, and the count matches.**
+  Anthropic's Claude Code Analytics API (Admin API, daily, per API key and
+  terminal type) counted all 91 Claude Code sessions on our key on Nov 14,
+  including the 25 we hid from the log. Its Sonnet and Opus tokens beyond the
+  log's equal, to the token, what the bill check found unexplained in the hidden
+  runs. For the interactive sessions it matched the log exactly (5 sessions,
+  730,927 tokens). It leaves out the desktop background request, which is the
+  only place its tokens differ from the bill (Haiku only). So a session that never reached
+  the log shows up as a missing session, even when it ran in the same minute
+  as logged work, which per-minute billing can't separate.
 
 ## Install
 
@@ -74,7 +90,8 @@ As a Claude Code plugin (slash commands, and a hook that keeps the receiver runn
 ```
 
 Then `/vawr:billcheck`, `/vawr:setup` (once), `/vawr:tag safety`, `/vawr:check`,
-`/vawr:report`. Python 3.9+ must be on PATH.
+`/vawr:report`, `/vawr:bundle --since 30d`; recipients use `/vawr:receive <file>`
+and admins `/vawr:team <files>`. Python 3.9+ must be on PATH.
 
 Or as a command-line tool:
 
@@ -138,6 +155,83 @@ Example, from four real interactive sessions:
 | Chain | No entry was edited, deleted or reordered since it was written | That the log was never rebuilt end to end by whoever holds it |
 | Coverage | Every request in this machine's session files reached the log | Work on another machine, or with session files turned off |
 | Bill | Everything billed to the API key is in the log, apart from Claude Code's own background requests | Usage on other keys or providers; subscription usage |
+| Sessions | Anthropic's daily count of Claude Code sessions and tokens on the key equals the log's, per terminal type | Days the log only partly covers; anything within the last hour |
+
+Each result carries a level: **checked against Anthropic's records** (the
+chain is intact and the bill check passed), **tamper-evident only** (chain
+intact, no bill check: no Admin key, or a Claude subscription, for which
+Anthropic offers no usage records to anyone) or **a check failed**. Reports
+show how much of their usage was on an API key and how much on a subscription.
+
+## Send a report to whoever pays
+
+The strongest setup: whoever pays (a funder, a client, your employer) owns the
+API key's account and issues you the key. They then hold Anthropic's records
+themselves, and nothing in your report rests on your word.
+
+```bash
+vawr tag safety --project grant-x --write        # once, in the project's folder
+vawr bundle --since 2026-11-01 --until 2026-12-01 --project grant-x --title "Grant X, November"
+```
+
+That runs `vawr check` and writes one zip: the report, the checks, a report
+page, and the log. The log goes whole, because the chain can only be checked
+whole. It holds token counts, models, times, session IDs, tool names, project
+tags and categories. It does not hold prompts or responses: `vawr bundle`
+refuses if it finds any (Claude Code only sends them if you turned on
+`OTEL_LOG_USER_PROMPTS` or `OTEL_LOG_TOOL_DETAILS`), and lists any other
+projects' sessions the log holds.
+
+Whoever receives it runs:
+
+```bash
+vawr receive vawr-report-20261101T0000_20261201T0000.zip --html report.html
+```
+
+On our four interactive sessions, with the account's Admin key:
+
+```
+PASS  chain        293 entries, head b5816ab239402278
+PASS  report       rebuilt from the log: same tokens per category
+SKIP  continuity   first report from this log
+PASS  bill         730,927 tokens billed: 730,927 logged, 0 Claude Code background, 0 unexplained
+SKIP  sessions     no whole day the log covers to compare yet
+        2026-11-14  Anthropic counted 98 Claude Code sessions, the log has 5 (the log started this day); ...
+          non-interactive  partial     Anthropic 91, log 0; ...
+          xterm            partial     Anthropic 2, log 0; ...
+          xterm-256color   pass so far Anthropic 5, log 5
+
+VERIFIED  checked against your own Anthropic records
+```
+
+(The key also ran our batch tests that day, so the day as a whole can't be
+compared; the interactive sessions' own terminal type matches exactly.) The
+same bundle of our batch runs, which include 25 runs hidden from the log,
+fails both the bill check and the sessions check (non-interactive: Anthropic
+91, log 66).
+
+`receive` rebuilds the report from the log and compares, checks the chain,
+and keeps a ledger of the head hashes it has received (`~/.vawr/received.jsonl`).
+The next report from the same log must contain every earlier head (continuity),
+so history can't be rewritten between reports, and a report for the same key
+from a different log fails until someone explains why. `--html` builds a fresh
+report page on the recipient's machine from the log and their own checks. The
+zip is treated as untrusted: only its five known files are read, and no path
+from it is used. Without an Admin key the verdict is CONSISTENT (nothing edited
+after the fact, not checked against a bill).
+
+## Check a whole team
+
+```bash
+vawr team alice.zip bob.zip carol.zip
+```
+
+For an organization admin: every API key that billed usage in the window,
+whether any bundle covers it ("NO REPORT" with its tokens if not), the bill
+check over all bundles on that key, and Anthropic's session count against
+their logs. Give each person their own key: Anthropic's minute records and
+session counts are per key, and continuity can't tell two people's logs on one
+key from a rebuilt log.
 
 The category check (`vawr validate category` in this repository) adds an
 outside view of the labels: a separate model reads what each run was asked to
@@ -158,6 +252,8 @@ intervals are in `work/results/summary.md` and the Sprint report.
 | Edits to a copy of the log that change recorded usage | 207 of 207 caught by the session-file check, including all 50 made with the hash chain rebuilt |
 | A run relabeled (say, capabilities work as safety) and the chain rebuilt | 0 of 50 caught by the log checks; the category check caught 157 of 162 relabels of held-out runs, and every relabel of capabilities work as safety |
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
+| Anthropic's daily Claude Code session count vs the log (Nov 14) | Non-interactive: Anthropic 91, log 66; the 25 missing are exactly our 25 hidden runs, and the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive sessions: 5 and 5, tokens equal |
+| A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |
 
 Session files from those interactive sessions left out about a third of
 what Anthropic billed (prompt suggestions, session titles, compaction); the
@@ -208,6 +304,21 @@ Runs on a Claude subscription use `--setting-sources project`,
 plugins, hooks and MCP servers stay out; API-key runs use `--bare`.
 
 ## Limits
+
+- The sessions check reads Anthropic's Claude Code Analytics API: whole UTC
+  days, available an hour or more later, API usage only. It names keys, not key
+  IDs, so two keys with the same name can't be told apart (vawr says so and
+  skips it). Console users signed in to Claude Code appear there by email; we
+  only tested API-key sessions.
+- A bundle shares the whole log, including other projects' token counts and
+  project names, because the chain can only be checked whole. If that matters,
+  a client's projects can have their own receiver and log
+  (`VAWR_HOME=~/.vawr-client-a vawr start --port 4321`, then
+  `vawr setup --project --port 4321 --write` in their folders); we haven't
+  tested that setup.
+- Continuity protects history only from the first report a recipient receives;
+  edits after the last received head are caught by the other checks or not at
+  all.
 
 - The bill check and the provider check cover one API key at per-minute
   resolution. Subscription usage has no provider-side record to check against.

@@ -1,4 +1,5 @@
-"""`vawr check`: the audit a team runs on its own log before sharing a report.
+"""`vawr check`: the audit a team runs on its own log before sharing a report,
+and (`vawr receive`) the audit whoever pays for the API key runs on it.
 
 1. Chain: every entry's hash recomputes, so nothing was edited or reordered.
 2. Coverage: every request in this machine's Claude Code session files during
@@ -7,21 +8,68 @@
 3. Bill (needs an Admin key): what Anthropic billed the API key, minute by
    minute, is accounted for by logged requests plus Claude Code's own
    background requests.
+4. Sessions (needs an Admin key): Anthropic's daily count of Claude Code
+   sessions and tokens on the key equals the log's (see daily.py).
 """
 from collections import defaultdict
 from datetime import timedelta
 
-from . import auditor, billcheck, chainlog, usage_api
+from . import auditor, billcheck, chainlog, daily, usage_api
 from .logdata import TOKEN_TYPES, api_requests
 from .sessions import parse_ts
 
+LEVELS = {
+    "provider": "Checked against Anthropic's records",
+    "tamper-evident": "Tamper-evident only: not checked against Anthropic's records",
+    "failed": "A check failed",
+}
+
+
+def level(res):
+    """How far a check result vouches for the log: "provider" (chain intact and the
+    bill check passed against Anthropic's records), "tamper-evident" (chain intact,
+    no bill check: a Claude subscription, or no Admin key) or "failed"."""
+    sess = res.get("sessions")
+    if (res["chain"]["ok"] is False or res["coverage"]["ok"] is False
+            or (res.get("bill") and res["bill"]["gaps"]) or (sess and sess.get("ok") is False)):
+        return "failed"
+    return "provider" if res.get("bill") is not None else "tamper-evident"
+
+
+def provider_checks(reqs, start, end, admin_key=None, key_id=None, api_key=None, provider_minutes=None,
+                    shift=2, source="auto", log_paths=None, only_projects=None, sessions=True):
+    """(bill, sessions) for requests billed to the key; either is None if it can't run."""
+    bill = sess = None
+    if provider_minutes is None and admin_key and not key_id and api_key:
+        key_id = usage_api.find_key_id(admin_key, api_key)
+    if provider_minutes is None and admin_key and key_id:
+        raw, source, _ = usage_api.minute_usage_any(admin_key, key_id, start, end, source)
+        provider_minutes = {parse_ts(k): v for k, v in raw.items()}
+    if provider_minutes is not None:
+        # requests billed to an API key: tagged runs ("sprint") or auth=api_key
+        key_reqs = [dict(r, mode="api_key") for r in reqs if r.get("mode") in ("api_key", "sprint")]
+        bill = auditor.check_provider(key_reqs, start, end, shift=shift, key_mode="api_key",
+                                      provider_minutes=provider_minutes)
+        bill["key_id"] = key_id
+        bill["source"] = source
+    if sessions and admin_key and key_id and log_paths:
+        try:
+            sess = daily.check(admin_key, key_id, start, end, log_paths, only_projects=only_projects)
+        except Exception as exc:  # the bill check stands on its own; say why this one didn't run
+            sess = {"ok": None, "error": "%s: %s" % (type(exc).__name__, exc)}
+    return bill, sess
+
 
 def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=None,
-        provider_minutes=None, shift=2, match=None, coverage=True, source="auto"):
+        provider_minutes=None, shift=2, match=None, coverage=True, source="auto", only_projects=None,
+        sessions=True):
+    """`only_projects`: count only requests from these project tags (a report for one
+    client or grant); the chain is still checked over the whole log."""
     ok_chain, problems, entries, head = chainlog.verify(log_path)
-    reqs = [r for r in api_requests(log_path)
-            if r.get("time") and start <= parse_ts(r["time"]) < end]
-    logged_ids = {r["request_id"]: r for r in reqs if r.get("request_id")}
+    in_window = [r for r in api_requests(log_path) if r.get("time") and start <= parse_ts(r["time"]) < end]
+    reqs = [r for r in in_window if not only_projects or r.get("project") in only_projects]
+    # coverage asks whether every local session reached the log, whatever its project
+    logged_ids = {r["request_id"]: r for r in in_window if r.get("request_id")}
 
     local = billcheck.local_requests(start, end, projects) if coverage else {}
     if match:  # only project folders whose name contains one of these
@@ -39,31 +87,21 @@ def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=Non
         elif any(lr["tokens"][t] != r["tokens"][t] for t in TOKEN_TYPES):
             mismatched += 1
 
-    bill = None
-    if provider_minutes is not None or admin_key:
-        if provider_minutes is None:
-            if not key_id and api_key:
-                key_id = usage_api.find_key_id(admin_key, api_key)
-            if key_id:
-                raw, source, _ = usage_api.minute_usage_any(admin_key, key_id, start, end, source)
-                provider_minutes = {parse_ts(k): v for k, v in raw.items()}
-        if provider_minutes is not None:
-            # requests billed to an API key: tagged runs ("sprint") or auth=api_key
-            key_reqs = [dict(r, mode="api_key") for r in reqs if r.get("mode") in ("api_key", "sprint")]
-            bill = auditor.check_provider(key_reqs, start, end, shift=shift, key_mode="api_key",
-                                          provider_minutes=provider_minutes)
-            bill["key_id"] = key_id
-            bill["source"] = source
-
-    return {
+    bill, sess = provider_checks(reqs, start, end, admin_key, key_id, api_key, provider_minutes, shift, source,
+                                 log_paths=[log_path], only_projects=only_projects, sessions=sessions)
+    res = {
         "window": [start.isoformat(), end.isoformat()],
+        "only_projects": sorted(only_projects) if only_projects else None,
         "chain": {"ok": ok_chain, "entries": entries, "head": head, "problems": problems[:5]},
         "coverage": {"ok": (not missing and not mismatched) if coverage else None, "local_requests": len(local),
                      "logged_requests_in_window": len(reqs), "token_mismatches": mismatched,
                      "unlogged_sessions": [dict(v, project=k[0], session=k[1]) for k, v in
                                            sorted(missing.items(), key=lambda kv: kv[1]["first"] or "")]},
         "bill": bill,
+        "sessions": sess,
     }
+    res["level"] = level(res)
+    return res
 
 
 def render(res):
@@ -100,6 +138,18 @@ def render(res):
         if b["log_excess"]:
             lines.append("        the log has %d minute(s) with more than was billed to this key "
                          "(another key, or usage records still arriving)" % len(b["log_excess"]))
+    s = res.get("sessions")
+    if s is None:
+        if b is not None:
+            lines.append("SKIP  sessions     needs an Admin key and the key's ID")
+    elif s.get("error"):
+        lines.append("SKIP  sessions     %s" % s["error"])
+    else:
+        lines.append("%s  sessions     %s" % (mark[s["ok"]], (
+            "Anthropic's daily count of Claude Code sessions and tokens on this key vs the log"
+            if s["ok"] is not None else "no whole day the log covers to compare yet")))
+        lines += daily.render_lines(s)
+    lines += ["", "Level: %s" % LEVELS[res.get("level") or level(res)]]
     return "\n".join(lines)
 
 
@@ -133,7 +183,7 @@ def verify_report(log_path, report_path):
                 fh.write(chainlog.canonical(e) + "\n")
         w = pub.get("window") or [None, None]
         parse = lambda s: datetime.fromisoformat(s) if s else None  # noqa: E731
-        fresh = report_mod.build(prefix, start=parse(w[0]), end=parse(w[1]))
+        fresh = report_mod.build(prefix, start=parse(w[0]), end=parse(w[1]), only_projects=pub.get("only_projects"))
     pub_t = {c["category"]: c["tokens"] for c in pub.get("categories", [])}
     new_t = {c["category"]: c["tokens"] for c in fresh["categories"]}
     diffs = {cat: {t: [pub_t.get(cat, {}).get(t, 0), new_t.get(cat, {}).get(t, 0)] for t in TOKEN_TYPES
@@ -142,4 +192,4 @@ def verify_report(log_path, report_path):
     diffs = {k: v for k, v in diffs.items() if v}
     return {"ok": not diffs and fresh["log"]["chain_ok"], "head_found": True, "head": head,
             "entries_at_head": len(upto), "chain_ok_to_head": fresh["log"]["chain_ok"],
-            "differences": diffs}
+            "differences": diffs, "report": fresh}

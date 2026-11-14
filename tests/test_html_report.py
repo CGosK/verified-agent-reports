@@ -120,7 +120,7 @@ class HtmlReportTest(unittest.TestCase):
         self.assertIn('id="check-chain"', doc)
         for key in ("coverage", "bill", "category", "claims"):
             self.assertNotIn('id="check-%s"' % key, doc)
-        self.assertIn("Not included in this report: coverage, bill, category, claims", doc)
+        self.assertIn("Not included in this report: coverage, bill, sessions, category, claims", doc)
         self.assertIn("--since &lt;start&gt; \\\n    --until &lt;end&gt;", doc)
 
     def test_escapes_hostile_strings(self):

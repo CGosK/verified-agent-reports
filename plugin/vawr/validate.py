@@ -598,3 +598,88 @@ def env_ab(run_ids, provider_minutes, log_path=paths.LOG_PATH, small_model=audit
         by_env[env] = {"runs": len(rs), "with_unrecorded_request": sum(r["has_unrecorded_request"] for r in rs),
                        "cache_read_values": sorted({r["unrecorded_small_model"]["cache_read"] for r in rs})}
     return {"by_env": by_env, "rows": rows}
+
+
+def continuity_trials(log_path=paths.LOG_PATH, n=200, seed=13):
+    """Relabel-and-rebuild trials against the continuity check: an earlier report's
+    head sits at a random point of a copy of the log; one API request's category is
+    changed at a random point and the chain rebuilt from there. Continuity should
+    catch exactly the edits at or before the earlier head (that is what it promises)
+    and, by design, none after it."""
+    from . import bundle
+    rng = random.Random(seed)
+    entries = [e for _, e in chainlog.read_entries(log_path)]
+    api_idx = [i for i, e in enumerate(entries) if e["event"].get("name") == "api_request"]
+    lid = entries[0]["hash"]
+    rows = []
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "rebuilt.jsonl")
+        for _ in range(n):
+            h = rng.randrange(len(entries) // 4, 3 * len(entries) // 4)
+            i = rng.choice(api_idx)
+            es = copy.deepcopy(entries)
+            a = es[i]["event"]["attributes"]
+            a["category"] = rng.choice([c for c in ("safety", "capabilities", "other") if c != a.get("category")])
+            if "resource" in es[i]["event"]:
+                es[i]["event"]["resource"]["category"] = a["category"]
+            rehash(es)
+            with open(path, "w") as fh:
+                for e in es:
+                    fh.write(chainlog.canonical(e) + "\n")
+            new_lid = es[0]["hash"]
+            known = [{"log_id": lid, "head": entries[h]["hash"], "key_id": "k", "only_projects": None,
+                      "received": "2026-01-01T00:00:00"}]
+            c = bundle.continuity(new_lid, path, known, head=es[-1]["hash"], key_id="k")
+            rows.append({"edit_at": i, "earlier_head_at": h, "before_head": i <= h, "caught": c["ok"] is False})
+    before = [r for r in rows if r["before_head"]]
+    after = [r for r in rows if not r["before_head"]]
+    return {"log": os.path.relpath(log_path, paths.REPO), "entries": len(entries), "trials": n, "seed": seed,
+            "caught_before_earlier_head": stats.rate(sum(r["caught"] for r in before), len(before)),
+            "caught_after_earlier_head": stats.rate(sum(r["caught"] for r in after), len(after)),
+            "rows": rows}
+
+
+def cc_analytics(admin_key, key_id, days=("2026-11-13", "2026-11-14"),
+                 logs=(paths.LOG_PATH, os.path.join(paths.WORK, "interactive", "log", "events.jsonl")),
+                 manifest_dir=paths.MANIFESTS):
+    """How Anthropic's Claude Code Analytics (daily, per API key and terminal type)
+    compares with the bill and with our logs, on the validation days. Saves the raw
+    records too, so the comparison can be redone without the Admin key."""
+    from collections import Counter
+    from . import daily, usage_api
+    name = next((k.get("name") for k in usage_api.api_keys(admin_key) if k.get("id") == key_id), None)
+    raw = {d: [r for r in usage_api.claude_code_day(admin_key, d)
+               if (r.get("actor") or {}).get("api_key_name") == name] for d in days}
+    anth = daily.anthropic_days(admin_key, list(days), {"api_key_name": name}, fetch=lambda d: raw[d])
+    logd, starts = daily.log_days(list(logs), list(days))
+    billed = {}
+    for d in days:
+        t0 = datetime.fromisoformat(d + "T00:00:00+00:00")
+        mins = usage_api.minute_usage(admin_key, key_id, t0, t0 + timedelta(days=1))
+        c = Counter()
+        for by_model in mins.values():
+            for m, tok in by_model.items():
+                c[m] += sum(tok.values())
+        billed[d] = dict(c)
+    hidden = Counter()
+    for m in _manifests(manifest_dir):
+        if m.get("mode") == "sprint" and (m.get("plant") or "").startswith("off_log"):
+            hidden[m["start"][:10]] += 1
+    runs = Counter(m["start"][:10] for m in _manifests(manifest_dir) if m.get("mode") == "sprint")
+    rows = daily.compare(anth, logd, datetime.now(timezone.utc), starts)
+    out = {"key_id": key_id, "key_name": name, "days": {}}
+    for r in rows:
+        d = r["day"]
+        a = anth[d]
+        out["days"][d] = {
+            "anthropic_sessions_by_terminal": dict(a["terminals"]),
+            "anthropic_tokens_by_model": dict(a["tokens"]),
+            "billed_tokens_by_model": billed[d],
+            "billed_minus_anthropic": {m: billed[d].get(m, 0) - a["tokens"].get(m, 0)
+                                       for m in sorted(set(billed[d]) | set(a["tokens"]))
+                                       if billed[d].get(m, 0) != a["tokens"].get(m, 0)},
+            "sprint_key_runs_in_manifests": runs.get(d, 0), "hidden_runs_in_manifests": hidden.get(d, 0),
+            "comparison": r,
+        }
+    out["raw_records"] = raw
+    return out

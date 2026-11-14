@@ -38,6 +38,7 @@ def api_requests(log_path=paths.LOG_PATH):
                     "seq": e.get("seq"), "request_id": None, "session_id": a.get("session.id"),
                     "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
                     "category": a.get("category") or r.get("category") or "untagged",
+                    "project": a.get("project") or r.get("project"),
                     "mode": a.get("run.mode") or r.get("run.mode") or _auth(a), "time": ev.get("time"),
                     "model": a.get("model"), "query_source": "auxiliary", "cost_usd": 0.0,
                     "tokens": {t: 0 for t in TOKEN_TYPES}})
@@ -96,3 +97,26 @@ def is_auxiliary_source(query_source):
     metrics count as "auxiliary": session titles, prompt suggestions, compaction..."""
     qs = query_source or ""
     return bool(qs) and qs not in ("repl_main_thread", "sdk") and not qs.startswith("agent:")
+
+
+def sessions(log_path=paths.LOG_PATH):
+    """{session_id: {"first", "terminal", "mode", "project", "category"}} from every
+    event in the log, including sessions that made no API request. "first" is the
+    earliest event time (UTC ISO); "mode" is the run.mode tag or how it was billed."""
+    out = {}
+    for _, e in chainlog.read_entries(log_path):
+        ev = e.get("event") or {}
+        a = ev.get("attributes") or {}
+        r = ev.get("resource") or {}
+        sid = a.get("session.id")
+        if not sid:
+            continue
+        t = a.get("event.timestamp") or ev.get("time")
+        s = out.setdefault(sid, {"first": t, "terminal": None, "mode": None, "project": None, "category": None})
+        if t and (not s["first"] or t < s["first"]):
+            s["first"] = t
+        s["terminal"] = s["terminal"] or a.get("terminal.type")
+        s["mode"] = s["mode"] or a.get("run.mode") or r.get("run.mode") or _auth(a)
+        s["project"] = s["project"] or a.get("project") or r.get("project")
+        s["category"] = s["category"] or a.get("category") or r.get("category")
+    return out

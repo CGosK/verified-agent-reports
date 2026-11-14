@@ -1,0 +1,1226 @@
+{
+  "log": "work/log/events_upto_20261114T0917Z.jsonl",
+  "entries": 2783,
+  "trials": 200,
+  "seed": 13,
+  "caught_before_earlier_head": {
+    "k": 98,
+    "n": 98,
+    "rate": 1.0,
+    "ci95": [
+      0.9631,
+      1.0
+    ]
+  },
+  "caught_after_earlier_head": {
+    "k": 0,
+    "n": 102,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      0.0355
+    ]
+  },
+  "rows": [
+    {
+      "edit_at": 1424,
+      "earlier_head_at": 1225,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1145,
+      "earlier_head_at": 2030,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 918,
+      "earlier_head_at": 1156,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2652,
+      "earlier_head_at": 840,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 152,
+      "earlier_head_at": 1298,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 83,
+      "earlier_head_at": 953,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 429,
+      "earlier_head_at": 995,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2164,
+      "earlier_head_at": 1618,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1756,
+      "earlier_head_at": 1220,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2733,
+      "earlier_head_at": 1691,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1788,
+      "earlier_head_at": 2068,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1543,
+      "earlier_head_at": 2002,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1290,
+      "earlier_head_at": 1403,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 679,
+      "earlier_head_at": 1830,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2210,
+      "earlier_head_at": 2081,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 996,
+      "earlier_head_at": 1295,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1756,
+      "earlier_head_at": 1765,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2292,
+      "earlier_head_at": 1455,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1377,
+      "earlier_head_at": 1935,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2436,
+      "earlier_head_at": 962,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1163,
+      "earlier_head_at": 1852,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 668,
+      "earlier_head_at": 1445,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2310,
+      "earlier_head_at": 1576,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2115,
+      "earlier_head_at": 699,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 693,
+      "earlier_head_at": 1155,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1239,
+      "earlier_head_at": 1606,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1232,
+      "earlier_head_at": 1541,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1853,
+      "earlier_head_at": 1110,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1171,
+      "earlier_head_at": 1930,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 212,
+      "earlier_head_at": 1128,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1683,
+      "earlier_head_at": 1430,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 944,
+      "earlier_head_at": 1299,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 568,
+      "earlier_head_at": 1832,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 334,
+      "earlier_head_at": 1037,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2762,
+      "earlier_head_at": 2012,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1687,
+      "earlier_head_at": 1595,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 16,
+      "earlier_head_at": 1773,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 612,
+      "earlier_head_at": 1331,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1319,
+      "earlier_head_at": 1312,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2594,
+      "earlier_head_at": 1657,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 23,
+      "earlier_head_at": 768,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 770,
+      "earlier_head_at": 1380,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2652,
+      "earlier_head_at": 1841,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1027,
+      "earlier_head_at": 1151,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1863,
+      "earlier_head_at": 760,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1263,
+      "earlier_head_at": 994,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1263,
+      "earlier_head_at": 1135,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1163,
+      "earlier_head_at": 1899,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1408,
+      "earlier_head_at": 1195,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1738,
+      "earlier_head_at": 1112,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1555,
+      "earlier_head_at": 773,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 431,
+      "earlier_head_at": 1638,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 23,
+      "earlier_head_at": 788,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2235,
+      "earlier_head_at": 1084,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1928,
+      "earlier_head_at": 1830,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1424,
+      "earlier_head_at": 820,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 723,
+      "earlier_head_at": 975,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1818,
+      "earlier_head_at": 924,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1515,
+      "earlier_head_at": 1142,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1925,
+      "earlier_head_at": 1930,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1704,
+      "earlier_head_at": 763,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1776,
+      "earlier_head_at": 899,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2161,
+      "earlier_head_at": 1599,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2655,
+      "earlier_head_at": 1413,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 244,
+      "earlier_head_at": 959,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2713,
+      "earlier_head_at": 1036,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1223,
+      "earlier_head_at": 705,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2385,
+      "earlier_head_at": 878,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1702,
+      "earlier_head_at": 839,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 241,
+      "earlier_head_at": 1132,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1173,
+      "earlier_head_at": 2060,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1957,
+      "earlier_head_at": 1094,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 246,
+      "earlier_head_at": 1815,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 681,
+      "earlier_head_at": 1951,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1971,
+      "earlier_head_at": 1787,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2713,
+      "earlier_head_at": 1000,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 431,
+      "earlier_head_at": 1229,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 152,
+      "earlier_head_at": 801,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 538,
+      "earlier_head_at": 726,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1641,
+      "earlier_head_at": 881,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1424,
+      "earlier_head_at": 1023,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 477,
+      "earlier_head_at": 919,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1925,
+      "earlier_head_at": 1525,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1319,
+      "earlier_head_at": 1493,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2235,
+      "earlier_head_at": 1001,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2617,
+      "earlier_head_at": 702,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1263,
+      "earlier_head_at": 1784,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1117,
+      "earlier_head_at": 1374,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2071,
+      "earlier_head_at": 1462,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2030,
+      "earlier_head_at": 1686,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2295,
+      "earlier_head_at": 1012,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1863,
+      "earlier_head_at": 1092,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 142,
+      "earlier_head_at": 1085,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2492,
+      "earlier_head_at": 1682,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 519,
+      "earlier_head_at": 951,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 671,
+      "earlier_head_at": 1901,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2475,
+      "earlier_head_at": 860,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2140,
+      "earlier_head_at": 1133,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 112,
+      "earlier_head_at": 1783,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 753,
+      "earlier_head_at": 1305,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2140,
+      "earlier_head_at": 1720,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2424,
+      "earlier_head_at": 1157,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 477,
+      "earlier_head_at": 1940,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2640,
+      "earlier_head_at": 1342,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2235,
+      "earlier_head_at": 1865,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1087,
+      "earlier_head_at": 2032,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2117,
+      "earlier_head_at": 1769,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 79,
+      "earlier_head_at": 1739,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 723,
+      "earlier_head_at": 1450,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 671,
+      "earlier_head_at": 1416,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1396,
+      "earlier_head_at": 1159,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 671,
+      "earlier_head_at": 1221,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 521,
+      "earlier_head_at": 1060,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 693,
+      "earlier_head_at": 1814,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1756,
+      "earlier_head_at": 1641,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2489,
+      "earlier_head_at": 1878,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2210,
+      "earlier_head_at": 833,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1883,
+      "earlier_head_at": 1387,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1612,
+      "earlier_head_at": 1116,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 382,
+      "earlier_head_at": 1882,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1468,
+      "earlier_head_at": 1543,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1928,
+      "earlier_head_at": 1611,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 302,
+      "earlier_head_at": 1681,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1061,
+      "earlier_head_at": 1207,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2652,
+      "earlier_head_at": 993,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2640,
+      "earlier_head_at": 1309,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1439,
+      "earlier_head_at": 1578,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 449,
+      "earlier_head_at": 1112,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 642,
+      "earlier_head_at": 2038,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1913,
+      "earlier_head_at": 1830,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 784,
+      "earlier_head_at": 1336,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 902,
+      "earlier_head_at": 1022,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1145,
+      "earlier_head_at": 808,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 872,
+      "earlier_head_at": 1853,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2424,
+      "earlier_head_at": 860,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 262,
+      "earlier_head_at": 923,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 246,
+      "earlier_head_at": 1966,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2117,
+      "earlier_head_at": 882,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1466,
+      "earlier_head_at": 1558,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1379,
+      "earlier_head_at": 1232,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1377,
+      "earlier_head_at": 1274,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 429,
+      "earlier_head_at": 893,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 610,
+      "earlier_head_at": 791,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1087,
+      "earlier_head_at": 1001,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 519,
+      "earlier_head_at": 900,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 521,
+      "earlier_head_at": 1599,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2713,
+      "earlier_head_at": 1873,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2368,
+      "earlier_head_at": 975,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1631,
+      "earlier_head_at": 1674,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 16,
+      "earlier_head_at": 950,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 509,
+      "earlier_head_at": 875,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 83,
+      "earlier_head_at": 1611,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 11,
+      "earlier_head_at": 980,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1720,
+      "earlier_head_at": 1194,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2164,
+      "earlier_head_at": 1572,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1786,
+      "earlier_head_at": 1425,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 944,
+      "earlier_head_at": 1409,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 784,
+      "earlier_head_at": 998,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2117,
+      "earlier_head_at": 1985,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2147,
+      "earlier_head_at": 1922,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2040,
+      "earlier_head_at": 1702,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1863,
+      "earlier_head_at": 1010,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1957,
+      "earlier_head_at": 1510,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1979,
+      "earlier_head_at": 1573,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2762,
+      "earlier_head_at": 859,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 832,
+      "earlier_head_at": 1516,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2190,
+      "earlier_head_at": 1639,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2552,
+      "earlier_head_at": 1793,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2774,
+      "earlier_head_at": 987,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 928,
+      "earlier_head_at": 1831,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2161,
+      "earlier_head_at": 1188,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1339,
+      "earlier_head_at": 1716,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1738,
+      "earlier_head_at": 782,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1979,
+      "earlier_head_at": 1634,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1015,
+      "earlier_head_at": 1595,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1957,
+      "earlier_head_at": 1857,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1998,
+      "earlier_head_at": 1495,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 936,
+      "earlier_head_at": 2051,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 185,
+      "earlier_head_at": 1114,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2220,
+      "earlier_head_at": 729,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2511,
+      "earlier_head_at": 1518,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 431,
+      "earlier_head_at": 1623,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2230,
+      "earlier_head_at": 1697,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2552,
+      "earlier_head_at": 1790,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2428,
+      "earlier_head_at": 817,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 580,
+      "earlier_head_at": 1185,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2776,
+      "earlier_head_at": 1555,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2385,
+      "earlier_head_at": 1648,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 212,
+      "earlier_head_at": 1543,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2489,
+      "earlier_head_at": 1262,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 770,
+      "earlier_head_at": 997,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 331,
+      "earlier_head_at": 1058,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 2366,
+      "earlier_head_at": 1040,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 2451,
+      "earlier_head_at": 2059,
+      "before_head": false,
+      "caught": false
+    },
+    {
+      "edit_at": 1223,
+      "earlier_head_at": 1931,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 582,
+      "earlier_head_at": 1652,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 321,
+      "earlier_head_at": 1913,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 872,
+      "earlier_head_at": 1774,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 273,
+      "earlier_head_at": 1848,
+      "before_head": true,
+      "caught": true
+    },
+    {
+      "edit_at": 1015,
+      "earlier_head_at": 1476,
+      "before_head": true,
+      "caught": true
+    }
+  ]
+}

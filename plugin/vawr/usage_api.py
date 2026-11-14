@@ -247,3 +247,68 @@ def minute_usage_any(admin_key, key_id, start, end, source="auto"):
             return minutes, "analytics", refreshed
     minutes, refreshed = minute_usage_analytics_with_refresh(admin_key, key_id, start, end)
     return minutes, "analytics", refreshed
+
+
+CLAUDE_CODE_PATH = "/v1/organizations/usage_report/claude_code"
+
+
+def api_keys(admin_key):
+    """Every API key in the organization, as the Admin API lists them (id, name, status...)."""
+    out, after = [], None
+    while True:
+        params = {"limit": 100}
+        if after:
+            params["after_id"] = after
+        data = _get(admin_key, "/v1/organizations/api_keys", params)
+        out += data.get("data", [])
+        after = data.get("last_id")
+        if not data.get("has_more") or not after:
+            return out
+
+
+def claude_code_day(admin_key, day):
+    """Anthropic's Claude Code Analytics records for one UTC day ("YYYY-MM-DD"): one
+    record per actor (API key name or Console user's email) and terminal type, with
+    num_sessions and tokens by model. Counted on Anthropic's side; data younger than
+    an hour is left out."""
+    out, page = [], None
+    while True:
+        params = {"starting_at": day, "limit": 1000}
+        if page:
+            params["page"] = page
+        data = _get(admin_key, CLAUDE_CODE_PATH, params)
+        out += data.get("data", [])
+        page = data.get("next_page")
+        if not data.get("has_more") or not page:
+            return out
+
+
+def org_minute_usage(admin_key, start, end):
+    """{key_id: {minute_start_iso: {model: tokens}}} for every key in the organization
+    between start and end; usage with no API key (e.g. the Console) is under None."""
+    out = {}
+    t = start.replace(second=0, microsecond=0)
+    while t < end:
+        chunk_end = min(end, t + timedelta(minutes=1440))
+        params = {"starting_at": _iso(t), "ending_at": _iso(chunk_end), "bucket_width": "1m",
+                  "group_by[]": ["api_key_id", "model"], "limit": 1440}
+        page = None
+        while True:
+            if page:
+                params["page"] = page
+            data = _get(admin_key, "/v1/organizations/usage_report/messages", params)
+            for bucket in data.get("data", []):
+                for r in bucket.get("results", []):
+                    tok = _tokens(r)
+                    if not any(tok.values()):
+                        continue
+                    acc = out.setdefault(r.get("api_key_id"), {}).setdefault(bucket["starting_at"], {}) \
+                        .setdefault(r.get("model") or "*", {"input": 0, "output": 0, "cache_read": 0,
+                                                              "cache_creation": 0})
+                    for k in acc:
+                        acc[k] += tok[k]
+            page = data.get("next_page")
+            if not data.get("has_more") or not page:
+                break
+        t = chunk_end
+    return out

@@ -27,9 +27,18 @@ TOKEN_TYPES = (("input", "Input"), ("output", "Output"), ("cache_read", "Cache r
 API_KEY_MODES = ("sprint", "api_key")  # run modes billed to an API key (see check.run)
 AUTH_NAMES = {"api_key": "API key", "account": "Claude account"}
 MODE_NAMES = {"sprint": "API key", "api_key": "API key", "subscription": "Claude subscription"}
-CHECK_ORDER = ("chain", "coverage", "bill", "category", "claims")
-CHECK_TITLES = {"chain": "Chain", "coverage": "Coverage", "bill": "Bill",
-                "category": "Category", "claims": "Claims"}
+CHECK_ORDER = ("chain", "coverage", "bill", "sessions", "continuity", "category", "claims")
+CHECK_TITLES = {"chain": "Chain", "coverage": "Coverage", "bill": "Bill", "sessions": "Sessions",
+                "continuity": "Continuity", "category": "Category", "claims": "Claims"}
+LEVEL_TEXT = {
+    "provider": ("Checked against Anthropic's records",
+                 "The usage figures match Anthropic's own billing records for the API key."),
+    "tamper-evident": ("Tamper-evident only",
+                       "The log has not been edited since it was written, but it was not checked against "
+                       "Anthropic's records (no Admin key, or usage on a Claude subscription, for which "
+                       "Anthropic offers no records)."),
+    "failed": ("A check failed", "See the checks below before relying on these figures."),
+}
 STATUS_TEXT = {"pass": "Pass", "fail": "Fail", "skip": "Skipped"}
 
 
@@ -407,6 +416,75 @@ def _bill(report, check, billcheck):
     }
 
 
+def _sessions(check):
+    ss = check.get("sessions") if isinstance(check, dict) else None
+    if not isinstance(ss, dict):
+        return None
+    means = ("Anthropic counts each API key's Claude Code sessions and their tokens by model, per day, on its "
+             "own side. On a day the log fully covers, the two counts should be equal; a session that never "
+             "reached the log shows up here even if it ran at the same time as logged work.")
+    limits = ("Whole UTC days only, an hour or more behind, and only usage on Anthropic's API (not a Claude "
+              "subscription, Bedrock or Vertex). Anthropic's count leaves out the one background request "
+              "Claude Code records nowhere, which the bill check covers.")
+    if ss.get("error") or not ss.get("days"):
+        return {"key": "sessions", "status": "skip", "short": "could not run",
+                "result": "Not run: %s." % _e(ss.get("error") or "no days in the window"),
+                "means": means, "limits": limits, "details": ""}
+    rows = ss["days"]
+    failed = [r for r in rows if r.get("status") == "fail"]
+    matched = [r for r in rows if r.get("status") in ("pass", "pass_so_far")]
+    if failed:
+        status = "fail"
+        missing = sum(max(0, _int(r.get("anthropic_sessions")) - _int(r.get("log_sessions"))) for r in failed)
+        result = ("On %s, Anthropic counted Claude Code sessions or tokens on this key that the log does not "
+                  "have%s." % (", ".join(_e(r["day"]) for r in failed),
+                               " (%s missing)" % _count(missing, "session") if missing else ""))
+        short = "Anthropic counted sessions the log does not have" if missing else \
+            "Anthropic's token count differs from the log's"
+    elif matched:
+        status = "pass"
+        result = "On %s, the log's sessions and tokens equal Anthropic's count%s." % (
+            ", ".join(_e(r["day"]) + (" (so far)" if r["status"] == "pass_so_far" else "") for r in matched),
+            "" if len(matched) == len(rows) else "; the other days could not be compared (see details)")
+        short = "the log's sessions equal Anthropic's count"
+    else:
+        status = "skip"
+        result = "No whole day the log covers could be compared yet (see details)."
+        short = "no whole day to compare yet"
+    trs = []
+    for r in rows:
+        trs.append([_e(r["day"]), _e(r["status"].replace("_", " ")), _num(r.get("anthropic_sessions")),
+                    _num(r.get("log_sessions")),
+                    _e(", ".join("%s %+d" % (m, v) for m, v in sorted((r.get("token_difference") or {}).items()))
+                       or "none")])
+    details = _table(["Day", "Result", "Anthropic's sessions", "Log's sessions", "Tokens, Anthropic minus log"],
+                     trs, num_cols=(2, 3))
+    work = {}
+    for r in rows:
+        for k, v in (r.get("work") or {}).items():
+            work[k] = work.get(k, 0) + _int(v)
+    if any(work.values()):
+        details += ("<p>Anthropic's records also count, for these days: %s lines added, %s removed, %s and %s "
+                    "made through Claude Code.</p>" % (
+                        _num(work.get("lines_added")), _num(work.get("lines_removed")),
+                        _count(work.get("commits", 0), "commit"), _count(work.get("pull_requests", 0),
+                                                                          "pull request")))
+    return {"key": "sessions", "status": status, "short": short, "result": result, "means": means,
+            "limits": limits, "details": details}
+
+
+def _continuity(check):
+    c = check.get("continuity") if isinstance(check, dict) else None
+    if not isinstance(c, dict):
+        return None
+    means = ("Each report you receive commits to the log as it stood then. This one's log must contain "
+             "every earlier report's head hash from the same log, so history can't be rewritten between reports.")
+    limits = "It compares only with reports you received before; the first report from a log has nothing to compare."
+    status = {True: "pass", False: "fail", None: "skip"}[c.get("ok")]
+    return {"key": "continuity", "status": status, "short": _e(c.get("short") or ""),
+            "result": _e(c.get("note") or ""), "means": means, "limits": limits, "details": ""}
+
+
 VERDICT_TEXT = {
     "contradicted": "the model sees a different purpose",
     "unconfirmed": "the model sees generic work with no safety or capabilities purpose",
@@ -579,11 +657,35 @@ def _claim_validation(claims):
 
 # ---------- sections ----------
 
-def _verdict(checks, warnings):
+def _level_line(check, report):
+    lv = check.get("level") if isinstance(check, dict) else None
+    if lv not in LEVEL_TEXT:
+        return ""
+    head, text = LEVEL_TEXT[lv]
+    b = report.get("billing") if isinstance(report.get("billing"), dict) else None
+    split = ""
+    if b and sum(_int(v) for v in b.values()):
+        total = sum(_int(v) for v in b.values())
+        parts = []
+        if _int(b.get("api_key")):
+            parts.append("%s on an API key" % _pct(_int(b["api_key"]), total))
+        if _int(b.get("subscription")):
+            parts.append("%s on a Claude subscription (Anthropic offers no records to check it against)"
+                         % _pct(_int(b["subscription"]), total))
+        if _int(b.get("unknown")):
+            parts.append("%s billed in a way the log does not show" % _pct(_int(b["unknown"]), total))
+        split = " Of the tokens in this report: %s." % "; ".join(parts)
+    who = check.get("checked_by") if isinstance(check, dict) else None
+    by = " Checks run by %s." % _e(who) if who else ""
+    return '<p class="level"><strong>Level: %s.</strong> %s%s%s</p>' % (_e(head), _e(text), split, by)
+
+
+def _verdict(checks, warnings, level=""):
     failed = [c for c in checks if c["status"] == "fail"]
     passed = [c for c in checks if c["status"] == "pass"]
     skipped = [c for c in checks if c["status"] == "skip"]
-    missing = [CHECK_TITLES[k].lower() for k in CHECK_ORDER if k not in {c["key"] for c in checks}]
+    missing = [CHECK_TITLES[k].lower() for k in CHECK_ORDER  # continuity exists only for a recipient
+               if k not in {c["key"] for c in checks} and k != "continuity"]
     ran = len(failed) + len(passed)
 
     def names(cs):
@@ -616,8 +718,8 @@ def _verdict(checks, warnings):
     if missing:
         tail.append("Not included in this report: %s." % ", ".join(missing))
     return ('<section class="verdict %s" aria-labelledby="verdict-head"><p class="headline" id="verdict-head">'
-            '%s</p>%s%s</section>' % (cls, head, "<ul>%s</ul>" % items if items else "",
-                                      '<p class="tail">%s</p>' % " ".join(tail) if tail else ""))
+            '%s</p>%s%s%s</section>' % (cls, head, level, "<ul>%s</ul>" % items if items else "",
+                                        '<p class="tail">%s</p>' % " ".join(tail) if tail else ""))
 
 
 def _usage(report):
@@ -742,9 +844,12 @@ def _verify(report, check, billcheck):
         steps.append("<li>Replace <code>&lt;start&gt;</code> and <code>&lt;end&gt;</code> with the UTC "
                      "times the report covers.</li>")
     return ('<section class="verify" aria-labelledby="verify"><h2 id="verify">How to verify this report</h2>'
-            '<dl>%s</dl><p>Get the published log file from the team and run, with the tool installed '
-            '(or <code>python3 -m vawr</code> from a copy of it):</p><pre><code>%s</code></pre><ul>%s</ul>'
-            '</section>' % (dl, _e(commands), "".join(steps)))
+            '<dl>%s</dl><p>If this came as a vawr bundle (a <code>.zip</code>), one command checks everything '
+            'below, and with your own Admin key also checks it against Anthropic\'s records for the key: '
+            '<code>vawr receive &lt;file&gt;.zip</code>. It keeps the head hash, so the next report from the '
+            'same log must extend this one.</p><p>Or, step by step, with the published log file and the tool '
+            'installed (or <code>python3 -m vawr</code> from a copy of it):</p><pre><code>%s</code></pre>'
+            '<ul>%s</ul></section>' % (dl, _e(commands), "".join(steps)))
 
 
 def _warnings(report, check):
@@ -795,6 +900,7 @@ border-radius:6px;padding:.9rem 1.1rem}
 .verdict ul{margin:.5rem 0 0;padding-left:1.2rem}
 .verdict li{margin:.2rem 0}
 .verdict .tail{color:var(--muted);font-size:.9rem;margin:.5rem 0 0}
+.verdict .level{margin:.5rem 0 0;font-size:.92rem}
 .table-wrap{overflow-x:auto;margin:.5rem 0}
 table{border-collapse:collapse;width:100%;font-size:.88rem}
 th,td{padding:.4rem .5rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
@@ -861,7 +967,8 @@ def render(report, check=None, billcheck=None, categories=None, claims=None, tit
     report = report if isinstance(report, dict) else {}
     title = title or "Agent usage report"
     checks = [c for c in (_chain(report, check), _coverage(check), _bill(report, check, billcheck),
-                          _category(report, categories), _claims(report, claims)) if c]
+                          _sessions(check), _continuity(check), _category(report, categories),
+                          _claims(report, claims)) if c]
     warnings = _warnings(report, check)
     log = report.get("log") or {}
     meta = []
@@ -883,7 +990,7 @@ def render(report, check=None, billcheck=None, categories=None, claims=None, tit
         "<meta name=\"generator\" content=\"vawr %s\">" % _e(__version__),
         "<title>%s</title><style>%s</style></head><body><main>" % (_e(title), CSS),
         "<header><h1>%s</h1><p class=\"meta\">%s</p></header>" % (_e(title), " · ".join(meta)),
-        _verdict(checks, warnings),
+        _verdict(checks, warnings, _level_line(check, report)),
         _usage(report),
         _checks_section(checks),
         _verify(report, check, billcheck),

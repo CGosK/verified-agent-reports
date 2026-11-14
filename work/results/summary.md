@@ -103,3 +103,24 @@ A separate model (frozen prompt 4981a32faa4a9d65, sonnet) reads each run's promp
 | Written cases, borderline | 12 | 2/12 (17%; 95% CI 2–48%) | 2/12 (17%; 95% CI 2–48%) | 22/24 (92%; 95% CI 73–99%) | 4/4 (100%; 95% CI 40–100%) |
 
 Token shares, declared vs the model's picks (all logged runs): {'safety': 0.343, 'capabilities': 0.3266, 'other': 0.3305} vs {'safety': 0.3114, 'capabilities': 0.2247, 'other': 0.464}.
+
+## Anthropic's Claude Code analytics vs the log and the bill
+
+Anthropic's Claude Code Analytics API (Admin API) counts each API key's Claude Code sessions and tokens by model, per UTC day and terminal type. Key Apart AI Epistemics Key (apikey_014nm6SadTU7zy9DoURcd48j).
+
+| Day | Terminal | Anthropic's sessions | Log's sessions | Result | Tokens, Anthropic minus log |
+| --- | --- | --- | --- | --- | --- |
+| 2026-11-13 | non-interactive | 26 | 8 | partial | claude-haiku-5-5 +39690, claude-opus-5-5 +53272, claude-sonnet-5-5 +87576 |
+| 2026-11-14 | non-interactive | 91 | 66 | fail | claude-haiku-5-5 +95655, claude-opus-5-5 +74764, claude-sonnet-5-5 +82633 |
+| 2026-11-14 | xterm | 2 | 0 | fail | claude-haiku-5-5 +35936 |
+| 2026-11-14 | xterm-256color | 5 | 5 | pass so far | none |
+
+- 2026-11-13: 14 runs on the key in the manifests, 6 of them hidden from the log; billed minus Anthropic's count: claude-haiku-5-5 +198398.
+- 2026-11-14: 91 runs on the key in the manifests, 25 of them hidden from the log; billed minus Anthropic's count: claude-haiku-4-5-20251001 +9, claude-haiku-5-5 +616117.
+
+## Continuity (relabel and rebuild after an earlier report)
+
+200 trials on a copy of work/log/events_upto_20261114T0917Z.jsonl (2783 entries): an earlier report's head at a random point, one API request relabeled at a random point and the chain rebuilt.
+
+- Edits at or before the earlier head caught: 98/98 (100%; 95% CI 96–100%)
+- Edits after it caught (by design, none): 0/102 (0%; 95% CI 0–4%)
