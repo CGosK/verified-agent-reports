@@ -1,68 +1,74 @@
 {
   "log": {
     "path": "/Users/operator/ClaudeWork/personal/verified-agent-reports/work/log/events.jsonl",
-    "entries": 558,
-    "head": "037ac8fe7b13f518d5c7be9b72f368b5711a6ade95f34913fa2b1c863d0bc7df",
+    "entries": 3020,
+    "head": "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce",
     "chain_ok": true
   },
+  "window": [
+    null,
+    null
+  ],
   "categories": [
     {
       "category": "capabilities",
-      "runs": 6,
-      "requests": 17,
-      "cost_usd": 0.153535,
+      "runs": 32,
+      "requests": 96,
+      "cost_usd": 0.623793,
       "tokens": {
-        "input": 38,
-        "output": 4570,
-        "cache_read": 423732,
-        "cache_creation": 18547
+        "input": 238,
+        "output": 26215,
+        "cache_read": 1109687,
+        "cache_creation": 78124
       },
-      "claims": 10,
-      "claims_held": 10,
-      "total_tokens": 446887,
-      "token_share": 0.32881557464198236,
+      "claims": 63,
+      "claims_held": 63,
+      "total_tokens": 1214264,
+      "token_share": 0.3265878292602108,
       "claims_held_rate": 1.0
     },
     {
       "category": "other",
-      "runs": 6,
-      "requests": 17,
-      "cost_usd": 0.154856,
+      "runs": 32,
+      "requests": 99,
+      "cost_usd": 0.683131,
       "tokens": {
-        "input": 38,
-        "output": 5244,
-        "cache_read": 424610,
-        "cache_creation": 16087
+        "input": 244,
+        "output": 31613,
+        "cache_read": 1116606,
+        "cache_creation": 80191
       },
-      "claims": 11,
-      "claims_held": 11,
-      "total_tokens": 445979,
-      "token_share": 0.32814747612541123,
-      "claims_held_rate": 1.0
+      "claims": 65,
+      "claims_held": 60,
+      "total_tokens": 1228654,
+      "token_share": 0.33045815635798725,
+      "claims_held_rate": 0.9230769230769231
     },
     {
       "category": "safety",
-      "runs": 7,
-      "requests": 23,
-      "cost_usd": 0.187822,
+      "runs": 36,
+      "requests": 116,
+      "cost_usd": 0.875512,
       "tokens": {
-        "input": 54,
-        "output": 6695,
-        "cache_read": 437369,
-        "cache_creation": 22097
+        "input": 288,
+        "output": 31721,
+        "cache_read": 1109356,
+        "cache_creation": 133749
       },
-      "claims": 16,
-      "claims_held": 16,
-      "total_tokens": 466215,
-      "token_share": 0.34303694923260647,
-      "claims_held_rate": 1.0
+      "claims": 73,
+      "claims_held": 72,
+      "total_tokens": 1275114,
+      "token_share": 0.342954014381802,
+      "claims_held_rate": 0.9863013698630136
     }
   ],
+  "projects": [],
   "runs": [
     {
       "run_id": "20261113T205154Z-s1refusals-spr-b941df",
       "category": "safety",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0162694,
       "tokens": {
@@ -76,6 +82,7 @@
       "run_id": "20261113T205310Z-s2agreement-spr-4f6558",
       "category": "safety",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0118836,
       "tokens": {
@@ -89,6 +96,7 @@
       "run_id": "20261113T205406Z-s1refusals-spr-e69cdf",
       "category": "safety",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0105611,
       "tokens": {
@@ -102,6 +110,7 @@
       "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
       "category": "safety",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0449302,
       "tokens": {
@@ -115,6 +124,7 @@
       "run_id": "20261113T205416Z-s4redact-sub-f5a9d7",
       "category": "safety",
       "mode": "subscription",
+      "project": null,
       "requests": 5,
       "cost_usd": 0.057409199999999994,
       "tokens": {
@@ -128,6 +138,7 @@
       "run_id": "20261113T205432Z-s5monitor-sub-0ab9c3",
       "category": "safety",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0330168,
       "tokens": {
@@ -141,6 +152,7 @@
       "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
       "category": "capabilities",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0333808,
       "tokens": {
@@ -154,6 +166,7 @@
       "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
       "category": "capabilities",
       "mode": "subscription",
+      "project": null,
       "requests": 4,
       "cost_usd": 0.0425713,
       "tokens": {
@@ -167,6 +180,7 @@
       "run_id": "20261113T205505Z-c5ngrams-sub-564526",
       "category": "capabilities",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.032193400000000004,
       "tokens": {
@@ -180,6 +194,7 @@
       "run_id": "20261113T205516Z-o3table-sub-028593",
       "category": "other",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.035269800000000004,
       "tokens": {
@@ -193,6 +208,7 @@
       "run_id": "20261113T205528Z-o4config-sub-42d125",
       "category": "other",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0331315,
       "tokens": {
@@ -206,6 +222,7 @@
       "run_id": "20261113T205539Z-o5versions-sub-f3ae98",
       "category": "other",
       "mode": "subscription",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0339675,
       "tokens": {
@@ -219,6 +236,7 @@
       "run_id": "20261113T205549Z-c5ngrams-sub-6c0d9b",
       "category": "capabilities",
       "mode": "subscription",
+      "project": null,
       "requests": 1,
       "cost_usd": 0.014993300000000001,
       "tokens": {
@@ -232,6 +250,7 @@
       "run_id": "20261113T205601Z-o5versions-sub-59c027",
       "category": "other",
       "mode": "subscription",
+      "project": null,
       "requests": 2,
       "cost_usd": 0.025157600000000002,
       "tokens": {
@@ -245,6 +264,7 @@
       "run_id": "20261113T205715Z-s2agreement-spr-6283e7",
       "category": "safety",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0137516,
       "tokens": {
@@ -258,6 +278,7 @@
       "run_id": "20261113T210340Z-c1sampling-spr-68ed9f",
       "category": "capabilities",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0148096,
       "tokens": {
@@ -271,6 +292,7 @@
       "run_id": "20261113T210959Z-c2schedule-spr-c0323c",
       "category": "capabilities",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.015586800000000001,
       "tokens": {
@@ -284,6 +306,7 @@
       "run_id": "20261113T211626Z-o1slugify-spr-3272b2",
       "category": "other",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0125032,
       "tokens": {
@@ -297,6 +320,7 @@
       "run_id": "20261113T212249Z-o2durations-spr-4f3791",
       "category": "other",
       "mode": "sprint",
+      "project": null,
       "requests": 3,
       "cost_usd": 0.0148269,
       "tokens": {
@@ -304,6 +328,1140 @@
         "output": 1022,
         "cache_read": 5609,
         "cache_creation": 1612
+      }
+    },
+    {
+      "run_id": "20261114T055542Z-s1refusals-spr-563843",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0156841,
+      "tokens": {
+        "input": 8,
+        "output": 772,
+        "cache_read": 4156,
+        "cache_creation": 3013
+      }
+    },
+    {
+      "run_id": "20261114T060202Z-s2agreement-spr-dcffb4",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0171181,
+      "tokens": {
+        "input": 8,
+        "output": 892,
+        "cache_read": 4171,
+        "cache_creation": 3106
+      }
+    },
+    {
+      "run_id": "20261114T060827Z-s3contamination-spr-4b611f",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0124137,
+      "tokens": {
+        "input": 8,
+        "output": 816,
+        "cache_read": 5577,
+        "cache_creation": 1472
+      }
+    },
+    {
+      "run_id": "20261114T061447Z-s4redact-spr-fd9a3d",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 7,
+      "cost_usd": 0.0350595,
+      "tokens": {
+        "input": 16,
+        "output": 2026,
+        "cache_read": 19425,
+        "cache_creation": 5130
+      }
+    },
+    {
+      "run_id": "20261114T062120Z-s5monitor-spr-573674",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0162359,
+      "tokens": {
+        "input": 8,
+        "output": 830,
+        "cache_read": 4099,
+        "cache_creation": 3004
+      }
+    },
+    {
+      "run_id": "20261114T062750Z-c1sampling-spr-29926f",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.012531900000000002,
+      "tokens": {
+        "input": 8,
+        "output": 813,
+        "cache_read": 5659,
+        "cache_creation": 1528
+      }
+    },
+    {
+      "run_id": "20261114T063415Z-c2schedule-spr-bdb8f0",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.0195361,
+      "tokens": {
+        "input": 10,
+        "output": 1042,
+        "cache_read": 7461,
+        "cache_creation": 3340
+      }
+    },
+    {
+      "run_id": "20261114T064038Z-c3batching-spr-e74c2e",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0158316,
+      "tokens": {
+        "input": 8,
+        "output": 809,
+        "cache_read": 4031,
+        "cache_creation": 2929
+      }
+    },
+    {
+      "run_id": "20261114T064701Z-c4cache-spr-a8dd59",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0108706,
+      "tokens": {
+        "input": 8,
+        "output": 703,
+        "cache_read": 5546,
+        "cache_creation": 1308
+      }
+    },
+    {
+      "run_id": "20261114T065324Z-c5ngrams-spr-f48306",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0140786,
+      "tokens": {
+        "input": 8,
+        "output": 671,
+        "cache_read": 3976,
+        "cache_creation": 2782
+      }
+    },
+    {
+      "run_id": "20261114T065945Z-o1slugify-spr-8cd567",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.014590099999999998,
+      "tokens": {
+        "input": 8,
+        "output": 733,
+        "cache_read": 3941,
+        "cache_creation": 2740
+      }
+    },
+    {
+      "run_id": "20261114T070606Z-o2durations-spr-be6832",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.025843899999999996,
+      "tokens": {
+        "input": 10,
+        "output": 1868,
+        "cache_read": 8564,
+        "cache_creation": 2515
+      }
+    },
+    {
+      "run_id": "20261114T071250Z-o3table-spr-393694",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0179776,
+      "tokens": {
+        "input": 8,
+        "output": 970,
+        "cache_read": 4116,
+        "cache_creation": 3140
+      }
+    },
+    {
+      "run_id": "20261114T071914Z-o4config-spr-57d5e0",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0135078,
+      "tokens": {
+        "input": 8,
+        "output": 625,
+        "cache_read": 4093,
+        "cache_creation": 2733
+      }
+    },
+    {
+      "run_id": "20261114T072534Z-o5versions-spr-ddcd98",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0124352,
+      "tokens": {
+        "input": 8,
+        "output": 838,
+        "cache_read": 5467,
+        "cache_creation": 1397
+      }
+    },
+    {
+      "run_id": "20261114T073157Z-s1refusals-spr-625c0f",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.016044799999999998,
+      "tokens": {
+        "input": 8,
+        "output": 802,
+        "cache_read": 4163,
+        "cache_creation": 3037
+      }
+    },
+    {
+      "run_id": "20261114T073818Z-s2agreement-spr-b9a38c",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.015056900000000002,
+      "tokens": {
+        "input": 8,
+        "output": 759,
+        "cache_read": 4109,
+        "cache_creation": 2816
+      }
+    },
+    {
+      "run_id": "20261114T074442Z-s3contamination-spr-37da76",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.010817400000000001,
+      "tokens": {
+        "input": 8,
+        "output": 688,
+        "cache_read": 5514,
+        "cache_creation": 1348
+      }
+    },
+    {
+      "run_id": "20261114T075109Z-s4redact-spr-f3964f",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0170529,
+      "tokens": {
+        "input": 8,
+        "output": 923,
+        "cache_read": 4169,
+        "cache_creation": 2956
+      }
+    },
+    {
+      "run_id": "20261114T075731Z-s5monitor-spr-74896d",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.0175596,
+      "tokens": {
+        "input": 10,
+        "output": 905,
+        "cache_read": 6621,
+        "cache_creation": 3131
+      }
+    },
+    {
+      "run_id": "20261114T080057Z-s1refusals-sub-0e5717",
+      "category": "safety",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.042239000000000006,
+      "tokens": {
+        "input": 6,
+        "output": 645,
+        "cache_read": 110170,
+        "cache_creation": 6190
+      }
+    },
+    {
+      "run_id": "20261114T080110Z-s2agreement-sub-c6bab7",
+      "category": "safety",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.17920370000000002,
+      "tokens": {
+        "input": 6,
+        "output": 992,
+        "cache_read": 78437,
+        "cache_creation": 40357
+      }
+    },
+    {
+      "run_id": "20261114T080127Z-s3contamination-sub-532b1e",
+      "category": "safety",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.037969300000000004,
+      "tokens": {
+        "input": 6,
+        "output": 835,
+        "cache_read": 113753,
+        "cache_creation": 4558
+      }
+    },
+    {
+      "run_id": "20261114T080137Z-s4redact-sub-f51b3c",
+      "category": "safety",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0402408,
+      "tokens": {
+        "input": 6,
+        "output": 996,
+        "cache_read": 113808,
+        "cache_creation": 4722
+      }
+    },
+    {
+      "run_id": "20261114T080148Z-s5monitor-sub-298d1e",
+      "category": "safety",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.037599400000000005,
+      "tokens": {
+        "input": 6,
+        "output": 782,
+        "cache_read": 113874,
+        "cache_creation": 4595
+      }
+    },
+    {
+      "run_id": "20261114T080159Z-c1sampling-sub-96a20e",
+      "category": "capabilities",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0381354,
+      "tokens": {
+        "input": 6,
+        "output": 807,
+        "cache_read": 113934,
+        "cache_creation": 4665
+      }
+    },
+    {
+      "run_id": "20261114T080209Z-c2schedule-sub-1e92a3",
+      "category": "capabilities",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0399614,
+      "tokens": {
+        "input": 6,
+        "output": 947,
+        "cache_read": 113954,
+        "cache_creation": 4771
+      }
+    },
+    {
+      "run_id": "20261114T080219Z-c3batching-sub-fc64f7",
+      "category": "capabilities",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0392488,
+      "tokens": {
+        "input": 6,
+        "output": 909,
+        "cache_read": 113868,
+        "cache_creation": 4690
+      }
+    },
+    {
+      "run_id": "20261114T080230Z-c4cache-sub-1ff41d",
+      "category": "capabilities",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.043792,
+      "tokens": {
+        "input": 6,
+        "output": 1137,
+        "cache_read": 114100,
+        "cache_creation": 5250
+      }
+    },
+    {
+      "run_id": "20261114T080242Z-c5ngrams-sub-78255c",
+      "category": "capabilities",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0376994,
+      "tokens": {
+        "input": 6,
+        "output": 816,
+        "cache_read": 113794,
+        "cache_creation": 4537
+      }
+    },
+    {
+      "run_id": "20261114T080252Z-o1slugify-sub-06699e",
+      "category": "other",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0378826,
+      "tokens": {
+        "input": 6,
+        "output": 836,
+        "cache_read": 113746,
+        "cache_creation": 4534
+      }
+    },
+    {
+      "run_id": "20261114T080302Z-o2durations-sub-97c555",
+      "category": "other",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0396361,
+      "tokens": {
+        "input": 6,
+        "output": 968,
+        "cache_read": 113841,
+        "cache_creation": 4640
+      }
+    },
+    {
+      "run_id": "20261114T080314Z-o3table-sub-d7e6cd",
+      "category": "other",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0392073,
+      "tokens": {
+        "input": 6,
+        "output": 894,
+        "cache_read": 113873,
+        "cache_creation": 4717
+      }
+    },
+    {
+      "run_id": "20261114T080324Z-o4config-sub-d8baf9",
+      "category": "other",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0381154,
+      "tokens": {
+        "input": 6,
+        "output": 804,
+        "cache_read": 113914,
+        "cache_creation": 4668
+      }
+    },
+    {
+      "run_id": "20261114T080336Z-o5versions-sub-5d97dd",
+      "category": "other",
+      "mode": "subscription",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0388136,
+      "tokens": {
+        "input": 6,
+        "output": 909,
+        "cache_read": 113796,
+        "cache_creation": 4583
+      }
+    },
+    {
+      "run_id": "20261114T080954Z-s1refusals-spr-4cd622",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0163899,
+      "tokens": {
+        "input": 8,
+        "output": 838,
+        "cache_read": 4164,
+        "cache_creation": 3031
+      }
+    },
+    {
+      "run_id": "20261114T081004Z-s2agreement-spr-c0e6d6",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0135255,
+      "tokens": {
+        "input": 8,
+        "output": 890,
+        "cache_read": 5670,
+        "cache_creation": 1617
+      }
+    },
+    {
+      "run_id": "20261114T081009Z-s3contamination-spr-fd844c",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0109027,
+      "tokens": {
+        "input": 8,
+        "output": 695,
+        "cache_read": 5517,
+        "cache_creation": 1354
+      }
+    },
+    {
+      "run_id": "20261114T081419Z-s4redact-spr-604110",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0131323,
+      "tokens": {
+        "input": 8,
+        "output": 913,
+        "cache_read": 5563,
+        "cache_creation": 1372
+      }
+    },
+    {
+      "run_id": "20261114T081424Z-s5monitor-spr-7c7e2e",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.008383700000000001,
+      "tokens": {
+        "input": 8,
+        "output": 532,
+        "cache_read": 5377,
+        "cache_creation": 1004
+      }
+    },
+    {
+      "run_id": "20261114T081429Z-c1sampling-spr-02c1be",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0125873,
+      "tokens": {
+        "input": 8,
+        "output": 817,
+        "cache_read": 5663,
+        "cache_creation": 1534
+      }
+    },
+    {
+      "run_id": "20261114T081839Z-c2schedule-spr-12cb8d",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0164252,
+      "tokens": {
+        "input": 8,
+        "output": 1113,
+        "cache_read": 5692,
+        "cache_creation": 1884
+      }
+    },
+    {
+      "run_id": "20261114T081849Z-c3batching-spr-6ec194",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0136693,
+      "tokens": {
+        "input": 8,
+        "output": 922,
+        "cache_read": 5583,
+        "cache_creation": 1550
+      }
+    },
+    {
+      "run_id": "20261114T081854Z-c4cache-spr-66a911",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0155164,
+      "tokens": {
+        "input": 8,
+        "output": 1012,
+        "cache_read": 5854,
+        "cache_creation": 1918
+      }
+    },
+    {
+      "run_id": "20261114T082305Z-c5ngrams-spr-54b1cf",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0119774,
+      "tokens": {
+        "input": 8,
+        "output": 786,
+        "cache_read": 5539,
+        "cache_creation": 1419
+      }
+    },
+    {
+      "run_id": "20261114T082310Z-o1slugify-spr-1d7388",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.013253000000000001,
+      "tokens": {
+        "input": 8,
+        "output": 921,
+        "cache_read": 5520,
+        "cache_creation": 1390
+      }
+    },
+    {
+      "run_id": "20261114T082315Z-o2durations-spr-c6a1e6",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.026742199999999997,
+      "tokens": {
+        "input": 10,
+        "output": 1913,
+        "cache_read": 8847,
+        "cache_creation": 2683
+      }
+    },
+    {
+      "run_id": "20261114T082734Z-o3table-spr-986c55",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0130914,
+      "tokens": {
+        "input": 8,
+        "output": 873,
+        "cache_read": 5529,
+        "cache_creation": 1517
+      }
+    },
+    {
+      "run_id": "20261114T082744Z-o4config-spr-08cbb0",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0126708,
+      "tokens": {
+        "input": 8,
+        "output": 817,
+        "cache_read": 5648,
+        "cache_creation": 1568
+      }
+    },
+    {
+      "run_id": "20261114T082749Z-o5versions-spr-b25266",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0135821,
+      "tokens": {
+        "input": 8,
+        "output": 939,
+        "cache_read": 5461,
+        "cache_creation": 1452
+      }
+    },
+    {
+      "run_id": "20261114T083206Z-s1refusals-spr-845ebc",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0121718,
+      "tokens": {
+        "input": 8,
+        "output": 779,
+        "cache_read": 5658,
+        "cache_creation": 1520
+      }
+    },
+    {
+      "run_id": "20261114T083211Z-s2agreement-spr-ba194c",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.013587100000000001,
+      "tokens": {
+        "input": 8,
+        "output": 897,
+        "cache_read": 5661,
+        "cache_creation": 1614
+      }
+    },
+    {
+      "run_id": "20261114T083216Z-s3contamination-spr-ba1379",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.012422,
+      "tokens": {
+        "input": 8,
+        "output": 808,
+        "cache_read": 5610,
+        "cache_creation": 1506
+      }
+    },
+    {
+      "run_id": "20261114T083626Z-s4redact-spr-8f5d65",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.014307799999999999,
+      "tokens": {
+        "input": 8,
+        "output": 996,
+        "cache_read": 5668,
+        "cache_creation": 1506
+      }
+    },
+    {
+      "run_id": "20261114T083636Z-s5monitor-spr-54af2f",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0123611,
+      "tokens": {
+        "input": 8,
+        "output": 811,
+        "cache_read": 5601,
+        "cache_creation": 1470
+      }
+    },
+    {
+      "run_id": "20261114T083641Z-c1sampling-spr-6d015d",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0128273,
+      "tokens": {
+        "input": 8,
+        "output": 841,
+        "cache_read": 5663,
+        "cache_creation": 1534
+      }
+    },
+    {
+      "run_id": "20261114T084051Z-c2schedule-spr-e615be",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.012028500000000001,
+      "tokens": {
+        "input": 8,
+        "output": 781,
+        "cache_read": 5625,
+        "cache_creation": 1456
+      }
+    },
+    {
+      "run_id": "20261114T084056Z-c3batching-spr-cf0959",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.013765100000000002,
+      "tokens": {
+        "input": 8,
+        "output": 923,
+        "cache_read": 5616,
+        "cache_creation": 1583
+      }
+    },
+    {
+      "run_id": "20261114T084101Z-c4cache-spr-3e9a9e",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0109433,
+      "tokens": {
+        "input": 8,
+        "output": 711,
+        "cache_read": 5548,
+        "cache_creation": 1305
+      }
+    },
+    {
+      "run_id": "20261114T084512Z-c5ngrams-spr-46ba0e",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0105112,
+      "tokens": {
+        "input": 8,
+        "output": 671,
+        "cache_read": 5477,
+        "cache_creation": 1295
+      }
+    },
+    {
+      "run_id": "20261114T084522Z-o1slugify-spr-7f1bc4",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.013026300000000001,
+      "tokens": {
+        "input": 8,
+        "output": 898,
+        "cache_read": 5528,
+        "cache_creation": 1391
+      }
+    },
+    {
+      "run_id": "20261114T084527Z-o2durations-spr-4337de",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.0240251,
+      "tokens": {
+        "input": 10,
+        "output": 1714,
+        "cache_read": 8476,
+        "cache_creation": 2407
+      }
+    },
+    {
+      "run_id": "20261114T084942Z-o3table-spr-5a9db4",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.014583299999999999,
+      "tokens": {
+        "input": 8,
+        "output": 983,
+        "cache_read": 5623,
+        "cache_creation": 1670
+      }
+    },
+    {
+      "run_id": "20261114T084947Z-o4config-spr-c735c6",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0097795,
+      "tokens": {
+        "input": 8,
+        "output": 612,
+        "cache_read": 5585,
+        "cache_creation": 1234
+      }
+    },
+    {
+      "run_id": "20261114T084952Z-o5versions-spr-7d1cd7",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.012640499999999999,
+      "tokens": {
+        "input": 8,
+        "output": 857,
+        "cache_read": 5470,
+        "cache_creation": 1403
+      }
+    },
+    {
+      "run_id": "20261114T085304Z-o2durations-spr-1b20e5",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.025606900000000002,
+      "tokens": {
+        "input": 10,
+        "output": 1842,
+        "cache_read": 8669,
+        "cache_creation": 2520
+      }
+    },
+    {
+      "run_id": "20261114T085624Z-c1sampling-spr-d1c0ff",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0127281,
+      "tokens": {
+        "input": 8,
+        "output": 828,
+        "cache_read": 5671,
+        "cache_creation": 1546
+      }
+    },
+    {
+      "run_id": "20261114T085938Z-s1refusals-spr-b5dc13",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.010506099999999999,
+      "tokens": {
+        "input": 8,
+        "output": 642,
+        "cache_read": 5601,
+        "cache_creation": 1404
+      }
+    },
+    {
+      "run_id": "20261114T090250Z-o5versions-spr-d3d3f5",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.012757999999999999,
+      "tokens": {
+        "input": 8,
+        "output": 870,
+        "cache_read": 5470,
+        "cache_creation": 1398
+      }
+    },
+    {
+      "run_id": "20261114T090604Z-c2schedule-spr-66b155",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0119585,
+      "tokens": {
+        "input": 8,
+        "output": 774,
+        "cache_read": 5625,
+        "cache_creation": 1456
+      }
+    },
+    {
+      "run_id": "20261114T090917Z-s5monitor-spr-4770ec",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 4,
+      "cost_usd": 0.0170383,
+      "tokens": {
+        "input": 10,
+        "output": 1128,
+        "cache_read": 8658,
+        "cache_creation": 1949
+      }
+    },
+    {
+      "run_id": "20261114T091232Z-o3table-spr-fb37e6",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.014193299999999999,
+      "tokens": {
+        "input": 8,
+        "output": 947,
+        "cache_read": 5623,
+        "cache_creation": 1658
+      }
+    },
+    {
+      "run_id": "20261114T091546Z-c5ngrams-spr-6b2d54",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0102812,
+      "tokens": {
+        "input": 8,
+        "output": 648,
+        "cache_read": 5477,
+        "cache_creation": 1295
+      }
+    },
+    {
+      "run_id": "20261114T094741Z-o2durations-spr-2b35bf",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0159258,
+      "tokens": {
+        "input": 8,
+        "output": 817,
+        "cache_read": 4023,
+        "cache_creation": 2935
+      }
+    },
+    {
+      "run_id": "20261114T095050Z-c1sampling-spr-89b69d",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0125773,
+      "tokens": {
+        "input": 8,
+        "output": 816,
+        "cache_read": 5663,
+        "cache_creation": 1534
+      }
+    },
+    {
+      "run_id": "20261114T095401Z-s1refusals-spr-751c82",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0106455,
+      "tokens": {
+        "input": 8,
+        "output": 656,
+        "cache_read": 5595,
+        "cache_creation": 1404
+      }
+    },
+    {
+      "run_id": "20261114T095709Z-o5versions-spr-66479c",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0139685,
+      "tokens": {
+        "input": 8,
+        "output": 957,
+        "cache_read": 5550,
+        "cache_creation": 1531
+      }
+    },
+    {
+      "run_id": "20261114T100019Z-c2schedule-spr-6b23fc",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.010244699999999999,
+      "tokens": {
+        "input": 8,
+        "output": 677,
+        "cache_read": 5462,
+        "cache_creation": 1165
+      }
+    },
+    {
+      "run_id": "20261114T100327Z-s5monitor-spr-50c209",
+      "category": "safety",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.012020800000000002,
+      "tokens": {
+        "input": 8,
+        "output": 778,
+        "cache_read": 5598,
+        "cache_creation": 1466
+      }
+    },
+    {
+      "run_id": "20261114T100637Z-o3table-spr-a31b6b",
+      "category": "other",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.014418299999999998,
+      "tokens": {
+        "input": 8,
+        "output": 964,
+        "cache_read": 5623,
+        "cache_creation": 1680
+      }
+    },
+    {
+      "run_id": "20261114T100947Z-c5ngrams-spr-f50b10",
+      "category": "capabilities",
+      "mode": "sprint",
+      "project": null,
+      "requests": 3,
+      "cost_usd": 0.0105309,
+      "tokens": {
+        "input": 8,
+        "output": 671,
+        "cache_read": 5474,
+        "cache_creation": 1303
       }
     }
   ],

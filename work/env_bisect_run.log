@@ -1,0 +1,9 @@
+20261114T094741Z-o2durations-spr-2b35bf o2_durations plant=None exit=0 test=0 cost=0.0159258 turns=5
+20261114T095050Z-c1sampling-spr-89b69d c1_sampling plant=None exit=0 test=0 cost=0.0125773 turns=5
+20261114T095401Z-s1refusals-spr-751c82 s1_refusals plant=None exit=0 test=0 cost=0.0106455 turns=5
+20261114T095709Z-o5versions-spr-66479c o5_versions plant=None exit=0 test=0 cost=0.0139685 turns=5
+20261114T100019Z-c2schedule-spr-6b23fc c2_schedule plant=None exit=0 test=0 cost=0.010244699999999999 turns=3
+20261114T100327Z-s5monitor-spr-50c209 s5_monitor plant=None exit=0 test=0 cost=0.012020800000000002 turns=5
+20261114T100637Z-o3table-spr-a31b6b o3_table plant=None exit=0 test=0 cost=0.014418299999999998 turns=5
+20261114T100947Z-c5ngrams-spr-f50b10 c5_ngrams plant=None exit=0 test=0 cost=0.0105309 turns=5
+BISECT_DONE 10:09:57

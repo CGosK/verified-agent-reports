@@ -1,0 +1,205 @@
+{
+ "window": [
+  "2026-11-14T09:16:00+00:00",
+  "2026-11-14T09:36:00+00:00"
+ ],
+ "chain": {
+  "ok": true,
+  "entries": 293,
+  "head": "b5816ab239402278172ed34f2c7985b138d2368aaa3172b4e3d28c965e36bef9",
+  "problems": []
+ },
+ "coverage": {
+  "ok": true,
+  "local_requests": 22,
+  "logged_requests_in_window": 36,
+  "token_mismatches": 0,
+  "unlogged_sessions": []
+ },
+ "bill": {
+  "ok": true,
+  "window": [
+   "2026-11-14T09:16:00+00:00",
+   "2026-11-14T09:36:00+00:00"
+  ],
+  "shift_minutes": 2,
+  "tolerance": {
+   "input": 0,
+   "output": 0,
+   "cache_read": 0,
+   "cache_creation": 0
+  },
+  "provider_tokens": {
+   "input": 11591,
+   "output": 7807,
+   "cache_read": 656072,
+   "cache_creation": 55457
+  },
+  "logged_tokens": {
+   "input": 11591,
+   "output": 7807,
+   "cache_read": 656072,
+   "cache_creation": 55457
+  },
+  "background_tokens": {
+   "input": 0,
+   "output": 0,
+   "cache_read": 0,
+   "cache_creation": 0
+  },
+  "recorded_totals_tokens": {
+   "input": 0,
+   "output": 0,
+   "cache_read": 0,
+   "cache_creation": 0
+  },
+  "background_model": "claude-haiku-5-5",
+  "logged_sessions": 4,
+  "per_session": {
+   "f7252551-301d-4239-b8a2-19754029bca3": {
+    "first_minute": "2026-11-14T09:18:00+00:00",
+    "last_minute": "2026-11-14T09:19:00+00:00",
+    "logged_tokens": {
+     "input": 2258,
+     "output": 1559,
+     "cache_read": 150559,
+     "cache_creation": 8697
+    },
+    "provider_tokens_in_span": 163073,
+    "background_in_span": 0,
+    "background_share": 0.0,
+    "span_shared": false
+   },
+   "f8ed4832-acb3-4329-b4fa-a1a289511030": {
+    "first_minute": "2026-11-14T09:21:00+00:00",
+    "last_minute": "2026-11-14T09:23:00+00:00",
+    "logged_tokens": {
+     "input": 2781,
+     "output": 2406,
+     "cache_read": 209777,
+     "cache_creation": 20148
+    },
+    "provider_tokens_in_span": 235112,
+    "background_in_span": 0,
+    "background_share": 0.0,
+    "span_shared": false
+   },
+   "4a34ffe8-8345-4401-97a4-17d0bee48ed0": {
+    "first_minute": "2026-11-14T09:25:00+00:00",
+    "last_minute": "2026-11-14T09:28:00+00:00",
+    "logged_tokens": {
+     "input": 4296,
+     "output": 2307,
+     "cache_read": 165431,
+     "cache_creation": 17545
+    },
+    "provider_tokens_in_span": 189579,
+    "background_in_span": 0,
+    "background_share": 0.0,
+    "span_shared": false
+   },
+   "ac91f0a2-89ea-45f1-8993-11a7d4febb59": {
+    "first_minute": "2026-11-14T09:30:00+00:00",
+    "last_minute": "2026-11-14T09:31:00+00:00",
+    "logged_tokens": {
+     "input": 2256,
+     "output": 1535,
+     "cache_read": 130305,
+     "cache_creation": 9067
+    },
+    "provider_tokens_in_span": 143163,
+    "background_in_span": 0,
+    "background_share": 0.0,
+    "span_shared": false
+   }
+  },
+  "background_by_session": {
+   "f7252551-301d-4239-b8a2-19754029bca3": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "f8ed4832-acb3-4329-b4fa-a1a289511030": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "4a34ffe8-8345-4401-97a4-17d0bee48ed0": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "ac91f0a2-89ea-45f1-8993-11a7d4febb59": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   }
+  },
+  "gaps": [],
+  "log_excess": [],
+  "per_minute": {
+   "2026-11-14T09:18:00+00:00": {
+    "provider": 91756,
+    "background": 0,
+    "gap": 0,
+    "matched": 91756
+   },
+   "2026-11-14T09:19:00+00:00": {
+    "provider": 71317,
+    "background": 0,
+    "gap": 0,
+    "matched": 71317
+   },
+   "2026-11-14T09:21:00+00:00": {
+    "provider": 91019,
+    "background": 0,
+    "gap": 0,
+    "matched": 91019
+   },
+   "2026-11-14T09:23:00+00:00": {
+    "provider": 144093,
+    "background": 0,
+    "gap": 0,
+    "matched": 144093
+   },
+   "2026-11-14T09:25:00+00:00": {
+    "provider": 115006,
+    "background": 0,
+    "gap": 0,
+    "matched": 115006
+   },
+   "2026-11-14T09:27:00+00:00": {
+    "provider": 26065,
+    "background": 0,
+    "gap": 0,
+    "matched": 26065
+   },
+   "2026-11-14T09:28:00+00:00": {
+    "provider": 48508,
+    "background": 0,
+    "gap": 0,
+    "matched": 48508
+   },
+   "2026-11-14T09:30:00+00:00": {
+    "provider": 94339,
+    "background": 0,
+    "gap": 0,
+    "matched": 94339
+   },
+   "2026-11-14T09:31:00+00:00": {
+    "provider": 48824,
+    "background": 0,
+    "gap": 0,
+    "matched": 48824
+   }
+  },
+  "minutes_checked": 20,
+  "clean_minutes": 20,
+  "key_id": "apikey_014nm6SadTU7zy9DoURcd48j",
+  "source": "legacy"
+ }
+}

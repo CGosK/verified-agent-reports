@@ -1,12 +1,13 @@
 {
+  "log": "work/log/events_upto_20261114T0917Z.jsonl",
   "baseline_flags": {
     "chain_flags": false,
     "session_flags": [
-      11,
+      57,
       0,
       0
     ],
-    "provider_gaps": 6,
+    "provider_gaps": 32,
     "provider_excess": 0,
     "note": "the untouched log's own flags come from the planted off-log runs"
   },
@@ -23,12 +24,12 @@
         ]
       },
       "sessions": {
-        "k": 27,
+        "k": 24,
         "n": 200,
-        "rate": 0.135,
+        "rate": 0.12,
         "ci95": [
-          0.0909,
-          0.1903
+          0.0784,
+          0.1733
         ]
       },
       "provider": {
@@ -49,13 +50,13 @@
           1.0
         ]
       },
-      "touching_requests": 27,
+      "touching_requests": 24,
       "sessions_on_requests": {
-        "k": 27,
-        "n": 27,
+        "k": 24,
+        "n": 24,
         "rate": 1.0,
         "ci95": [
-          0.8723,
+          0.8575,
           1.0
         ]
       },
@@ -119,11 +120,11 @@
       },
       "provider_on_sprint_requests": {
         "k": 0,
-        "n": 45,
+        "n": 69,
         "rate": 0.0,
         "ci95": [
           0.0,
-          0.0787
+          0.0521
         ]
       }
     },
@@ -148,12 +149,12 @@
         ]
       },
       "provider": {
-        "k": 44,
+        "k": 84,
         "n": 100,
-        "rate": 0.44,
+        "rate": 0.84,
         "ci95": [
-          0.3408,
-          0.5428
+          0.7532,
+          0.9057
         ]
       },
       "any": {
@@ -176,11 +177,11 @@
         ]
       },
       "provider_on_sprint_requests": {
-        "k": 44,
-        "n": 44,
+        "k": 84,
+        "n": 84,
         "rate": 1.0,
         "ci95": [
-          0.9196,
+          0.957,
           1.0
         ]
       }
@@ -235,11 +236,11 @@
       },
       "provider_on_sprint_requests": {
         "k": 0,
-        "n": 23,
+        "n": 33,
         "rate": 0.0,
         "ci95": [
           0.0,
-          0.1482
+          0.1058
         ]
       }
     },
@@ -264,12 +265,12 @@
         ]
       },
       "provider": {
-        "k": 20,
+        "k": 36,
         "n": 50,
-        "rate": 0.4,
+        "rate": 0.72,
         "ci95": [
-          0.2641,
-          0.5482
+          0.5751,
+          0.8377
         ]
       },
       "any": {
@@ -292,11 +293,11 @@
         ]
       },
       "provider_on_sprint_requests": {
-        "k": 20,
-        "n": 20,
+        "k": 36,
+        "n": 36,
         "rate": 1.0,
         "ci95": [
-          0.8316,
+          0.9026,
           1.0
         ]
       }
@@ -313,48 +314,48 @@
         ]
       },
       "sessions": {
-        "k": 35,
+        "k": 33,
         "n": 50,
-        "rate": 0.7,
+        "rate": 0.66,
         "ci95": [
-          0.5539,
-          0.8214
+          0.5123,
+          0.7879
         ]
       },
       "provider": {
-        "k": 35,
+        "k": 33,
         "n": 50,
-        "rate": 0.7,
+        "rate": 0.66,
         "ci95": [
-          0.5539,
-          0.8214
+          0.5123,
+          0.7879
         ]
       },
       "any": {
-        "k": 35,
+        "k": 33,
         "n": 50,
-        "rate": 0.7,
+        "rate": 0.66,
         "ci95": [
-          0.5539,
-          0.8214
+          0.5123,
+          0.7879
         ]
       },
-      "touching_requests": 35,
+      "touching_requests": 33,
       "sessions_on_requests": {
-        "k": 35,
-        "n": 35,
+        "k": 33,
+        "n": 33,
         "rate": 1.0,
         "ci95": [
-          0.9,
+          0.8942,
           1.0
         ]
       },
       "provider_on_sprint_requests": {
-        "k": 35,
-        "n": 35,
+        "k": 33,
+        "n": 33,
         "rate": 1.0,
         "ci95": [
-          0.9,
+          0.8942,
           1.0
         ]
       }

@@ -26,3 +26,11 @@
 20261114T084051Z-c2schedule-spr-e615be c2_schedule plant=None exit=0 test=0 cost=0.012028500000000001 turns=5
 20261114T084056Z-c3batching-spr-cf0959 c3_batching plant=None exit=0 test=0 cost=0.013765100000000002 turns=5
 20261114T084101Z-c4cache-spr-3e9a9e c4_cache plant=None exit=0 test=0 cost=0.0109433 turns=3
+20261114T084512Z-c5ngrams-spr-46ba0e c5_ngrams plant=None exit=0 test=0 cost=0.0105112 turns=5
+20261114T084517Z-c3batching-spr-b15ed7 c3_batching plant=off_log exit=0 test=0 cost=0.014114699999999999 turns=5
+20261114T084522Z-o1slugify-spr-7f1bc4 o1_slugify plant=None exit=0 test=0 cost=0.013026300000000001 turns=5
+20261114T084527Z-o2durations-spr-4337de o2_durations plant=None exit=0 test=0 cost=0.0240251 turns=6
+20261114T084942Z-o3table-spr-5a9db4 o3_table plant=None exit=0 test=0 cost=0.014583299999999999 turns=5
+20261114T084947Z-o4config-spr-c735c6 o4_config plant=None exit=0 test=0 cost=0.0097795 turns=4
+20261114T084952Z-o5versions-spr-7d1cd7 o5_versions plant=None exit=0 test=0 cost=0.012640499999999999 turns=5
+CONC_DONE

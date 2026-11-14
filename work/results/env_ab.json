@@ -1,0 +1,216 @@
+{
+ "by_env": {
+  "inherited": {
+   "runs": 4,
+   "with_unrecorded_request": 4,
+   "cache_read_values": [
+    7010
+   ]
+  },
+  "clean": {
+   "runs": 4,
+   "with_unrecorded_request": 0,
+   "cache_read_values": [
+    0
+   ]
+  }
+ },
+ "rows": [
+  {
+   "run_id": "20261114T085304Z-o2durations-spr-1b20e5",
+   "task": "o2_durations",
+   "env_mode": "inherited",
+   "billed_small_model": {
+    "input": 552,
+    "output": 483,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 552,
+    "output": 483,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": true
+  },
+  {
+   "run_id": "20261114T085624Z-c1sampling-spr-d1c0ff",
+   "task": "c1_sampling",
+   "env_mode": "clean",
+   "billed_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": false
+  },
+  {
+   "run_id": "20261114T085938Z-s1refusals-spr-b5dc13",
+   "task": "s1_refusals",
+   "env_mode": "inherited",
+   "billed_small_model": {
+    "input": 282,
+    "output": 179,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 282,
+    "output": 179,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": true
+  },
+  {
+   "run_id": "20261114T090250Z-o5versions-spr-d3d3f5",
+   "task": "o5_versions",
+   "env_mode": "clean",
+   "billed_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": false
+  },
+  {
+   "run_id": "20261114T090604Z-c2schedule-spr-66b155",
+   "task": "c2_schedule",
+   "env_mode": "inherited",
+   "billed_small_model": {
+    "input": 387,
+    "output": 302,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 387,
+    "output": 302,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": true
+  },
+  {
+   "run_id": "20261114T090917Z-s5monitor-spr-4770ec",
+   "task": "s5_monitor",
+   "env_mode": "clean",
+   "billed_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": false
+  },
+  {
+   "run_id": "20261114T091232Z-o3table-spr-fb37e6",
+   "task": "o3_table",
+   "env_mode": "inherited",
+   "billed_small_model": {
+    "input": 303,
+    "output": 173,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 303,
+    "output": 173,
+    "cache_read": 7010,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": true
+  },
+  {
+   "run_id": "20261114T091546Z-c5ngrams-spr-6b2d54",
+   "task": "c5_ngrams",
+   "env_mode": "clean",
+   "billed_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "logged_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "unrecorded_small_model": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0
+   },
+   "has_unrecorded_request": false
+  }
+ ],
+ "provider_window": [
+  "2026-11-14T08:52:00Z",
+  "2026-11-14T09:17:00Z"
+ ]
+}

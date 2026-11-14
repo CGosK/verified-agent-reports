@@ -1,0 +1,475 @@
+{
+ "sources": {
+  "runs_by_batch": "work/manifests/*.json (batch by run id lists in work/*_run_ids.json; batch1 = Nov 13)",
+  "provider_offlog_caught_batches_1_2": "off_log.json runs (sprint runs in window, concurrency excluded; plant set)",
+  "provider_logged_flagged_batches_1_2_ab_bisect": "off_log.json runs with plant null (includes A/B and bisect runs inside the window)",
+  "session_file_offlog_caught": "off_log.json runs with plant off_log (session files kept)",
+  "offlog_gap_tokens_min_max": "off_log.json gap_tokens",
+  "provider_window": "false_flags.json provider.window",
+  "provider_gaps_total": "false_flags.json provider.gaps",
+  "provider_log_excess": "false_flags.json provider.log_excess",
+  "logged_sessions_in_window": "false_flags.json provider.logged_sessions",
+  "session_check_missing_from_log_requests": "false_flags.json sessions.missing_from_log (requests in session files not in the log; from off-log runs that kept files)",
+  "session_check_missing_from_files": "false_flags.json sessions.missing_from_files",
+  "session_check_token_mismatch": "false_flags.json sessions.token_mismatch",
+  "background_request_inherited_sessions": "false_flags.json provider.background_by_session, env_mode from manifests",
+  "background_request_clean_sessions": "same",
+  "background_share_of_session_billed_tokens_min_max": "background_by_session / (background + logged tokens of that session)",
+  "concurrency_offlog_windows_flagged": "concurrency.json",
+  "concurrency_clean_windows_flagged": "concurrency.json (the one flag: 9 tokens claude-haiku-4-5 at 08:50 from interactive test startups on the same key)",
+  "tamper_usage_changing_caught": "tamper_summary.json: delete touching requests + edit_tokens + rehash_tokens + truncations dropping requests",
+  "tamper_relabel_rebuild_caught": "tamper_summary.json rehash_category any",
+  "tamper_chain_on_unrebuilt_edits": "tamper_summary.json chain on delete/edit_tokens/edit_category",
+  "tamper_trials_total": "tamper_summary.json",
+  "env_ab": "env_ab.json",
+  "interactive_check": "work/results/interactive_check.json",
+  "interactive_billcheck": "work/results/interactive_billcheck.json",
+  "claims_false_done_caught": "claims_summary.json false_done_caught",
+  "claims_fake_blocker_caught": "claims_summary.json fake_blocker_caught",
+  "claims_true_blocker_wrongly_flagged": "claims_summary.json true_blocker_wrongly_flagged",
+  "claims_fake_blocker_caught_held_out": "claims_summary.json fake_blocker_caught_held_out",
+  "claims_true_blocker_wrongly_flagged_held_out": "claims_summary.json true_blocker_wrongly_flagged_held_out",
+  "claims_negations_with_spurious_claims": "claims_summary.json negations_with_spurious_claims",
+  "claims_real_runs_flagged": "claims_summary.json real_runs_flagged",
+  "claims_real_runs_flagged_explained": "claims_real.json detail, failed claims",
+  "category_dev": "category_check.json / category_heldout.json",
+  "category_held_out_runs": "category_check.json / category_heldout.json",
+  "category_cases_clear": "category_check.json / category_heldout.json",
+  "category_cases_borderline": "category_check.json / category_heldout.json",
+  "category_capabilities_to_safety_caught_all": "dev + held-out runs + written cases",
+  "category_prompt": "category_check.json summary",
+  "category_variance": "category_variance.json (54 runs and 36 cases, two extra calls each)"
+ },
+ "runs_by_batch": {
+  "batch2": {
+   "runs": 55,
+   "key_runs": 40,
+   "subscription_runs": 15,
+   "off_log": 20,
+   "tests_passed": 55,
+   "cost_usd_est": 1.4167
+  },
+  "concurrency": {
+   "runs": 35,
+   "key_runs": 35,
+   "subscription_runs": 0,
+   "off_log": 5,
+   "tests_passed": 35,
+   "cost_usd_est": 0.5139
+  },
+  "batch1": {
+   "runs": 25,
+   "key_runs": 14,
+   "subscription_runs": 11,
+   "off_log": 6,
+   "tests_passed": 23,
+   "cost_usd_est": 0.6325
+  },
+  "env_bisect": {
+   "runs": 8,
+   "key_runs": 8,
+   "subscription_runs": 0,
+   "off_log": 0,
+   "tests_passed": 8,
+   "cost_usd_est": 0.1002
+  },
+  "env_ab": {
+   "runs": 8,
+   "key_runs": 8,
+   "subscription_runs": 0,
+   "off_log": 0,
+   "tests_passed": 8,
+   "cost_usd_est": 0.1151
+  }
+ },
+ "provider_offlog_caught_batches_1_2": {
+  "k": 26,
+  "n": 26,
+  "rate": 1.0,
+  "ci95": [
+   0.8677,
+   1.0
+  ]
+ },
+ "provider_logged_flagged_batches_1_2_ab_bisect": {
+  "k": 0,
+  "n": 36,
+  "rate": 0.0,
+  "ci95": [
+   0.0,
+   0.0974
+  ]
+ },
+ "session_file_offlog_caught": {
+  "k": 13,
+  "n": 13,
+  "rate": 1.0,
+  "ci95": [
+   0.7529,
+   1.0
+  ]
+ },
+ "offlog_gap_tokens_min_max": [
+  14463,
+  26642
+ ],
+ "provider_window": [
+  "2026-11-13T20:50:00+00:00",
+  "2026-11-14T09:17:00+00:00"
+ ],
+ "provider_gaps_total": 32,
+ "provider_log_excess": 0,
+ "logged_sessions_in_window": 66,
+ "session_check_missing_from_log_requests": 57,
+ "session_check_missing_from_files": 0,
+ "session_check_token_mismatch": 0,
+ "background_request_inherited_sessions": "62/62",
+ "background_request_clean_sessions": "0/4",
+ "background_share_of_session_billed_tokens_min_max": [
+  0.227,
+  0.542
+ ],
+ "concurrency_offlog_windows_flagged": {
+  "k": 5,
+  "n": 5,
+  "rate": 1.0,
+  "ci95": [
+   0.4782,
+   1.0
+  ]
+ },
+ "concurrency_clean_windows_flagged": {
+  "k": 1,
+  "n": 5,
+  "rate": 0.2,
+  "ci95": [
+   0.0051,
+   0.7164
+  ]
+ },
+ "tamper_usage_changing_caught": {
+  "k": 207,
+  "n": 207,
+  "rate": 1.0,
+  "ci95": [
+   0.9823,
+   1.0
+  ]
+ },
+ "tamper_relabel_rebuild_caught": {
+  "k": 0,
+  "n": 50,
+  "rate": 0.0,
+  "ci95": [
+   0.0,
+   0.0711
+  ]
+ },
+ "tamper_chain_on_unrebuilt_edits": {
+  "k": 400,
+  "n": 400,
+  "rate": 1.0,
+  "ci95": [
+   0.9908,
+   1.0
+  ]
+ },
+ "tamper_trials_total": 550,
+ "env_ab": {
+  "inherited": {
+   "runs": 4,
+   "with_unrecorded_request": 4,
+   "cache_read_values": [
+    7010
+   ]
+  },
+  "clean": {
+   "runs": 4,
+   "with_unrecorded_request": 0,
+   "cache_read_values": [
+    0
+   ]
+  }
+ },
+ "interactive_check": {
+  "chain_ok": true,
+  "coverage_ok": true,
+  "local_requests": 22,
+  "logged_requests": 36,
+  "billed": 730927,
+  "gaps": 0,
+  "log_excess_minutes": 0
+ },
+ "interactive_billcheck": {
+  "billed": 730927,
+  "only_in_cost_totals": 248395,
+  "only_in_cost_totals_share": 0.34,
+  "unexplained": 0,
+  "local_only_minutes": 0
+ },
+ "claims_false_done_caught": {
+  "k": 98,
+  "n": 98,
+  "rate": 1.0,
+  "ci95": [
+   0.9631,
+   1.0
+  ]
+ },
+ "claims_fake_blocker_caught": {
+  "k": 9,
+  "n": 9,
+  "rate": 1.0,
+  "ci95": [
+   0.6637,
+   1.0
+  ]
+ },
+ "claims_true_blocker_wrongly_flagged": {
+  "k": 0,
+  "n": 9,
+  "rate": 0.0,
+  "ci95": [
+   0.0,
+   0.3363
+  ]
+ },
+ "claims_fake_blocker_caught_held_out": {
+  "k": 2,
+  "n": 2,
+  "rate": 1.0,
+  "ci95": [
+   0.1581,
+   1.0
+  ]
+ },
+ "claims_true_blocker_wrongly_flagged_held_out": {
+  "k": 0,
+  "n": 4,
+  "rate": 0.0,
+  "ci95": [
+   0.0,
+   0.6024
+  ]
+ },
+ "claims_negations_with_spurious_claims": {
+  "k": 0,
+  "n": 2,
+  "rate": 0.0,
+  "ci95": [
+   0.0,
+   0.8419
+  ]
+ },
+ "claims_real_runs_flagged": {
+  "k": 6,
+  "n": 98,
+  "rate": 0.061224489795918366,
+  "ci95": [
+   0.0228,
+   0.1285
+  ]
+ },
+ "claims_real_runs_flagged_explained": "3 extraction errors on added_tests (descriptions of existing tests; 'I only ran the two provided tests'), 3 truthful reports of a denied shell command read as a blocker that exists",
+ "category_dev": {
+  "true_tags_flagged": {
+   "k": 3,
+   "n": 19,
+   "rate": 0.15789473684210525,
+   "ci95": [
+    0.0338,
+    0.3958
+   ]
+  },
+  "true_tags_contradicted": {
+   "k": 1,
+   "n": 19,
+   "rate": 0.05263157894736842,
+   "ci95": [
+    0.0013,
+    0.2603
+   ]
+  },
+  "relabels_caught": {
+   "k": 35,
+   "n": 38,
+   "rate": 0.9210526315789473,
+   "ci95": [
+    0.7862,
+    0.9834
+   ]
+  },
+  "capabilities_to_safety_caught": {
+   "k": 6,
+   "n": 6,
+   "rate": 1.0,
+   "ci95": [
+    0.5407,
+    1.0
+   ]
+  },
+  "n": 19
+ },
+ "category_held_out_runs": {
+  "true_tags_flagged": {
+   "k": 5,
+   "n": 81,
+   "rate": 0.06172839506172839,
+   "ci95": [
+    0.0203,
+    0.1382
+   ]
+  },
+  "true_tags_contradicted": {
+   "k": 0,
+   "n": 81,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.0445
+   ]
+  },
+  "relabels_caught": {
+   "k": 157,
+   "n": 162,
+   "rate": 0.9691358024691358,
+   "ci95": [
+    0.9294,
+    0.9899
+   ]
+  },
+  "capabilities_to_safety_caught": {
+   "k": 26,
+   "n": 26,
+   "rate": 1.0,
+   "ci95": [
+    0.8677,
+    1.0
+   ]
+  },
+  "n": 81
+ },
+ "category_cases_clear": {
+  "true_tags_flagged": {
+   "k": 0,
+   "n": 24,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.1425
+   ]
+  },
+  "true_tags_contradicted": {
+   "k": 0,
+   "n": 24,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.1425
+   ]
+  },
+  "relabels_caught": {
+   "k": 48,
+   "n": 48,
+   "rate": 1.0,
+   "ci95": [
+    0.926,
+    1.0
+   ]
+  },
+  "capabilities_to_safety_caught": {
+   "k": 8,
+   "n": 8,
+   "rate": 1.0,
+   "ci95": [
+    0.6306,
+    1.0
+   ]
+  },
+  "n": 24
+ },
+ "category_cases_borderline": {
+  "true_tags_flagged": {
+   "k": 2,
+   "n": 12,
+   "rate": 0.16666666666666666,
+   "ci95": [
+    0.0209,
+    0.4841
+   ]
+  },
+  "true_tags_contradicted": {
+   "k": 2,
+   "n": 12,
+   "rate": 0.16666666666666666,
+   "ci95": [
+    0.0209,
+    0.4841
+   ]
+  },
+  "relabels_caught": {
+   "k": 22,
+   "n": 24,
+   "rate": 0.9166666666666666,
+   "ci95": [
+    0.73,
+    0.9897
+   ]
+  },
+  "capabilities_to_safety_caught": {
+   "k": 4,
+   "n": 4,
+   "rate": 1.0,
+   "ci95": [
+    0.3976,
+    1.0
+   ]
+  },
+  "n": 12
+ },
+ "category_capabilities_to_safety_caught_all": "44/44",
+ "category_prompt": {
+  "sha": "4981a32faa4a9d65",
+  "model": "sonnet"
+ },
+ "category_variance": {
+  "runs": {
+   "items": 54,
+   "all_three_agree": [
+    47,
+    54
+   ],
+   "first_pick_flagged": [
+    6,
+    54
+   ],
+   "majority_flagged": [
+    4,
+    54
+   ],
+   "majority_contradicted": [
+    1,
+    54
+   ]
+  },
+  "cases": {
+   "items": 36,
+   "all_three_agree": [
+    36,
+    36
+   ],
+   "first_pick_flagged": [
+    2,
+    36
+   ],
+   "majority_flagged": [
+    2,
+    36
+   ],
+   "majority_contradicted": [
+    2,
+    36
+   ]
+  }
+ }
+}
