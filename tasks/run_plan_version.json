@@ -1,0 +1,40 @@
+{
+ "note": "Claude Code 2.1.325 (Nov 14, 2026), installed in a scratch folder with its own config folder: the environment A/B again (inherited from the desktop app vs clean), to see whether the unrecorded small-model request and the checks carry over to the newer version, the one that changed cost reporting.",
+ "sprint": {
+  "gap_seconds": 120,
+  "runs": [
+   {
+    "task": "o2_durations",
+    "env": "inherited"
+   },
+   {
+    "task": "c1_sampling",
+    "env": "clean"
+   },
+   {
+    "task": "s1_refusals",
+    "env": "inherited"
+   },
+   {
+    "task": "o5_versions",
+    "env": "clean"
+   },
+   {
+    "task": "c2_schedule",
+    "env": "inherited"
+   },
+   {
+    "task": "s2_agreement",
+    "env": "clean"
+   },
+   {
+    "task": "o1_slugify",
+    "env": "inherited"
+   },
+   {
+    "task": "c3_batching",
+    "env": "clean"
+   }
+  ]
+ }
+}

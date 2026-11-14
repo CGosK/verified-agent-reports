@@ -245,6 +245,17 @@ The category check (`vawr validate category` in this repository) adds an
 outside view of the labels: a separate model reads what each run was asked to
 do and what it changed, and flags labels it disagrees with.
 
+Whether the work got done: the claim checker pulls "done", "tests pass",
+"added tests" and "blocked by X" out of each run's final message and checks
+them against the code (a "done" holds only if the change is there and the
+tests pass), and the report's "work passing its tests" column re-runs each
+run's tests whatever it claimed. In a planted test of weaker work described
+without false claims, both caught all 11 runs whose work broke the tests and
+flagged none of 5 controls; the 4 other planted runs met both the visible
+tests and hidden ones written from the task descriptions. Work that passes a
+project's tests but is subtly worse needs tests or rubrics only the recipient
+holds.
+
 ## How well it works
 
 We planted failures on purpose and counted what each check caught, over 131
@@ -261,6 +272,7 @@ intervals are in `work/results/summary.md` and the Sprint report.
 | A run relabeled (say, capabilities work as safety) and the chain rebuilt | 0 of 50 caught by the log checks; the category check caught 157 of 162 relabels of held-out runs, and every relabel of capabilities work as safety |
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
 | Anthropic's daily Claude Code session count vs the log (Nov 14) | Non-interactive: Anthropic 91, log 66; the 25 missing are exactly our 25 hidden runs, and the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive sessions: 5 and 5, tokens equal |
+| Weaker work, described without false claims (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; the claim checker and the outcome column each caught 11 of 11, and flagged 0 of 5 controls; the other 4 met hidden tests too (as do 41 of 41 normal runs) |
 | A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |
 
 Session files from those interactive sessions left out about a third of

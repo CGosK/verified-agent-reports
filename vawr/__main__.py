@@ -422,8 +422,11 @@ def cmd_validate(args):
             r["caught_before_earlier_head"], r["caught_after_earlier_head"]))
     if args.what == "underperform":
         r = validate.underperform()
+        h = validate.underperform_hidden()
+        r["hidden_tests"] = h
         _save("underperform.json", r)
         print("underperform:", json.dumps(r["summary"], indent=2))
+        print("hidden tests:", json.dumps(h["summary"], indent=2))
     if args.what == "cc-analytics":  # needs the Admin key; not part of "all"
         from . import billcheck
         admin, _ = billcheck.admin_and_key()

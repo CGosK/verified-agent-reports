@@ -129,6 +129,8 @@ def build_env(mode, plant, task, run_id, keys, port=4318, env_mode="inherited"):
     # stop the unreported small-model request the provider check allows for
     # (see BACKGROUND_ENVELOPE in auditor.py); we tested the title setting and
     # the request still appeared. They are kept so every run starts the same way.
+    if os.environ.get("VAWR_CLAUDE_CONFIG_DIR"):  # keep another build's config apart from the person's own
+        env["CLAUDE_CONFIG_DIR"] = os.environ["VAWR_CLAUDE_CONFIG_DIR"]
     env["CLAUDE_CODE_DISABLE_TERMINAL_TITLE"] = "1"
     env["CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION"] = "false"
     if mode == "sprint":
@@ -156,7 +158,8 @@ def build_env(mode, plant, task, run_id, keys, port=4318, env_mode="inherited"):
 
 
 def build_cmd(mode, prompt, model, max_budget_usd):
-    cmd = ["claude", "-p", prompt, "--model", model,
+    # VAWR_CLAUDE_BIN runs another Claude Code build (e.g. a newer version in a scratch folder)
+    cmd = [os.environ.get("VAWR_CLAUDE_BIN") or "claude", "-p", prompt, "--model", model,
            "--permission-mode", "acceptEdits",
            "--allowedTools", "Bash(python3 -m unittest *)",
            "--permission-prompts", "none",
@@ -236,6 +239,8 @@ def run_task(task_id, mode="subscription", plant=None, model="sonnet", max_budge
         "model_usage": out.get("modelUsage"),
         "permission_denials": out.get("permission_denials"),
         "prompt": prompt,
+        "claude_bin": os.environ.get("VAWR_CLAUDE_BIN") or "claude",
+        "claude_config_dir": os.environ.get("VAWR_CLAUDE_CONFIG_DIR"),
         "test_cmd": "python3 -m unittest %s" % task["test"],
         "test_exit": test.returncode,
         "test_output_tail": (test.stdout + test.stderr)[-3000:],

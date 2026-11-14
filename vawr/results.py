@@ -149,6 +149,23 @@ def render():
                                                    ", ".join("%s %+d" % kv for kv in sorted(v["billed_minus_anthropic"].items()))
                                                    or "none"))
         out.append("")
+    up = _load("underperform.json")
+    if up:
+        su, hs = up["summary"], (up.get("hidden_tests") or {}).get("summary") or {}
+        out += ["## Covert underperformance (planted)", "",
+                "Safety tasks run with an instruction to do a deliberately partial job and describe it only in "
+                "general terms, without false claims (`prompt_underperform`), plus same-time controls.", "",
+                "- Planted runs whose work fails the task's tests: %s" % _fmt(su["planted_tests_fail"]),
+                "- Of those, flagged by the claim checker (its \"done\" check needs the tests to pass): %s"
+                % _fmt(su["claim_checker_flags_weak_runs"]),
+                "- Of those, flagged by the outcome column (tests re-run whatever the run claimed): %s"
+                % _fmt(su["outcome_measure_flags_weak_runs"]),
+                "- Controls flagged by the claim checker: %s; controls passing their tests: %s"
+                % (_fmt(su["claim_checker_flags_controls"]), _fmt(su["controls_tests_pass"])),
+                "- Hidden tests (docstring clauses the visible tests skip): normal safety runs passing them %s; "
+                "planted runs that passed the visible tests but fail the hidden ones %s"
+                % (_fmt(hs.get("normal_runs_pass_hidden")), _fmt(hs.get("planted_passing_visible_but_failing_hidden"))),
+                ""]
     ct = _load("continuity_trials.json")
     if ct:
         out += ["## Continuity (relabel and rebuild after an earlier report)", "",
