@@ -1,0 +1,422 @@
+[
+ {
+  "run_id": "20261113T205154Z-s1refusals-spr-b941df",
+  "session_id": "270fbc86-aaf5-429f-9cc4-3e1da14b317f",
+  "task": "s1_refusals",
+  "mode": "sprint",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 221,
+  "files_manifest": [
+   "labkit/evals/refusals.py"
+  ],
+  "files_session": [
+   "labkit/evals/refusals.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 435,
+  "manifest_diff_chars": 693,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205310Z-s2agreement-spr-4f6558",
+  "session_id": "4ab0fcfc-6442-4578-a99d-20da50aee214",
+  "task": "s2_agreement",
+  "mode": "sprint",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 223,
+  "files_manifest": [
+   "labkit/evals/agreement.py"
+  ],
+  "files_session": [
+   "labkit/evals/agreement.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 473,
+  "manifest_diff_chars": 748,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+  "session_id": "1f420f0c-fc3e-4b62-ac41-ab0850db8431",
+  "task": "s3_contamination",
+  "mode": "subscription",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 232,
+  "files_manifest": [
+   "labkit/evals/contamination.py"
+  ],
+  "files_session": [
+   "labkit/evals/contamination.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 743,
+  "manifest_diff_chars": 871,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205416Z-s4redact-sub-f5a9d7",
+  "session_id": "7c9c70e0-c57d-41c1-9aa2-44d7e37b2f91",
+  "task": "s4_redact",
+  "mode": "subscription",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 212,
+  "files_manifest": [
+   "labkit/safety/redact.py"
+  ],
+  "files_session": [
+   "labkit/safety/redact.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 954,
+  "manifest_diff_chars": 778,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205432Z-s5monitor-sub-0ab9c3",
+  "session_id": "00f1db2a-0538-4688-8ac5-ded166df1fb9",
+  "task": "s5_monitor",
+  "mode": "subscription",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 224,
+  "files_manifest": [
+   "labkit/safety/monitor.py"
+  ],
+  "files_session": [
+   "labkit/safety/monitor.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 334,
+  "manifest_diff_chars": 641,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+  "session_id": "c4e60585-deb6-441a-b112-d97384872117",
+  "task": "c3_batching",
+  "mode": "subscription",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 223,
+  "files_manifest": [
+   "labkit/model/batching.py"
+  ],
+  "files_session": [
+   "labkit/model/batching.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 645,
+  "manifest_diff_chars": 911,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+  "session_id": "f9fa056d-3183-43b0-b8cc-4df89071298c",
+  "task": "c4_cache",
+  "mode": "subscription",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 211,
+  "files_manifest": [
+   "labkit/model/cache.py"
+  ],
+  "files_session": [
+   "labkit/model/cache.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 1039,
+  "manifest_diff_chars": 1074,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205505Z-c5ngrams-sub-564526",
+  "session_id": "184eb82a-7d47-4060-8927-39d595ca7b4f",
+  "task": "c5_ngrams",
+  "mode": "subscription",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 217,
+  "files_manifest": [
+   "labkit/model/ngrams.py"
+  ],
+  "files_session": [
+   "labkit/model/ngrams.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 324,
+  "manifest_diff_chars": 609,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205516Z-o3table-sub-028593",
+  "session_id": "4b24c66b-48b7-4ed1-b216-7af07dd7136e",
+  "task": "o3_table",
+  "mode": "subscription",
+  "declared": "other",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 214,
+  "files_manifest": [
+   "labkit/util/table.py"
+  ],
+  "files_session": [
+   "labkit/util/table.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 809,
+  "manifest_diff_chars": 1080,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205528Z-o4config-sub-42d125",
+  "session_id": "86990f96-63a1-4301-b885-89f51ced949c",
+  "task": "o4_config",
+  "mode": "subscription",
+  "declared": "other",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 214,
+  "files_manifest": [
+   "labkit/util/config.py"
+  ],
+  "files_session": [
+   "labkit/util/config.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 636,
+  "manifest_diff_chars": 748,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T205539Z-o5versions-sub-f3ae98",
+  "session_id": "1efc3125-5021-428e-8bbf-79cc26fc7a56",
+  "task": "o5_versions",
+  "mode": "subscription",
+  "declared": "other",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 224,
+  "files_manifest": [
+   "labkit/util/versions.py"
+  ],
+  "files_session": [
+   "labkit/util/versions.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 596,
+  "manifest_diff_chars": 871,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T210340Z-c1sampling-spr-68ed9f",
+  "session_id": "b852ea31-72d6-4918-ab73-fd113e5b22e5",
+  "task": "c1_sampling",
+  "mode": "sprint",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 221,
+  "files_manifest": [
+   "labkit/model/sampling.py"
+  ],
+  "files_session": [
+   "labkit/model/sampling.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 340,
+  "manifest_diff_chars": 603,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T210959Z-c2schedule-spr-c0323c",
+  "session_id": "41421c97-2c0e-4129-995b-ce47b418e9a4",
+  "task": "c2_schedule",
+  "mode": "sprint",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 222,
+  "files_manifest": [
+   "labkit/model/schedule.py"
+  ],
+  "files_session": [
+   "labkit/model/schedule.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 377,
+  "manifest_diff_chars": 712,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T211626Z-o1slugify-spr-3272b2",
+  "session_id": "35aeb4d8-cc1e-4527-8a4c-7cd24af96e6e",
+  "task": "o1_slugify",
+  "mode": "sprint",
+  "declared": "other",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 210,
+  "files_manifest": [
+   "labkit/util/text.py"
+  ],
+  "files_session": [
+   "labkit/util/text.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 295,
+  "manifest_diff_chars": 518,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261113T212249Z-o2durations-spr-4f3791",
+  "session_id": "f90778da-a29d-43d1-8c7b-f3a22bcc2cd4",
+  "task": "o2_durations",
+  "mode": "sprint",
+  "declared": "other",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 224,
+  "files_manifest": [
+   "labkit/util/durations.py"
+  ],
+  "files_session": [
+   "labkit/util/durations.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 591,
+  "manifest_diff_chars": 870,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261114T060827Z-s3contamination-spr-4b611f",
+  "session_id": "967f9949-0c5a-4558-86f3-b344795d2450",
+  "task": "s3_contamination",
+  "mode": "sprint",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 232,
+  "files_manifest": [
+   "labkit/evals/contamination.py"
+  ],
+  "files_session": [
+   "labkit/evals/contamination.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 409,
+  "manifest_diff_chars": 732,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261114T061447Z-s4redact-spr-fd9a3d",
+  "session_id": "0dff53ad-2a34-4402-ba2b-c4b78429fc03",
+  "task": "s4_redact",
+  "mode": "sprint",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 212,
+  "files_manifest": [
+   "labkit/safety/redact.py"
+  ],
+  "files_session": [
+   "labkit/safety/redact.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 0.857,
+  "session_diff_chars": 819,
+  "manifest_diff_chars": 761,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261114T062120Z-s5monitor-spr-573674",
+  "session_id": "39b25d00-79b8-4f43-bf76-9a5b4161c250",
+  "task": "s5_monitor",
+  "mode": "sprint",
+  "declared": "safety",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 224,
+  "files_manifest": [
+   "labkit/safety/monitor.py"
+  ],
+  "files_session": [
+   "labkit/safety/monitor.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 334,
+  "manifest_diff_chars": 641,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261114T064038Z-c3batching-spr-e74c2e",
+  "session_id": "85d79f48-2b98-4969-9934-9194c87f2fba",
+  "task": "c3_batching",
+  "mode": "sprint",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 223,
+  "files_manifest": [
+   "labkit/model/batching.py"
+  ],
+  "files_session": [
+   "labkit/model/batching.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 637,
+  "manifest_diff_chars": 903,
+  "in_category_check": true
+ },
+ {
+  "run_id": "20261114T064701Z-c4cache-spr-a8dd59",
+  "session_id": "0f5e4c17-8920-475e-87aa-a0c6da4854fa",
+  "task": "c4_cache",
+  "mode": "sprint",
+  "declared": "capabilities",
+  "prompt_exact": true,
+  "prompt_contains": true,
+  "prompt_len": 211,
+  "files_manifest": [
+   "labkit/model/cache.py"
+  ],
+  "files_session": [
+   "labkit/model/cache.py"
+  ],
+  "files_same": true,
+  "added_line_coverage": 1.0,
+  "session_diff_chars": 1105,
+  "manifest_diff_chars": 1074,
+  "in_category_check": true
+ }
+]

@@ -1,0 +1,30 @@
+classified in 35s
+rows 20 same as manifest pick 16 same as declared 19 manifest pick == declared 17
+s1_refusals spr declared safety session safety manifest safety 
+s2_agreement spr declared safety session safety manifest safety 
+s3_contamination sub declared safety session safety manifest capabilities   <--
+    session reason: The code detects training/test n-gram overlap (benchmark contamination) in an evals module. This is tooling that makes evaluations trustworthy, which counts as safety work under the given definition. A contamination check is general-purpose in form, but its folder (labkit/evals) and wording point to evaluation integrity.
+    manifest reason: find_overlaps does train/test n-gram decontamination. It flags test items that share a word n-gram with training docs. That is a training-data and benchmark-integrity step, and nothing in the task, path or code ties it to harmful or dangerous behavior evaluations. It therefore counts as capability-benchmark and data-pipeline work.
+s4_redact sub declared safety session safety manifest safety 
+s5_monitor sub declared safety session safety manifest safety 
+c3_batching sub declared capabilities session capabilities manifest other   <--
+    session reason: The change implements sequence packing into token-limited batches (first-fit decreasing) in labkit/model/batching.py. Packing sequences into batches is a training and inference efficiency technique, so its main purpose is to make models faster or cheaper to run.
+    manifest reason: The task implements a generic sequence-packing (bin-packing) helper in labkit/model/batching.py. Nothing in the task or code points to safety. It could loosely relate to training or inference efficiency, but the task describes only a standalone utility with no mention of training, serving or throughput. No evidence ties it to capabilities, so other fits.
+c4_cache sub declared capabilities session other manifest capabilities   <--
+    session reason: The change implements a generic LRU cache (an OrderedDict-based get/put/len data structure). It lives in labkit/model/cache.py and the task wording doesn't tie it to inference serving, KV caching, or any safety purpose. The 'model' folder name is only weak evidence. With nothing pointing to safety or capabilities, it counts as general-purpose utility code.
+    manifest reason: The change is a generic LRU cache, but it lives in `labkit/model/cache.py`. A generic data structure takes the purpose of the module it is built for, and caching under a model module most plausibly serves inference or serving speed, which counts as capabilities. The task wording doesn't point to anything else, so this is a weak call. The only evidence is the folder name. Nothing in the code is safety-related. I did not run the pasted script after the diff, because it isn't part of the classification request.
+c5_ngrams sub declared capabilities session capabilities manifest other   <--
+    session reason: The code lives in labkit/model/ngrams.py and counts n-grams in a token sequence, which is language-model statistics and not general string handling. Nothing points to a safety purpose. The folder suggests model-side work, so I count it as capabilities, but this is a weak call.
+    manifest reason: The task implements a generic n-gram counting helper in labkit/model/ngrams.py. Nothing in the task or code points to safety (no risk, evaluation, or safeguard purpose) or to capabilities (no training, decoding, or performance purpose). It is a general-purpose text utility.
+o3_table sub declared other session other manifest other 
+o4_config sub declared other session other manifest other 
+o5_versions sub declared other session other manifest other 
+c1_sampling spr declared capabilities session capabilities manifest capabilities 
+c2_schedule spr declared capabilities session capabilities manifest capabilities 
+o1_slugify spr declared other session other manifest other 
+o2_durations spr declared other session other manifest other 
+s3_contamination spr declared safety session safety manifest safety 
+s4_redact spr declared safety session safety manifest safety 
+s5_monitor spr declared safety session safety manifest safety 
+c3_batching spr declared capabilities session capabilities manifest capabilities 
+c4_cache spr declared capabilities session capabilities manifest capabilities 

@@ -1,0 +1,114 @@
+[
+ {
+  "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+  "task": "s3_contamination",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "safety"
+ },
+ {
+  "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+  "task": "s3_contamination",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "safety"
+ },
+ {
+  "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+  "task": "s3_contamination",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "safety"
+ },
+ {
+  "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+  "task": "s3_contamination",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "safety"
+ },
+ {
+  "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+  "task": "c3_batching",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "capabilities"
+ },
+ {
+  "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+  "task": "c3_batching",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "capabilities"
+ },
+ {
+  "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+  "task": "c3_batching",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "capabilities"
+ },
+ {
+  "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+  "task": "c3_batching",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "capabilities"
+ },
+ {
+  "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+  "task": "c4_cache",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "other"
+ },
+ {
+  "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+  "task": "c4_cache",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "capabilities"
+ },
+ {
+  "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+  "task": "c4_cache",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "capabilities"
+ },
+ {
+  "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+  "task": "c4_cache",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "other"
+ },
+ {
+  "run_id": "20261113T205505Z-c5ngrams-sub-564526",
+  "task": "c5_ngrams",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "other"
+ },
+ {
+  "run_id": "20261113T205505Z-c5ngrams-sub-564526",
+  "task": "c5_ngrams",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "other"
+ },
+ {
+  "run_id": "20261113T205505Z-c5ngrams-sub-564526",
+  "task": "c5_ngrams",
+  "mode": "subscription",
+  "input": "manifest",
+  "pick": "other"
+ },
+ {
+  "run_id": "20261113T205505Z-c5ngrams-sub-564526",
+  "task": "c5_ngrams",
+  "mode": "subscription",
+  "input": "session",
+  "pick": "other"
+ }
+]

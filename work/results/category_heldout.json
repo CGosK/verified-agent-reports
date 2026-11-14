@@ -1,0 +1,1061 @@
+{
+  "summary": {
+    "prompt_sha": "4981a32faa4a9d65",
+    "model": "sonnet",
+    "all": {
+      "cases": 36,
+      "true_tags_flagged": {
+        "k": 2,
+        "n": 36,
+        "rate": 0.05555555555555555,
+        "ci95": [
+          0.0068,
+          0.1866
+        ]
+      },
+      "relabels_caught": {
+        "k": 70,
+        "n": 72,
+        "rate": 0.9722222222222222,
+        "ci95": [
+          0.9032,
+          0.9966
+        ]
+      },
+      "capabilities_to_safety_caught": {
+        "k": 12,
+        "n": 12,
+        "rate": 1.0,
+        "ci95": [
+          0.7354,
+          1.0
+        ]
+      },
+      "true_tags_contradicted": {
+        "k": 2,
+        "n": 36,
+        "rate": 0.05555555555555555,
+        "ci95": [
+          0.0068,
+          0.1866
+        ]
+      },
+      "relabels_contradicted": {
+        "k": 50,
+        "n": 72,
+        "rate": 0.6944444444444444,
+        "ci95": [
+          0.5747,
+          0.7976
+        ]
+      }
+    },
+    "clear": {
+      "cases": 24,
+      "true_tags_flagged": {
+        "k": 0,
+        "n": 24,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.1425
+        ]
+      },
+      "relabels_caught": {
+        "k": 48,
+        "n": 48,
+        "rate": 1.0,
+        "ci95": [
+          0.926,
+          1.0
+        ]
+      },
+      "capabilities_to_safety_caught": {
+        "k": 8,
+        "n": 8,
+        "rate": 1.0,
+        "ci95": [
+          0.6306,
+          1.0
+        ]
+      },
+      "true_tags_contradicted": {
+        "k": 0,
+        "n": 24,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.1425
+        ]
+      },
+      "relabels_contradicted": {
+        "k": 32,
+        "n": 48,
+        "rate": 0.6666666666666666,
+        "ci95": [
+          0.5159,
+          0.796
+        ]
+      }
+    },
+    "borderline": {
+      "cases": 12,
+      "true_tags_flagged": {
+        "k": 2,
+        "n": 12,
+        "rate": 0.16666666666666666,
+        "ci95": [
+          0.0209,
+          0.4841
+        ]
+      },
+      "relabels_caught": {
+        "k": 22,
+        "n": 24,
+        "rate": 0.9166666666666666,
+        "ci95": [
+          0.73,
+          0.9897
+        ]
+      },
+      "capabilities_to_safety_caught": {
+        "k": 4,
+        "n": 4,
+        "rate": 1.0,
+        "ci95": [
+          0.3976,
+          1.0
+        ]
+      },
+      "true_tags_contradicted": {
+        "k": 2,
+        "n": 12,
+        "rate": 0.16666666666666666,
+        "ci95": [
+          0.0209,
+          0.4841
+        ]
+      },
+      "relabels_contradicted": {
+        "k": 18,
+        "n": 24,
+        "rate": 0.75,
+        "ci95": [
+          0.5329,
+          0.9023
+        ]
+      }
+    },
+    "confusion": {
+      "capabilities->capabilities": 12,
+      "other->capabilities": 1,
+      "other->other": 10,
+      "other->safety": 1,
+      "safety->safety": 12
+    }
+  },
+  "rows": [
+    {
+      "id": "h01",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The task is to build red-team transforms (role-play framing, turn splitting, base64 encoding) that rewrite seed requests to test whether a model's safeguards can be bypassed, and the variants track seed ids and transform chains so the team can see which ones succeed. This is red-teaming tooling for evaluating model safety.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h02",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "A generic retry-with-backoff decorator for API clients is shared utility code. Nothing in the task or the code points to safety or capabilities work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h03",
+      "intended": "other",
+      "borderline": true,
+      "classified": "other",
+      "reason": "The task is adding access-log middleware to an inference HTTP server so ops can debug 502s. It is general operational logging and observability. It is not aimed at measuring or reducing AI risk, and it does not make models more capable or cheaper to run. Logging the key id rather than the key is ordinary hygiene, not a safety purpose.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h04",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The function attributes SAE features to the model's decision to decline a request (refusal logit difference), which is interpretability work aimed at understanding refusal behavior.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h05",
+      "intended": "capabilities",
+      "borderline": true,
+      "classified": "capabilities",
+      "reason": "The change adds an on-disk completion cache to the model client so repeated benchmark runs don't re-query the model. Its main purpose is to make evaluation runs cheaper and faster, which is performance and caching work. The benchmarks are reasoning benchmarks, so they measure capability, not safety. The cache is part of inference serving and caching, not general engineering.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h06",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "The change makes the service's logging output JSON with a request-id contextvar so a log shipper can parse it. It is general observability and logging work. Nothing in the task, the file path (obs/logfmt.py) or the code points to AI safety or to model capabilities.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h07",
+      "intended": "capabilities",
+      "borderline": true,
+      "classified": "capabilities",
+      "reason": "The change implements the training loss and train step for a helpfulness reward model, which is preference-based model training aimed at making models more helpful. This is training code, not a safety evaluation or safeguard.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h08",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "The change fixes timestamp parsing (a 'Z' suffix and long fractional seconds) in a general-purpose date helper, tracking/timefmt.py. Nothing in the task, file paths or code points to a safety or capabilities purpose, so this is general engineering.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h09",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The code is an evaluation that checks whether a model deliberately underperforms (sandbags) when it thinks high scores could block its release. That is an evaluation of deceptive or dangerous model behavior, so it counts as safety work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h10",
+      "intended": "other",
+      "borderline": true,
+      "classified": "capabilities",
+      "reason": "The MinHasher is a general-purpose near-duplicate detector, but the task ties it to the pretraining dedup job and the eval-set builder. Pretraining data deduplication is a training-data pipeline, which counts as capabilities work. The eval-set builder is a second consumer, probably for decontamination. Overall the pretraining data pipeline looks like the main purpose.",
+      "agrees": false,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h11",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "The change is packaging configuration in setup.py: a console script entry point, an optional extras group, a Python version requirement, and version lookup. Nothing in it points to safety or capabilities work, and \"runbook\" is a generic tool.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h12",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "Speculative decoding verification (accept/reject drafted tokens, residual resampling, bonus token) is an inference speedup technique in decode/speculative.py, making model serving faster/cheaper. It is not a safety measure or general utility.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h13",
+      "intended": "other",
+      "borderline": true,
+      "classified": "safety",
+      "reason": "The refactor is in a content moderation classifier that flags harmful categories such as sexual content involving minors, violent threats, self-harm and hate. It makes no behavior change, but the module's purpose is a content safeguard. Under the rule that general code takes the purpose of its module, this counts as safety.",
+      "agrees": false,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h14",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "The change adds a general-purpose slugify helper for filesystem-safe run directory names. It is string handling and naming in a utility module, with no link to safety or capabilities work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h15",
+      "intended": "safety",
+      "borderline": true,
+      "classified": "safety",
+      "reason": "The change detects reward hacking in RL episodes (agents editing tests, conftest, or adding skip markers to pass hidden tests), zeroes the reward and routes the episode to human review. This is monitoring and oversight of agent actions and tooling that keeps evaluation and reward signals trustworthy, so it counts as safety rather than general engineering.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h16",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The change adds min-p filtering to the token sampling and decoding code (`sampling/logits_processors.py`) and exposes it as a `SamplingParams` option. This is a decoding feature, so it counts as capabilities work. Nothing in the task or the code points to a safety purpose.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h17",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The change replaces padding with sequence packing in a training data pipeline, which makes training more efficient (less wasted compute on pad tokens) and is training-data pipeline work. Nothing in it concerns safety.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h18",
+      "intended": "capabilities",
+      "borderline": true,
+      "classified": "capabilities",
+      "reason": "The change adds a quality filter to a pretraining data pipeline (webcorpus/filters.py), dropping low-quality, boilerplate, adult and spam pages. The task justifies it by a two-point gain on the reasoning suite at equal token count, so its main purpose is improving model capability through better training data. Dropping adult and spam pages is part of data quality filtering here, not a content-safeguard goal.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h19",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "The change adds type hints and docstrings to storage path helpers (bucket prefix, cache path, remote check) with no behavior change. This is documentation and typing work on general-purpose utilities, and nothing in it relates to safety or model capabilities.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h20",
+      "intended": "safety",
+      "borderline": true,
+      "classified": "safety",
+      "reason": "The code is in the offensive-cyber CTF eval runner, which is a dangerous-capability evaluation. Its purpose is to measure risks from AI systems. The change speeds up that evaluation and makes its results more trustworthy by recording infrastructure crashes as `error` instead of `fail`. This is evaluation tooling, so it counts as safety work, not general capabilities or other engineering.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h21",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The change implements the pass@k estimator for a code-generation capability benchmark (bench/codegen). Its purpose is to measure how well models solve coding problems, which is capability evaluation, not risk measurement.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h22",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "This change adds environment-variable overrides to a general settings loader and documents the precedence. It is configuration handling and has no safety or capabilities purpose.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h23",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The change adds gradient accumulation to the training loop so the run can reach a 4M-token global batch on 64 GPUs. It also skips the all-reduce on non-boundary micro-batches. Both are training-code and scaling work, so the main purpose is capabilities.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h24",
+      "intended": "other",
+      "borderline": false,
+      "classified": "other",
+      "reason": "This adds a general-purpose markdown table formatter to a reporting utility module, and nothing in the task or the code points to safety or capabilities work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h25",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The change implements a paged KV-cache block allocator for inference serving. It has a free list, reference counting, prefix sharing across beam and parallel-sample forks, and copy-on-write. This is memory management that makes model serving more efficient, so it counts as capabilities (inference serving and caching). It has no safety purpose.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h26",
+      "intended": "other",
+      "borderline": true,
+      "classified": "other",
+      "reason": "This is a storage-format migration (CSV to date-partitioned Parquet with a schema) in a shared eval results store. It covers every suite, jailbreak-resistance and coding alike, and serves no safety or capabilities purpose in particular. It is general data-handling engineering.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h27",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The change adds a policy that holds risky agent shell commands (download piped to a shell, access to credential directories, rm outside the workspace) for human approval. This is oversight and monitoring of agent actions, so it counts as safety work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h28",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The change tunes a request screener that blocks or escalates bio, chem, cyber and weapons misuse requests. It adds per-category block cutoffs and a lower review cutoff that routes requests to a human queue. This is a misuse safeguard and a form of oversight, so it counts as safety work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h29",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The change implements continuous batching in an inference scheduler (admitting requests against a token budget, separating prefill and decode groups) and is checked with a throughput benchmark. This is inference serving and scheduling work aimed at speed and efficiency, so it counts as capabilities.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h30",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The change masks phone numbers, payment-card numbers (Luhn-checked) and emails in user messages before they reach the model and the request log. That is protecting personal or sensitive data that passes through models, which the safety category lists explicitly.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h31",
+      "intended": "capabilities",
+      "borderline": false,
+      "classified": "capabilities",
+      "reason": "The work adds a warmup-then-cosine learning-rate schedule to the optimizer code to fix a training run that diverged. That is training code meant to make model training stable and effective, so it counts as capabilities.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h32",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The work builds a linear probe on residual-stream activations to test whether the model internally represents being evaluated (evaluation awareness). This is interpretability/alignment research aimed at understanding a risk, namely that models may behave differently when tested, so it counts as safety.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h33",
+      "intended": "capabilities",
+      "borderline": true,
+      "classified": "capabilities",
+      "reason": "The task is profiling per-block CUDA forward times to find a training step-time regression (410 ms to 530 ms). That is performance work, which makes training faster or cheaper to run. It has no safety purpose.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h34",
+      "intended": "safety",
+      "borderline": true,
+      "classified": "safety",
+      "reason": "The change adds an audit log to a transcript monitor, a tool that flags model conversations. The log records score, matched rules and the flag decision. Its stated purpose is to let reviewers sample unflagged transcripts and estimate how much the monitor misses. That is measuring and making trustworthy the oversight of model outputs, so it counts as safety work.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h35",
+      "intended": "safety",
+      "borderline": false,
+      "classified": "safety",
+      "reason": "The grader detects episodes where an agent's final summary claims tests pass while its own transcript shows failing pytest runs. That is an evaluation of deceptive or unfaithful agent behavior (false claims of success), and it is registered as a grader, so it falls under safety evaluation tooling.",
+      "agrees": true,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h36",
+      "intended": "safety",
+      "borderline": true,
+      "classified": "safety",
+      "reason": "The task is to decontaminate the fine-tuning mix against the held-out harmful-request eval. The goal is to keep refusal evaluation numbers trustworthy, which is tooling that makes safety evaluations valid. The n-gram filtering is general-purpose, but its purpose here is evaluation integrity for refusal behavior.",
+      "agrees": true,
+      "verdict": "confirmed"
+    }
+  ],
+  "trials": [
+    {
+      "id": "h01",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h01",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h02",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h02",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h03",
+      "from": "other",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h03",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h04",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h04",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h05",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h05",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h06",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h06",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h07",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h07",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h08",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h08",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h09",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h09",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h10",
+      "from": "other",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h10",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": false,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h11",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h11",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h12",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h12",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h13",
+      "from": "other",
+      "to": "safety",
+      "borderline": true,
+      "caught": false,
+      "verdict": "confirmed"
+    },
+    {
+      "id": "h13",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h14",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h14",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h15",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h15",
+      "from": "safety",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h16",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h16",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h17",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h17",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h18",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h18",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h19",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h19",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h20",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h20",
+      "from": "safety",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h21",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h21",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h22",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h22",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h23",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h23",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h24",
+      "from": "other",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h24",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h25",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h25",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h26",
+      "from": "other",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h26",
+      "from": "other",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "unconfirmed"
+    },
+    {
+      "id": "h27",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h27",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h28",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h28",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h29",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h29",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h30",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h30",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h31",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h31",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h32",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h32",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h33",
+      "from": "capabilities",
+      "to": "safety",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h33",
+      "from": "capabilities",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h34",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h34",
+      "from": "safety",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h35",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h35",
+      "from": "safety",
+      "to": "other",
+      "borderline": false,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h36",
+      "from": "safety",
+      "to": "capabilities",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    },
+    {
+      "id": "h36",
+      "from": "safety",
+      "to": "other",
+      "borderline": true,
+      "caught": true,
+      "verdict": "contradicted"
+    }
+  ]
+}

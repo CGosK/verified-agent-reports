@@ -1,0 +1,46 @@
+{
+  "audited_at": "2026-11-13T20:53:51.943525+00:00",
+  "window": [
+    "2026-11-13T20:42:00.260000+00:00",
+    "2026-11-13T20:53:00+00:00"
+  ],
+  "chain": {
+    "ok": true,
+    "entries": 60,
+    "head": "5cedc6eb945b371147e8693820982aa0bb8dfc6445cbb9226994f0663988ed29",
+    "problems": [],
+    "problem_count": 0
+  },
+  "totals": {
+    "ok": true,
+    "note": "no published report given; recount only",
+    "categories": {
+      "safety": 15870
+    }
+  },
+  "sessions": {
+    "ok": false,
+    "requests_in_files": 10,
+    "requests_in_log_window": 3,
+    "missing_from_log": [
+      "req_011Ch1aR4b8eXmdN11aaYjMv",
+      "req_011Ch1aRED5ADCBodgtSCzAP",
+      "req_011Ch1aRSguQCt3uCsYwMis1",
+      "req_011Ch1aRi8MGYtRCZfrQs2Xk",
+      "req_011Ch1afrTHxKL7xdH8V6Yjh",
+      "req_011Ch1afyFaDEtmptGt81zGd",
+      "req_011Ch1agLienCYKKZ6fX4kLS"
+    ],
+    "off_log_sessions": [
+      "20f06fe8-ed07-430a-8a4a-9046ab323398",
+      "62007c88-74bb-4627-98a1-551384361a36"
+    ],
+    "missing_from_files": [],
+    "token_mismatch": {}
+  },
+  "provider": {
+    "ok": null,
+    "skipped": "disabled"
+  },
+  "ok": false
+}

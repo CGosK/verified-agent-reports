@@ -1,0 +1,102 @@
+{
+ "4981a32faa4a9d65|session:00f1db2a-0538-4688-8ac5-ded166df1fb9": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The function `flag_transcripts` lives in `labkit/safety/monitor.py`. It scans transcripts for patterns and flags the matches, which is monitoring of model outputs. Both the folder and the task wording point to safety."
+ },
+ "4981a32faa4a9d65|session:0dff53ad-2a34-4402-ba2b-c4b78429fc03": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The work fixes a phone-number regex in `labkit/safety/redact.py`, which redacts personal data. Protecting personal or sensitive data is a safety purpose, and the folder name and task point the same way."
+ },
+ "4981a32faa4a9d65|session:0f5e4c17-8920-475e-87aa-a0c6da4854fa": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The task implements an LRUCache in labkit/model/cache.py. A cache inside a model module is most likely for inference or serving, such as caching computed results, which makes models faster or cheaper to run. Nothing in the task points to safety. The \"model\" folder points to capabilities more than to general-purpose engineering. No diff was provided, so this rests on the task and the file path."
+ },
+ "4981a32faa4a9d65|session:184eb82a-7d47-4060-8927-39d595ca7b4f": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The code lives in labkit/model/ngrams.py and counts n-grams in a token sequence, which is language-model statistics and not general string handling. Nothing points to a safety purpose. The folder suggests model-side work, so I count it as capabilities, but this is a weak call."
+ },
+ "4981a32faa4a9d65|session:1efc3125-5021-428e-8bbf-79cc26fc7a56": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements a generic version-string comparison helper in a shared utility module (labkit/util/versions.py). Nothing in the task, path or code points to safety or capabilities work."
+ },
+ "4981a32faa4a9d65|session:1f420f0c-fc3e-4b62-ac41-ab0850db8431": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The code detects training/test n-gram overlap (benchmark contamination) in an evals module. This is tooling that makes evaluations trustworthy, which counts as safety work under the given definition. A contamination check is general-purpose in form, but its folder (labkit/evals) and wording point to evaluation integrity."
+ },
+ "4981a32faa4a9d65|session:270fbc86-aaf5-429f-9cc4-3e1da14b317f": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The code computes a refusal rate over model responses in an evals module (labkit/evals/refusals.py). That is an evaluation of refusal behavior, which counts as safety measurement work."
+ },
+ "4981a32faa4a9d65|session:35aeb4d8-cc1e-4527-8a4c-7cd24af96e6e": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements a generic text helper, `slugify`, in `labkit/util/text.py`. It is a shared string utility, and nothing in the task, the path or the code points to a safety or capabilities purpose."
+ },
+ "4981a32faa4a9d65|session:39b25d00-79b8-4f43-bf76-9a5b4161c250": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The function lives in labkit/safety/monitor.py and flags transcripts matching patterns, which is monitoring of model outputs or agent actions. That is a safety purpose."
+ },
+ "4981a32faa4a9d65|session:41421c97-2c0e-4129-995b-ce47b418e9a4": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements a warmup-plus-cosine learning rate schedule in labkit/model/schedule.py. Learning rate schedules are part of model training, so this counts as capabilities work."
+ },
+ "4981a32faa4a9d65|session:4ab0fcfc-6442-4578-a99d-20da50aee214": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "Cohen's kappa is a general statistic, but it lives in `labkit/evals/agreement.py`. Inter-rater agreement is used to check that evaluations, such as labels of model behavior, are reliable. The module's folder points to evaluation tooling. That makes the work support trustworthy evaluations, which falls under safety rather than other."
+ },
+ "4981a32faa4a9d65|session:4b24c66b-48b7-4ed1-b216-7af07dd7136e": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The work implements a generic table-rendering helper in a shared utility module (labkit/util/table.py). It formats strings into a text table and has no link to safety or capabilities purposes."
+ },
+ "4981a32faa4a9d65|session:7c9c70e0-c57d-41c1-9aa2-44d7e37b2f91": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The code lives in labkit/safety/redact.py and redacts email addresses and phone numbers from text. That protects personal data passing through models, which falls under safety."
+ },
+ "4981a32faa4a9d65|session:85d79f48-2b98-4969-9934-9194c87f2fba": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The code packs sequences into token-limited batches (first-fit decreasing) in `labkit/model/batching.py`. Batching to cut padding and use compute well is a training/inference efficiency task, which falls under capabilities."
+ },
+ "4981a32faa4a9d65|session:86990f96-63a1-4301-b885-89f51ced949c": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "deep_merge is a general-purpose config/dict utility in labkit/util/config.py. Nothing in the task, path or code points to a safety or capabilities purpose."
+ },
+ "4981a32faa4a9d65|session:967f9949-0c5a-4558-86f3-b344795d2450": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The code detects n-gram overlap between test items and training documents (benchmark/test-set contamination) in `labkit/evals/contamination.py`. Contamination checks make evaluations trustworthy, and the task is tooling for evaluation integrity, so this fits the evaluations-tooling side of safety better than general engineering."
+ },
+ "4981a32faa4a9d65|session:b852ea31-72d6-4918-ab73-fd113e5b22e5": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "top_k_filter implements top-k sampling (keeps the k highest logits, masks the rest) in labkit/model/sampling.py. Sampling and decoding code is listed under capabilities, and nothing in the task or code points to a safety purpose."
+ },
+ "4981a32faa4a9d65|session:c4e60585-deb6-441a-b112-d97384872117": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements sequence packing into token-limited batches (first-fit decreasing) in labkit/model/batching.py. Packing sequences into batches is a training and inference efficiency technique, so its main purpose is to make models faster or cheaper to run."
+ },
+ "4981a32faa4a9d65|session:f90778da-a29d-43d1-8c7b-f3a22bcc2cd4": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements a general-purpose duration string parser in a shared utility module (labkit/util/durations.py). Nothing in the task, file path or code points to a safety or capabilities purpose."
+ },
+ "4981a32faa4a9d65|session:f9fa056d-3183-43b0-b8cc-4df89071298c": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements a generic LRU cache (an OrderedDict-based get/put/len data structure). It lives in labkit/model/cache.py and the task wording doesn't tie it to inference serving, KV caching, or any safety purpose. The 'model' folder name is only weak evidence. With nothing pointing to safety or capabilities, it counts as general-purpose utility code."
+ }
+}

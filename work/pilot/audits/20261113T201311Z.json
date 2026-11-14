@@ -1,0 +1,37 @@
+{
+  "audited_at": "2026-11-13T20:13:11.851314+00:00",
+  "window": [
+    "2026-11-13T19:54:22.737000+00:00",
+    "2026-11-13T20:13:00+00:00"
+  ],
+  "chain": {
+    "ok": true,
+    "entries": 218,
+    "head": "43b9cc939641718a1c02408a3a4e5b1579d623dee161150dd0d0988037e0e383",
+    "problems": [],
+    "problem_count": 0
+  },
+  "totals": {
+    "ok": true,
+    "note": "no published report given; recount only",
+    "categories": {
+      "capabilities": 431069,
+      "other": 430145,
+      "safety": 360099
+    }
+  },
+  "sessions": {
+    "ok": true,
+    "requests_in_files": 34,
+    "requests_in_log_window": 34,
+    "missing_from_log": [],
+    "off_log_sessions": [],
+    "missing_from_files": [],
+    "token_mismatch": {}
+  },
+  "provider": {
+    "ok": null,
+    "skipped": "disabled"
+  },
+  "ok": true
+}

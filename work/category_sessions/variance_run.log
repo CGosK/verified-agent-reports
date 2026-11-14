@@ -1,0 +1,4 @@
+s3_contamination subscription declared safety | earlier: manifest capabilities session safety | re-asked: manifest ['safety', 'safety'] session ['safety', 'safety']
+c3_batching subscription declared capabilities | earlier: manifest other session capabilities | re-asked: manifest ['capabilities', 'capabilities'] session ['capabilities', 'capabilities']
+c4_cache subscription declared capabilities | earlier: manifest capabilities session other | re-asked: manifest ['other', 'capabilities'] session ['capabilities', 'other']
+c5_ngrams subscription declared capabilities | earlier: manifest other session capabilities | re-asked: manifest ['other', 'other'] session ['other', 'other']

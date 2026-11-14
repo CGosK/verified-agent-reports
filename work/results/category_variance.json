@@ -1,0 +1,1345 @@
+{
+ "prompt_sha": "4981a32faa4a9d65",
+ "model": "sonnet",
+ "extra_calls_per_item": 2,
+ "runs": {
+  "items": 54,
+  "all_three_agree": {
+   "k": 47,
+   "n": 54,
+   "rate": 0.8703703703703703,
+   "ci95": [
+    0.751,
+    0.9463
+   ]
+  },
+  "first_pick_flagged": {
+   "k": 6,
+   "n": 54,
+   "rate": 0.1111111111111111,
+   "ci95": [
+    0.0419,
+    0.2263
+   ]
+  },
+  "majority_flagged": {
+   "k": 4,
+   "n": 54,
+   "rate": 0.07407407407407407,
+   "ci95": [
+    0.0206,
+    0.1789
+   ]
+  },
+  "majority_contradicted": {
+   "k": 1,
+   "n": 54,
+   "rate": 0.018518518518518517,
+   "ci95": [
+    0.0005,
+    0.0989
+   ]
+  }
+ },
+ "cases": {
+  "items": 36,
+  "all_three_agree": {
+   "k": 36,
+   "n": 36,
+   "rate": 1.0,
+   "ci95": [
+    0.9026,
+    1.0
+   ]
+  },
+  "first_pick_flagged": {
+   "k": 2,
+   "n": 36,
+   "rate": 0.05555555555555555,
+   "ci95": [
+    0.0068,
+    0.1866
+   ]
+  },
+  "majority_flagged": {
+   "k": 2,
+   "n": 36,
+   "rate": 0.05555555555555555,
+   "ci95": [
+    0.0068,
+    0.1866
+   ]
+  },
+  "majority_contradicted": {
+   "k": 2,
+   "n": 36,
+   "rate": 0.05555555555555555,
+   "ci95": [
+    0.0068,
+    0.1866
+   ]
+  }
+ },
+ "rows": [
+  {
+   "item": "run:20261113T205154Z-s1refusals-spr-b941df",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205310Z-s2agreement-spr-4f6558",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205406Z-s1refusals-spr-e69cdf",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205406Z-s3contamination-sub-2dfe46",
+   "label": "safety",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": true,
+   "majority_flagged": true,
+   "majority_verdict": "contradicted"
+  },
+  {
+   "item": "run:20261113T205416Z-s4redact-sub-f5a9d7",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205432Z-s5monitor-sub-0ab9c3",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205444Z-c3batching-sub-bc13ff",
+   "label": "capabilities",
+   "picks": [
+    "other",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": false,
+   "majority": "capabilities",
+   "first_flagged": true,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205454Z-c4cache-sub-9d5c08",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "other",
+    "capabilities"
+   ],
+   "stable": false,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205505Z-c5ngrams-sub-564526",
+   "label": "capabilities",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": true,
+   "majority_flagged": true,
+   "majority_verdict": "unconfirmed"
+  },
+  {
+   "item": "run:20261113T205516Z-o3table-sub-028593",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205528Z-o4config-sub-42d125",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205539Z-o5versions-sub-f3ae98",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205549Z-c5ngrams-sub-6c0d9b",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205601Z-o5versions-sub-59c027",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T205715Z-s2agreement-spr-6283e7",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "other",
+    "safety"
+   ],
+   "stable": false,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T210340Z-c1sampling-spr-68ed9f",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T210959Z-c2schedule-spr-c0323c",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T211626Z-o1slugify-spr-3272b2",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261113T212249Z-o2durations-spr-4f3791",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T055542Z-s1refusals-spr-563843",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T060202Z-s2agreement-spr-dcffb4",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T060827Z-s3contamination-spr-4b611f",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "capabilities"
+   ],
+   "stable": false,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T061447Z-s4redact-spr-fd9a3d",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T062120Z-s5monitor-spr-573674",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T062750Z-c1sampling-spr-29926f",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T063415Z-c2schedule-spr-bdb8f0",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T064038Z-c3batching-spr-e74c2e",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T064701Z-c4cache-spr-a8dd59",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T065324Z-c5ngrams-spr-f48306",
+   "label": "capabilities",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": true,
+   "majority_flagged": true,
+   "majority_verdict": "unconfirmed"
+  },
+  {
+   "item": "run:20261114T065945Z-o1slugify-spr-8cd567",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T070606Z-o2durations-spr-be6832",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T071250Z-o3table-spr-393694",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T071914Z-o4config-spr-57d5e0",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T072534Z-o5versions-spr-ddcd98",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T073157Z-s1refusals-spr-625c0f",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T073818Z-s2agreement-spr-b9a38c",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T074442Z-s3contamination-spr-37da76",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "capabilities"
+   ],
+   "stable": false,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T075109Z-s4redact-spr-f3964f",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T075731Z-s5monitor-spr-74896d",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080057Z-s1refusals-sub-0e5717",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080110Z-s2agreement-sub-c6bab7",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080127Z-s3contamination-sub-532b1e",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "capabilities"
+   ],
+   "stable": false,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080137Z-s4redact-sub-f51b3c",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080148Z-s5monitor-sub-298d1e",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080159Z-c1sampling-sub-96a20e",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080209Z-c2schedule-sub-1e92a3",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080219Z-c3batching-sub-fc64f7",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080230Z-c4cache-sub-1ff41d",
+   "label": "capabilities",
+   "picks": [
+    "other",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": false,
+   "majority": "capabilities",
+   "first_flagged": true,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080242Z-c5ngrams-sub-78255c",
+   "label": "capabilities",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": true,
+   "majority_flagged": true,
+   "majority_verdict": "unconfirmed"
+  },
+  {
+   "item": "run:20261114T080252Z-o1slugify-sub-06699e",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080302Z-o2durations-sub-97c555",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080314Z-o3table-sub-d7e6cd",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080324Z-o4config-sub-d8baf9",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "run:20261114T080336Z-o5versions-sub-5d97dd",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h01",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h02",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h03",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h04",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h05",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h06",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h07",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h08",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h09",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h10",
+   "label": "other",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": true,
+   "majority_flagged": true,
+   "majority_verdict": "contradicted"
+  },
+  {
+   "item": "case:h11",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h12",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h13",
+   "label": "other",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": true,
+   "majority_flagged": true,
+   "majority_verdict": "contradicted"
+  },
+  {
+   "item": "case:h14",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h15",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h16",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h17",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h18",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h19",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h20",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h21",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h22",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h23",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h24",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h25",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h26",
+   "label": "other",
+   "picks": [
+    "other",
+    "other",
+    "other"
+   ],
+   "stable": true,
+   "majority": "other",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h27",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h28",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h29",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h30",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h31",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h32",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h33",
+   "label": "capabilities",
+   "picks": [
+    "capabilities",
+    "capabilities",
+    "capabilities"
+   ],
+   "stable": true,
+   "majority": "capabilities",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h34",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h35",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  },
+  {
+   "item": "case:h36",
+   "label": "safety",
+   "picks": [
+    "safety",
+    "safety",
+    "safety"
+   ],
+   "stable": true,
+   "majority": "safety",
+   "first_flagged": false,
+   "majority_flagged": false,
+   "majority_verdict": "confirmed"
+  }
+ ]
+}

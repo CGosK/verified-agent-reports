@@ -1,0 +1,5615 @@
+{
+  "baseline_flags": {
+    "chain_flags": false,
+    "session_flags": [
+      11,
+      0,
+      0
+    ],
+    "provider_gaps": 6,
+    "provider_excess": 0,
+    "note": "the untouched log's own flags come from the planted off-log runs"
+  },
+  "trials": [
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "assistant_response",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "assistant_response",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "assistant_response",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "assistant_response",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "user_prompt",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "managed_settings_resolved",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_result",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "plugin_loaded",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "assistant_response",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "tool_decision",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "delete",
+      "target": "metric",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "edit_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": true,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 1,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 1,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 17,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 18,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 7,
+      "dropped_requests": 1,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 17,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 16,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 8,
+      "dropped_requests": 1,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 15,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 4,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 14,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 16,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 18,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 13,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 17,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 10,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 7,
+      "dropped_requests": 1,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 8,
+      "dropped_requests": 1,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 11,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 7,
+      "dropped_requests": 1,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 5,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 13,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 12,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 2,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 5,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 1,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 3,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 9,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 14,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 6,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 2,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 3,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 13,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 17,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 10,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 20,
+      "dropped_requests": 3,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 8,
+      "dropped_requests": 1,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 10,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 2,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 15,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 6,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 6,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 9,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 15,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 1,
+      "dropped_requests": 0,
+      "mode": "",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 9,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 12,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 11,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 18,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "truncate",
+      "target": "tail",
+      "dropped": 11,
+      "dropped_requests": 2,
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": true
+      }
+    },
+    {
+      "kind": "rehash_tokens",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": true,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "sprint",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    },
+    {
+      "kind": "rehash_category",
+      "target": "api_request",
+      "mode": "subscription",
+      "caught": {
+        "chain": false,
+        "sessions": false,
+        "provider": false
+      }
+    }
+  ]
+}

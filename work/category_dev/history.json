@@ -1,0 +1,85 @@
+{
+ "note": "Development of the category check on batch 1's 19 logged runs, Nov 14, 2026. v1 told the model to call unmarked utilities 'other'; v2 counts the folder and task wording as evidence of purpose. The frozen version is the v2 prompt on sonnet; held-out sets were scored only after this.",
+ "frozen_prompt_sha": "4981a32faa4a9d65",
+ "frozen_model": "sonnet",
+ "history": [
+  {
+   "file": "dev_1338e17d8a408702.json",
+   "prompt_sha": "1338e17d8a408702",
+   "model": "haiku",
+   "true_tags_flagged": [
+    5,
+    19
+   ],
+   "relabels_caught": [
+    33,
+    38
+   ],
+   "capabilities_to_safety_caught": [
+    6,
+    6
+   ]
+  },
+  {
+   "file": "dev_4981a32faa4a9d65_sonnet.json",
+   "prompt_sha": "4981a32faa4a9d65",
+   "model": "sonnet",
+   "true_tags_flagged": [
+    3,
+    19
+   ],
+   "relabels_caught": [
+    35,
+    38
+   ],
+   "capabilities_to_safety_caught": [
+    6,
+    6
+   ]
+  },
+  {
+   "file": "dev_bfd390ea3ddfd921.json",
+   "prompt_sha": "bfd390ea3ddfd921",
+   "model": "haiku",
+   "true_tags_flagged": [
+    6,
+    19
+   ],
+   "relabels_caught": [
+    32,
+    38
+   ],
+   "capabilities_to_safety_caught": [
+    6,
+    6
+   ]
+  }
+ ],
+ "dev_run_ids": [
+  "20261113T205154Z-s1refusals-spr-b941df",
+  "20261113T205310Z-s2agreement-spr-4f6558",
+  "20261113T205406Z-s1refusals-spr-e69cdf",
+  "20261113T205406Z-s3contamination-sub-2dfe46",
+  "20261113T205416Z-s4redact-sub-f5a9d7",
+  "20261113T205432Z-s5monitor-sub-0ab9c3",
+  "20261113T205444Z-c3batching-sub-bc13ff",
+  "20261113T205454Z-c4cache-sub-9d5c08",
+  "20261113T205505Z-c5ngrams-sub-564526",
+  "20261113T205516Z-o3table-sub-028593",
+  "20261113T205528Z-o4config-sub-42d125",
+  "20261113T205539Z-o5versions-sub-f3ae98",
+  "20261113T205549Z-c5ngrams-sub-6c0d9b",
+  "20261113T205601Z-o5versions-sub-59c027",
+  "20261113T205715Z-s2agreement-spr-6283e7",
+  "20261113T210025Z-o3table-spr-7d0f67",
+  "20261113T210340Z-c1sampling-spr-68ed9f",
+  "20261113T210650Z-c4cache-spr-dbf31a",
+  "20261113T210959Z-c2schedule-spr-c0323c",
+  "20261113T211311Z-s5monitor-spr-584019",
+  "20261113T211626Z-o1slugify-spr-3272b2",
+  "20261113T211938Z-o4config-spr-823aaa",
+  "20261113T212249Z-o2durations-spr-4f3791",
+  "20261113T212601Z-c3batching-spr-c1ab8c",
+  "20261113T212916Z-s4redact-spr-aba66b"
+ ]
+}

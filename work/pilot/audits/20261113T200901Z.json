@@ -1,0 +1,72 @@
+{
+  "audited_at": "2026-11-13T20:08:59.294896+00:00",
+  "window": [
+    "2026-11-13T19:54:22.737000+00:00",
+    "2026-11-13T20:08:00+00:00"
+  ],
+  "chain": {
+    "ok": true,
+    "entries": 39,
+    "head": "f083f390ea8df75261dc35e59ced0ed92aea33213b74a3521ebb46d59888c767",
+    "problems": [],
+    "problem_count": 0
+  },
+  "totals": {
+    "ok": true,
+    "note": "no published report given; recount only",
+    "categories": {
+      "safety": 125091
+    }
+  },
+  "sessions": {
+    "ok": true,
+    "requests_in_files": 6,
+    "requests_in_log_window": 6,
+    "missing_from_log": [],
+    "off_log_sessions": [],
+    "missing_from_files": [],
+    "token_mismatch": {}
+  },
+  "provider": {
+    "ok": false,
+    "window": [
+      "2026-11-13T19:54:22.737000+00:00",
+      "2026-11-13T20:08:00+00:00"
+    ],
+    "shift_minutes": 2,
+    "tolerance": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+    },
+    "provider_tokens": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+    },
+    "logged_tokens": {
+      "input": 8,
+      "output": 642,
+      "cache_read": 4100,
+      "cache_creation": 2891
+    },
+    "gaps": [],
+    "log_excess": [
+      {
+        "start": "2026-11-13T20:04:00+00:00",
+        "end": "2026-11-13T20:04:00+00:00",
+        "tokens": {
+          "input": 8,
+          "output": 642,
+          "cache_read": 4100,
+          "cache_creation": 2891
+        }
+      }
+    ],
+    "minutes_checked": 14,
+    "clean_minutes": 13
+  },
+  "ok": false
+}

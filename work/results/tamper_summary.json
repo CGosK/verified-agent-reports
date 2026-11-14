@@ -1,0 +1,363 @@
+{
+  "baseline_flags": {
+    "chain_flags": false,
+    "session_flags": [
+      11,
+      0,
+      0
+    ],
+    "provider_gaps": 6,
+    "provider_excess": 0,
+    "note": "the untouched log's own flags come from the planted off-log runs"
+  },
+  "summary": {
+    "delete": {
+      "trials": 200,
+      "chain": {
+        "k": 200,
+        "n": 200,
+        "rate": 1.0,
+        "ci95": [
+          0.9817,
+          1.0
+        ]
+      },
+      "sessions": {
+        "k": 27,
+        "n": 200,
+        "rate": 0.135,
+        "ci95": [
+          0.0909,
+          0.1903
+        ]
+      },
+      "provider": {
+        "k": 14,
+        "n": 200,
+        "rate": 0.07,
+        "ci95": [
+          0.0388,
+          0.1147
+        ]
+      },
+      "any": {
+        "k": 200,
+        "n": 200,
+        "rate": 1.0,
+        "ci95": [
+          0.9817,
+          1.0
+        ]
+      },
+      "touching_requests": 27,
+      "sessions_on_requests": {
+        "k": 27,
+        "n": 27,
+        "rate": 1.0,
+        "ci95": [
+          0.8723,
+          1.0
+        ]
+      },
+      "provider_on_sprint_requests": {
+        "k": 14,
+        "n": 14,
+        "rate": 1.0,
+        "ci95": [
+          0.7684,
+          1.0
+        ]
+      }
+    },
+    "edit_category": {
+      "trials": 100,
+      "chain": {
+        "k": 100,
+        "n": 100,
+        "rate": 1.0,
+        "ci95": [
+          0.9638,
+          1.0
+        ]
+      },
+      "sessions": {
+        "k": 0,
+        "n": 100,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0362
+        ]
+      },
+      "provider": {
+        "k": 0,
+        "n": 100,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0362
+        ]
+      },
+      "any": {
+        "k": 100,
+        "n": 100,
+        "rate": 1.0,
+        "ci95": [
+          0.9638,
+          1.0
+        ]
+      },
+      "touching_requests": 100,
+      "sessions_on_requests": {
+        "k": 0,
+        "n": 100,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0362
+        ]
+      },
+      "provider_on_sprint_requests": {
+        "k": 0,
+        "n": 45,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0787
+        ]
+      }
+    },
+    "edit_tokens": {
+      "trials": 100,
+      "chain": {
+        "k": 100,
+        "n": 100,
+        "rate": 1.0,
+        "ci95": [
+          0.9638,
+          1.0
+        ]
+      },
+      "sessions": {
+        "k": 100,
+        "n": 100,
+        "rate": 1.0,
+        "ci95": [
+          0.9638,
+          1.0
+        ]
+      },
+      "provider": {
+        "k": 44,
+        "n": 100,
+        "rate": 0.44,
+        "ci95": [
+          0.3408,
+          0.5428
+        ]
+      },
+      "any": {
+        "k": 100,
+        "n": 100,
+        "rate": 1.0,
+        "ci95": [
+          0.9638,
+          1.0
+        ]
+      },
+      "touching_requests": 100,
+      "sessions_on_requests": {
+        "k": 100,
+        "n": 100,
+        "rate": 1.0,
+        "ci95": [
+          0.9638,
+          1.0
+        ]
+      },
+      "provider_on_sprint_requests": {
+        "k": 44,
+        "n": 44,
+        "rate": 1.0,
+        "ci95": [
+          0.9196,
+          1.0
+        ]
+      }
+    },
+    "rehash_category": {
+      "trials": 50,
+      "chain": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "sessions": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "provider": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "any": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "touching_requests": 50,
+      "sessions_on_requests": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "provider_on_sprint_requests": {
+        "k": 0,
+        "n": 23,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.1482
+        ]
+      }
+    },
+    "rehash_tokens": {
+      "trials": 50,
+      "chain": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "sessions": {
+        "k": 50,
+        "n": 50,
+        "rate": 1.0,
+        "ci95": [
+          0.9289,
+          1.0
+        ]
+      },
+      "provider": {
+        "k": 20,
+        "n": 50,
+        "rate": 0.4,
+        "ci95": [
+          0.2641,
+          0.5482
+        ]
+      },
+      "any": {
+        "k": 50,
+        "n": 50,
+        "rate": 1.0,
+        "ci95": [
+          0.9289,
+          1.0
+        ]
+      },
+      "touching_requests": 50,
+      "sessions_on_requests": {
+        "k": 50,
+        "n": 50,
+        "rate": 1.0,
+        "ci95": [
+          0.9289,
+          1.0
+        ]
+      },
+      "provider_on_sprint_requests": {
+        "k": 20,
+        "n": 20,
+        "rate": 1.0,
+        "ci95": [
+          0.8316,
+          1.0
+        ]
+      }
+    },
+    "truncate": {
+      "trials": 50,
+      "chain": {
+        "k": 0,
+        "n": 50,
+        "rate": 0.0,
+        "ci95": [
+          0.0,
+          0.0711
+        ]
+      },
+      "sessions": {
+        "k": 35,
+        "n": 50,
+        "rate": 0.7,
+        "ci95": [
+          0.5539,
+          0.8214
+        ]
+      },
+      "provider": {
+        "k": 35,
+        "n": 50,
+        "rate": 0.7,
+        "ci95": [
+          0.5539,
+          0.8214
+        ]
+      },
+      "any": {
+        "k": 35,
+        "n": 50,
+        "rate": 0.7,
+        "ci95": [
+          0.5539,
+          0.8214
+        ]
+      },
+      "touching_requests": 35,
+      "sessions_on_requests": {
+        "k": 35,
+        "n": 35,
+        "rate": 1.0,
+        "ci95": [
+          0.9,
+          1.0
+        ]
+      },
+      "provider_on_sprint_requests": {
+        "k": 35,
+        "n": 35,
+        "rate": 1.0,
+        "ci95": [
+          0.9,
+          1.0
+        ]
+      }
+    }
+  }
+}
