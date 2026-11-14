@@ -1,5 +1,19 @@
 .env
-work/
 __pycache__/
 *.pyc
 .DS_Store
+*.egg-info/
+build/
+
+# Run data is committed (logs, manifests, results) except these:
+# per-run git worktrees and the task repo they branch from (regenerable, nested git)
+work/runs/
+work/task-repo/
+work/smoke/
+# the interactive test's isolated Claude config and screen captures can hold
+# part of the API key (Claude Code's key-approval list and prompt)
+work/interactive/claude-config/
+work/interactive/*.screen.log
+# receiver runtime files
+work/receiver.pid
+work/receiver.out

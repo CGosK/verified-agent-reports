@@ -55,6 +55,7 @@ def api_requests(log_path=paths.LOG_PATH):
             "session_id": a.get("session.id"),
             "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
             "category": a.get("category") or r.get("category") or "untagged",
+            "project": a.get("project") or r.get("project"),
             "mode": a.get("run.mode") or r.get("run.mode") or _auth(a),
             "time": a.get("event.timestamp") or ev.get("time"),
             "model": a.get("model"),

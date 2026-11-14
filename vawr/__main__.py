@@ -138,8 +138,12 @@ def cmd_status(args):
 
 
 def cmd_report(args):
-    from . import report
-    rep = report.build(args.log, claims_path=args.claims)
+    from datetime import datetime, timezone
+    from . import billcheck, report
+    now = datetime.now(timezone.utc)
+    start = billcheck.parse_when(args.since, now) if args.since else None
+    end = billcheck.parse_when(args.until, now) if args.until else None
+    rep = report.build(args.log, claims_path=args.claims, start=start, end=end)
     if args.out:
         with open(args.out, "w") as fh:
             json.dump(rep, fh, indent=2)
@@ -207,7 +211,10 @@ def cmd_validate(args):
         reqs = auditor.api_requests(auditor.paths.LOG_PATH)
         audit = {"provider": auditor.check_provider(reqs, window[0], window[1], provider_minutes=provider),
                  "sessions": auditor.check_sessions(reqs, window[0], window[1])}
-        scored = validate.score_off_log(audit)
+        import os
+        conc_ids_path = os.path.join(validate.paths.WORK, "concurrency_run_ids.json")
+        conc_ids = json.load(open(conc_ids_path)) if os.path.exists(conc_ids_path) else []
+        scored = validate.score_off_log(audit, exclude_ids=set(conc_ids))
         _save("off_log.json", dict(scored, audit=audit))
         for r in scored["runs"]:
             print("%-14s %-17s provider=%-5s sessions=%-5s gap=%s share=%s" % (
@@ -216,6 +223,17 @@ def cmd_validate(args):
         print("unassigned gaps: %d; log excess: %d; background attributed: %s over %d logged sessions"
               % (len(scored["unassigned_gaps"]), len(scored["log_excess"]), scored["background_tokens"],
                  scored["logged_sessions"]))
+    if args.what in ("concurrency", "all"):
+        import os
+        conc_ids_path = os.path.join(validate.paths.WORK, "concurrency_run_ids.json")
+        if os.path.exists(conc_ids_path):
+            window, provider = validate.load_provider()
+            reqs = auditor.api_requests(auditor.paths.LOG_PATH)
+            audit = {"provider": auditor.check_provider(reqs, window[0], window[1], provider_minutes=provider)}
+            conc = validate.score_windows(audit, json.load(open(conc_ids_path)))
+            _save("concurrency.json", conc)
+            print("concurrency: off-log windows flagged %s; clean windows flagged %s" % (
+                conc["off_log_windows_flagged"], conc["clean_windows_flagged"]))
     if args.what in ("category", "all"):
         import os
         hist = os.path.join(validate.paths.WORK, "category_dev", "history.json")
@@ -238,45 +256,22 @@ def cmd_validate(args):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(prog="vawr")
-    sub = p.add_subparsers(dest="cmd", required=True)
+    p = argparse.ArgumentParser(
+        prog="vawr",
+        description="Checkable usage reports for Claude Code: see what Anthropic billed your API key "
+                    "that Claude Code didn't record, keep a tamper-evident log of agent work, and "
+                    "share a report by category with checks anyone can rerun.",
+        epilog="Start here: `vawr billcheck --since 7d` (needs ANTHROPIC_ADMIN_KEY and ANTHROPIC_API_KEY). "
+               "Then `vawr setup --write`, `vawr start`, work as usual, and `vawr check`.")
+    sub = p.add_subparsers(dest="cmd", required=True, metavar="command")
 
-    s = sub.add_parser("serve", help="run the OTLP receiver that writes the chained log")
-    s.add_argument("--log", default=LOG_PATH)
-    s.add_argument("--port", type=int, default=4318)
-    s.set_defaults(func=cmd_serve)
-
-    s = sub.add_parser("verify", help="recompute the hash chain")
-    s.add_argument("--log", default=LOG_PATH)
-    s.set_defaults(func=cmd_verify)
-
-    s = sub.add_parser("run", help="run one task with claude -p and write its manifest")
-    s.add_argument("--task", required=True)
-    s.add_argument("--mode", choices=("subscription", "sprint"), default="subscription")
-    s.add_argument("--plant", default=None,
-                   choices=("off_log", "off_log_no_files", "prompt_overstate", "prompt_blocker"))
-    s.add_argument("--model", default="sonnet")
-    s.add_argument("--max-budget", type=float, default=1.0, help="per-run cap for sprint mode, USD")
-    s.add_argument("--category", default=None, help="override the category tag (mislabel test)")
-    s.set_defaults(func=cmd_run)
-
-    s = sub.add_parser("batch", help="run one set from a run plan in order")
-    s.add_argument("--plan", default="tasks/run_plan.json")
-    s.add_argument("--set", choices=("sprint", "subscription"), required=True)
-    s.add_argument("--skip", type=int, default=0, help="skip the first N runs (to resume)")
-    s.set_defaults(func=cmd_batch)
-
-    s = sub.add_parser("provider-cache", help="fetch the Sprint key's per-minute usage once for validation")
-    s.add_argument("--start", required=True)
-    s.add_argument("--end", required=True)
-    s.set_defaults(func=cmd_provider_cache)
-
-    s = sub.add_parser("validate", help="planted-failure experiments")
-    s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "all"))
-    s.set_defaults(func=cmd_validate)
-
-    s = sub.add_parser("results", help="write work/results/summary.md from the experiment files")
-    s.set_defaults(func=lambda a: print(__import__("vawr.results", fromlist=["write"]).write()[1]))
+    s = sub.add_parser("billcheck", help="what Anthropic billed an API key vs what this machine's Claude Code session files record")
+    s.add_argument("--since", default="24h", help="how far back: 90m, 24h, 7d, or a UTC ISO time (default 24h)")
+    s.add_argument("--until", default=None, help="end time (default: now minus the usage records' lag)")
+    s.add_argument("--key-id", default=None, help="API key ID to check (default: the key in ANTHROPIC_API_KEY)")
+    s.add_argument("--json", default=None, help="also write the full result here")
+    s.add_argument("--projects", default=None, help="Claude Code's projects folder (default: ~/.claude/projects, or under CLAUDE_CONFIG_DIR)")
+    s.set_defaults(func=cmd_billcheck)
 
     s = sub.add_parser("setup", help="point Claude Code's telemetry at the local receiver (shows the change; --write applies it)")
     s.add_argument("--project", action="store_true", help="this project's .claude/settings.local.json instead of your user settings")
@@ -314,21 +309,24 @@ def main(argv=None):
     s.add_argument("--json", default=None)
     s.set_defaults(func=cmd_check)
 
-    s = sub.add_parser("billcheck", help="what Anthropic billed an API key vs what this machine's Claude Code session files record")
-    s.add_argument("--since", default="24h", help="how far back: 90m, 24h, 7d, or a UTC ISO time (default 24h)")
-    s.add_argument("--until", default=None, help="end time (default: now minus the usage records' lag)")
-    s.add_argument("--key-id", default=None, help="API key ID to check (default: the key in ANTHROPIC_API_KEY)")
-    s.add_argument("--json", default=None, help="also write the full result here")
-    s.add_argument("--projects", default=None, help="Claude Code's projects folder (default: ~/.claude/projects, or under CLAUDE_CONFIG_DIR)")
-    s.set_defaults(func=cmd_billcheck)
-
     s = sub.add_parser("report", help="allocation report from the chained log")
     s.add_argument("--log", default=LOG_PATH)
     s.add_argument("--claims", default=None, help="claims result JSON to fill the claims column")
     s.add_argument("--out", default=None, help="write the report JSON here")
+    s.add_argument("--since", default=None, help="only requests from this time: 30d, or a UTC ISO time")
+    s.add_argument("--until", default=None, help="only requests before this time")
     s.set_defaults(func=cmd_report)
 
-    s = sub.add_parser("audit", help="run the auditor's four checks")
+    s = sub.add_parser("serve", help="run the OTLP receiver that writes the chained log")
+    s.add_argument("--log", default=LOG_PATH)
+    s.add_argument("--port", type=int, default=4318)
+    s.set_defaults(func=cmd_serve)
+
+    s = sub.add_parser("verify", help="recompute the hash chain")
+    s.add_argument("--log", default=LOG_PATH)
+    s.set_defaults(func=cmd_verify)
+
+    s = sub.add_parser("audit", help="[research] run the auditor's four checks")
     s.add_argument("--log", default=LOG_PATH)
     s.add_argument("--report", default=None, help="published report JSON to check totals against")
     s.add_argument("--start", default=None, help="UTC ISO time; default 10 min before the first logged request")
@@ -337,6 +335,34 @@ def main(argv=None):
     s.add_argument("--no-provider", action="store_true")
     s.add_argument("--out", default=None)
     s.set_defaults(func=cmd_audit)
+
+    s = sub.add_parser("run", help="[research] run one task with claude -p and write its manifest")
+    s.add_argument("--task", required=True)
+    s.add_argument("--mode", choices=("subscription", "sprint"), default="subscription")
+    s.add_argument("--plant", default=None,
+                   choices=("off_log", "off_log_no_files", "prompt_overstate", "prompt_blocker"))
+    s.add_argument("--model", default="sonnet")
+    s.add_argument("--max-budget", type=float, default=1.0, help="per-run cap for sprint mode, USD")
+    s.add_argument("--category", default=None, help="override the category tag (mislabel test)")
+    s.set_defaults(func=cmd_run)
+
+    s = sub.add_parser("batch", help="[research] run one set from a run plan in order")
+    s.add_argument("--plan", default="tasks/run_plan.json")
+    s.add_argument("--set", choices=("sprint", "subscription"), required=True)
+    s.add_argument("--skip", type=int, default=0, help="skip the first N runs (to resume)")
+    s.set_defaults(func=cmd_batch)
+
+    s = sub.add_parser("provider-cache", help="[research] fetch the Sprint key's per-minute usage once for validation")
+    s.add_argument("--start", required=True)
+    s.add_argument("--end", required=True)
+    s.set_defaults(func=cmd_provider_cache)
+
+    s = sub.add_parser("validate", help="[research] planted-failure experiments")
+    s.add_argument("what", choices=("tamper", "flags", "offlog", "claims", "category", "concurrency", "all"))
+    s.set_defaults(func=cmd_validate)
+
+    s = sub.add_parser("results", help="[research] write work/results/summary.md from the experiment files")
+    s.set_defaults(func=lambda a: print(__import__("vawr.results", fromlist=["write"]).write()[1]))
 
     args = p.parse_args(argv)
     return args.func(args) or 0

@@ -83,6 +83,23 @@ def render():
         for p in cl.get("prompted_runs", []):
             out.append("- Prompted run %s (%s): %s" % (p["task"], p["plant"], p["verdicts"]))
         out.append("")
+    conc = _load("concurrency.json")
+    if conc:
+        out += ["## Concurrency (overlapping runs)", "",
+                "Each window ran three logged runs at once; half also ran an off-log run among them. "
+                "Per-minute provider records can't tell runs in the same minute apart, so the unit is a window.", "",
+                "- Off-log windows flagged: %s" % _fmt(conc["off_log_windows_flagged"]),
+                "- Clean windows flagged: %s (%d logged sessions in clean windows)"
+                % (_fmt(conc["clean_windows_flagged"]), conc["logged_sessions_in_clean_windows"]), "",
+                "| Window start | Runs | Off-log run (model, own tokens) | Flagged | Gap tokens |",
+                "| --- | --- | --- | --- | --- |"]
+        for w in conc["windows"]:
+            off = "; ".join("%s %s, %s" % (o["plant"], o["model"], "{:,}".format(o["own_tokens"]))
+                            for o in w["off_log"]) or "none"
+            out.append("| %s | %d | %s | %s | %s |" % (w["start"][11:19], w["runs"], off,
+                                                       "yes" if w["flagged"] else "no",
+                                                       "{:,}".format(w["gap_tokens"])))
+        out.append("")
     cc = _load("category_check.json")
     ho = _load("category_heldout.json")
     if cc or ho:
