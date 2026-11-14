@@ -19,7 +19,7 @@ Session-file and provider rates count only trials that touched API requests (and
 
 Session-file check: 57 requests in session files but not in the log (the planted runs that kept session files). Provider check: 710 of 747 minutes clean, 32 gap events, 0 log-excess events.
 
-Background request's share of provider tokens in each logged session's own minutes: 0.0%–50.4% over 37 sessions (`provider.per_session` in false_flags.json).
+Background request credited to 62 of 66 logged sessions; 22.7%–54.2% of each such session's billed tokens (`provider.background_by_session` in false_flags.json; approximate where sessions overlap).
 
 ## Off-log runs
 
@@ -98,7 +98,7 @@ A separate model (frozen prompt 4981a32faa4a9d65, sonnet) reads each run's promp
 | Set | Items | True tags flagged | of which contradicted | Relabels caught | Capabilities retagged as safety caught |
 | --- | --- | --- | --- | --- | --- |
 | Logged runs, development (batch 1) | 19 | 3/19 (16%; 95% CI 3–40%) | 1/19 (5%; 95% CI 0–26%) | 35/38 (92%; 95% CI 79–98%) | 6/6 (100%; 95% CI 54–100%) |
-| Logged runs, held out (batch 2) | 81 | 5/81 (6%; 95% CI 2–14%) | 0/81 (0%; 95% CI 0–4%) | 157/162 (97%; 95% CI 93–99%) | 26/26 (100%; 95% CI 87–100%) |
+| Logged runs, held out (all later runs) | 81 | 5/81 (6%; 95% CI 2–14%) | 0/81 (0%; 95% CI 0–4%) | 157/162 (97%; 95% CI 93–99%) | 26/26 (100%; 95% CI 87–100%) |
 | Written cases, clear | 24 | 0/24 (0%; 95% CI 0–14%) | 0/24 (0%; 95% CI 0–14%) | 48/48 (100%; 95% CI 93–100%) | 8/8 (100%; 95% CI 63–100%) |
 | Written cases, borderline | 12 | 2/12 (17%; 95% CI 2–48%) | 2/12 (17%; 95% CI 2–48%) | 22/24 (92%; 95% CI 73–99%) | 4/4 (100%; 95% CI 40–100%) |
 

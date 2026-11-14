@@ -2,7 +2,7 @@
  "sources": {
   "runs_by_batch": "work/manifests/*.json (batch by run id lists in work/*_run_ids.json; batch1 = Nov 13)",
   "provider_offlog_caught_batches_1_2": "off_log.json runs (sprint runs in window, concurrency excluded; plant set)",
-  "provider_logged_flagged_batches_1_2_ab_bisect": "off_log.json runs with plant null (includes A/B and bisect runs inside the window)",
+  "provider_logged_flagged_batches_1_2_ab_bisect": "off_log.json runs with plant null (batches 1-2 and the A/B; bisection runs fall outside the window)",
   "session_file_offlog_caught": "off_log.json runs with plant off_log (session files kept)",
   "offlog_gap_tokens_min_max": "off_log.json gap_tokens",
   "provider_window": "false_flags.json provider.window",
@@ -38,7 +38,10 @@
   "category_cases_borderline": "category_check.json / category_heldout.json",
   "category_capabilities_to_safety_caught_all": "dev + held-out runs + written cases",
   "category_prompt": "category_check.json summary",
-  "category_variance": "category_variance.json (54 runs and 36 cases, two extra calls each)"
+  "category_variance": "category_variance.json (54 runs and 36 cases, two extra calls each)",
+  "env_bisect_rows": "env_bisect.json",
+  "entrypoint_runs_with_request": "env_ab.json + env_bisect.json; the 62 window sessions include the 4 inherited A/B runs, so 58 are added",
+  "no_entrypoint_runs_with_request": "env_ab.json clean + env_bisect.json runs without CLAUDE_CODE_ENTRYPOINT"
  },
  "runs_by_batch": {
   "batch2": {
@@ -471,5 +474,41 @@
     36
    ]
   }
- }
+ },
+ "env_bisect_rows": [
+  {
+   "env_mode": "clean+CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+   "unrecorded_cache_read": 0
+  },
+  {
+   "env_mode": "clean+CLAUDE_CODE_ENTRYPOINT",
+   "unrecorded_cache_read": 7010
+  },
+  {
+   "env_mode": "clean+CLAUDE_PREVIEW_CLASSIFIER_FLOOR",
+   "unrecorded_cache_read": 0
+  },
+  {
+   "env_mode": "clean+CLAUDE_CODE_DESKTOP_MESSAGE_CARD",
+   "unrecorded_cache_read": 0
+  },
+  {
+   "env_mode": "clean+all-but:CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES,CLAUDE_CODE_ENTRYPOINT,CLAUDE_PREVIEW_CLASSIFIER_FLOOR,CLAUDE_CODE_DESKTOP_MESSAGE_CARD",
+   "unrecorded_cache_read": 0
+  },
+  {
+   "env_mode": "inherited-CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+   "unrecorded_cache_read": 7010
+  },
+  {
+   "env_mode": "clean+CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+   "unrecorded_cache_read": 0
+  },
+  {
+   "env_mode": "inherited-CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+   "unrecorded_cache_read": 7010
+  }
+ ],
+ "entrypoint_runs_with_request": "7/7 (A/B + bisection) + 62/62 window sessions = 65/65",
+ "no_entrypoint_runs_with_request": "0/9"
 }

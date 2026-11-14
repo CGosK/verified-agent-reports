@@ -46,12 +46,17 @@ def render():
                 "Provider check: %d of %d minutes clean, %d gap events, %d log-excess events."
                 % (len(ff["sessions"]["missing_from_log"]), p["clean_minutes"], p["minutes_checked"],
                    len(p["gaps"]), len(p["log_excess"])), ""]
-        shares = [v["background_share"] for v in p.get("per_session", {}).values()
-                  if v["background_share"] is not None and not v["span_shared"]]
+        bbs = p.get("background_by_session") or {}
+        per = p.get("per_session") or {}
+        shares = []
+        for sid, b in bbs.items():
+            bg = sum(b.values())
+            if b.get("cache_read", 0) >= 7010 and sid in per:
+                shares.append(bg / (bg + sum(per[sid]["logged_tokens"].values())))
         if shares:
-            out += ["Background request's share of provider tokens in each logged session's own minutes: "
-                    "%.1f%%–%.1f%% over %d sessions (`provider.per_session` in false_flags.json)."
-                    % (100 * min(shares), 100 * max(shares), len(shares)), ""]
+            out += ["Background request credited to %d of %d logged sessions; %.1f%%–%.1f%% of each such session's "
+                    "billed tokens (`provider.background_by_session` in false_flags.json; approximate where sessions "
+                    "overlap)." % (len(shares), len(bbs), 100 * min(shares), 100 * max(shares)), ""]
     off = _load("off_log.json")
     if off:
         out += ["## Off-log runs", "",
@@ -112,7 +117,7 @@ def render():
         rows = []
         if cc:
             rows += [("Logged runs, development (batch 1)", cc["summary"]["dev"]),
-                     ("Logged runs, held out (batch 2)", cc["summary"]["held_out_runs"])]
+                     ("Logged runs, held out (all later runs)", cc["summary"]["held_out_runs"])]
         if ho:
             rows += [("Written cases, clear", ho["summary"]["clear"]),
                      ("Written cases, borderline", ho["summary"]["borderline"])]

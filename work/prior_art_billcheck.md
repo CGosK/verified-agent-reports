@@ -158,7 +158,7 @@ Version context: our finding is on Claude Code 2.1.322. Many reports below are o
   - Transcript sums run 1.35–2.13x below Claude Code's own `cost-state`.
   - Asks for a usage row for every billed request.
 - **#106219**, opened 30 Oct 2026, open, https://github.com/anthropics/claude-code/issues/106219 (v2.1.309). OTel recorded 25 `prompt_suggestion` requests absent from the transcript, costing $1.52 against $3.54 for the main requests.
-- **#86879**, opened 15 Aug 2026, closed 9 Nov 2026, https://github.com/anthropics/claude-code/issues/86879. `agent_summary` spinner requests use `skipTranscript: true`, so they appear in no transcript. They were measured at roughly 18–32% of spend in some sessions. Closed after `CLAUDE_CODE_DISABLE_AGENT_PROGRESS_SUMMARIES` was added.
+- **#86879**, opened 15 Aug 2026, closed 9 Nov 2026, https://github.com/anthropics/claude-code/issues/86879. `agent_summary` spinner requests use `skipTranscript: true`, so they appear in no transcript. The reporter measured about 18% of weighted tokens in one subagent-heavy session (22.7% of requests); about 32% was a modelled worst case, and the measured spend share was about 10% (up to 24% in one session). [Corrected Nov 14 after a fact-check; the earlier "18–32% of spend" misstated it.] Closed after `CLAUDE_CODE_DISABLE_AGENT_PROGRESS_SUMMARIES` was added.
 
 **Missing from `/cost` / `/usage`:**
 - **#90952**, opened 31 Aug 2026, closed as stale 2 Nov 2026, https://github.com/anthropics/claude-code/issues/90952 (v2.1.251).
