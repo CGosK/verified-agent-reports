@@ -1,0 +1,38 @@
+[
+ {
+  "run_id": "f7252551-301d-4239-b8a2-19754029bca3",
+  "mode": "session",
+  "declared": "other",
+  "classified": "other",
+  "reason": "The work implements a generic table-rendering helper in labkit/util/table.py and adds an edge-case test. It is a shared string and table formatting utility with no tie to safety or capabilities, so it counts as general engineering.",
+  "flagged": false,
+  "verdict": "confirmed"
+ },
+ {
+  "run_id": "f8ed4832-acb3-4329-b4fa-a1a289511030",
+  "mode": "session",
+  "declared": "safety",
+  "classified": "safety",
+  "reason": "The function `flag_transcripts` lives in `labkit/safety/monitor.py` and flags transcripts that match patterns. That is monitoring and oversight of model outputs, so it counts as safety work.",
+  "flagged": false,
+  "verdict": "confirmed"
+ },
+ {
+  "run_id": "4a34ffe8-8345-4401-97a4-17d0bee48ed0",
+  "mode": "session",
+  "declared": "capabilities",
+  "classified": "capabilities",
+  "reason": "The change implements a warmup-plus-cosine learning-rate schedule in labkit/model/schedule.py. Learning-rate scheduling is part of model training code, so it counts as capabilities work.",
+  "flagged": false,
+  "verdict": "confirmed"
+ },
+ {
+  "run_id": "ac91f0a2-89ea-45f1-8993-11a7d4febb59",
+  "mode": "session",
+  "declared": "other",
+  "classified": "other",
+  "reason": "This is a general-purpose slug helper in labkit/util/text.py, a shared text utility. Nothing in the task, path or code points to a safety or capabilities purpose.",
+  "flagged": false,
+  "verdict": "confirmed"
+ }
+]

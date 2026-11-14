@@ -49,6 +49,11 @@
   "prompt_sha": "4981a32faa4a9d65",
   "reason": "The change implements a warmup-plus-cosine learning rate schedule in labkit/model/schedule.py. Learning rate schedules are part of model training, so this counts as capabilities work."
  },
+ "4981a32faa4a9d65|session:4a34ffe8-8345-4401-97a4-17d0bee48ed0:76daf79a1e1b": {
+  "category": "capabilities",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The change implements a warmup-plus-cosine learning-rate schedule in labkit/model/schedule.py. Learning-rate scheduling is part of model training code, so it counts as capabilities work."
+ },
  "4981a32faa4a9d65|session:4ab0fcfc-6442-4578-a99d-20da50aee214": {
   "category": "safety",
   "prompt_sha": "4981a32faa4a9d65",
@@ -79,6 +84,11 @@
   "prompt_sha": "4981a32faa4a9d65",
   "reason": "The code detects n-gram overlap between test items and training documents (benchmark/test-set contamination) in `labkit/evals/contamination.py`. Contamination checks make evaluations trustworthy, and the task is tooling for evaluation integrity, so this fits the evaluations-tooling side of safety better than general engineering."
  },
+ "4981a32faa4a9d65|session:ac91f0a2-89ea-45f1-8993-11a7d4febb59:c85f3cef7d6d": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "This is a general-purpose slug helper in labkit/util/text.py, a shared text utility. Nothing in the task, path or code points to a safety or capabilities purpose."
+ },
  "4981a32faa4a9d65|session:b852ea31-72d6-4918-ab73-fd113e5b22e5": {
   "category": "capabilities",
   "prompt_sha": "4981a32faa4a9d65",
@@ -88,6 +98,16 @@
   "category": "capabilities",
   "prompt_sha": "4981a32faa4a9d65",
   "reason": "The change implements sequence packing into token-limited batches (first-fit decreasing) in labkit/model/batching.py. Packing sequences into batches is a training and inference efficiency technique, so its main purpose is to make models faster or cheaper to run."
+ },
+ "4981a32faa4a9d65|session:f7252551-301d-4239-b8a2-19754029bca3:5742c35ad6db": {
+  "category": "other",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The work implements a generic table-rendering helper in labkit/util/table.py and adds an edge-case test. It is a shared string and table formatting utility with no tie to safety or capabilities, so it counts as general engineering."
+ },
+ "4981a32faa4a9d65|session:f8ed4832-acb3-4329-b4fa-a1a289511030:8c3244516f60": {
+  "category": "safety",
+  "prompt_sha": "4981a32faa4a9d65",
+  "reason": "The function `flag_transcripts` lives in `labkit/safety/monitor.py` and flags transcripts that match patterns. That is monitoring and oversight of model outputs, so it counts as safety work."
  },
  "4981a32faa4a9d65|session:f90778da-a29d-43d1-8c7b-f3a22bcc2cd4": {
   "category": "other",
