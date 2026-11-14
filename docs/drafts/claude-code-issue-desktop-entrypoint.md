@@ -2,7 +2,7 @@
 
 # With CLAUDE_CODE_ENTRYPOINT=claude-desktop, each API-key session makes a billed Haiku request that appears in no local record
 
-**Version:** Claude Code 2.1.322, macOS, API-key auth (`claude -p`).
+**Version:** Claude Code 2.1.322, macOS, API-key auth, headless (`claude -p --bare`).
 
 ## What happens
 
@@ -37,8 +37,11 @@ github.com/CGosK/verified-agent-reports, `work/results/env_ab.json`,
 ## Reproduce
 
 1. Use an API key with Admin Usage API access for its organization.
-2. Run `CLAUDE_CODE_ENTRYPOINT=claude-desktop claude -p "say hi" --model sonnet` with
-   OpenTelemetry export on, then the same without the variable, a few minutes apart.
+2. Run a short task with `CLAUDE_CODE_ENTRYPOINT=claude-desktop claude -p "<task>" --model sonnet --bare
+   --permission-mode acceptEdits --output-format json` (the flags our runs used; see
+   `vawr/runner.py`) with OpenTelemetry export on, then the same without the variable, a
+   few minutes apart. We did not test other flag combinations or interactive desktop
+   sessions.
 3. Compare the Usage API's 1-minute buckets for the key (grouped by model) with the
    OTel events, the transcript and `cost-state`: the first run has an extra
    claude-haiku-5-5 request (cache-read 7,010) in none of them.
