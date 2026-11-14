@@ -674,8 +674,15 @@ def _usage(report):
         extra += "<details><summary>All %s</summary>%s</details>" % (_count(len(runs), "run"), _table(
             ["Run", "Category", "Billed to", "Tokens", "Est. cost", "Requests"], rows, cls="runs wide",
             num_cols=(3, 4, 5)))
-    return ('<section aria-labelledby="usage"><h2 id="usage">Usage by category</h2>%s%s%s%s</section>'
-            % (lead, table, note, extra))
+    projects = [p for p in report.get("projects") or [] if isinstance(p, dict)]
+    proj = ""
+    if projects:
+        rows = [[_e(p.get("project")), _e(p.get("category")), _num(p.get("runs")),
+                 _num(p.get("total_tokens")), _usd(p.get("cost_usd"))] for p in projects]
+        proj = "<h3>By project</h3>%s" % _table(["Project", "Category", "Sessions", "Tokens", "Est. cost"],
+                                                 rows, num_cols=(2, 3, 4))
+    return ('<section aria-labelledby="usage"><h2 id="usage">Usage by category</h2>%s%s%s%s%s</section>'
+            % (lead, table, proj, note, extra))
 
 
 def _checks_section(checks):
