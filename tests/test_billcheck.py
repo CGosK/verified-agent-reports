@@ -70,6 +70,32 @@ class BillCheckTest(unittest.TestCase):
         self.assertEqual(len(res["gaps"]), 1)
         self.assertEqual(res["local_account_requests"], 1)
 
+    def test_usage_only_in_cost_totals_is_credited_not_flagged(self):
+        # an interactive session: one listed request, plus a title (haiku) and a prompt
+        # suggestion (sonnet) that only the session's cost totals include
+        cost = {"type": "cost-state", "modelUsage": {
+            SONNET: {"inputTokens": 100 + 400, "outputTokens": 100 + 50, "cacheReadInputTokens": 0,
+                     "cacheCreationInputTokens": 0},
+            HAIKU: {"inputTokens": 300, "outputTokens": 20, "cacheReadInputTokens": 0,
+                    "cacheCreationInputTokens": 0}}}
+        self.write("p", "s1", [assistant("r1", 3, 100, "s1"),
+                               {"type": "user", "timestamp": m(6).isoformat()}, cost])
+        provider = {m(3): {SONNET: tok(100), HAIKU: {"input": 300, "output": 20, "cache_read": 0,
+                                                     "cache_creation": 0}},
+                    m(5): {SONNET: {"input": 400, "output": 50, "cache_read": 0, "cache_creation": 0}}}
+        res = self.run_check(provider)
+        self.assertEqual(res["gaps"], [], res["gaps"])
+        self.assertEqual(sum(res["recorded_totals_tokens"].values()), 770)
+
+    def test_cost_totals_dont_cover_usage_outside_the_session(self):
+        cost = {"type": "cost-state", "modelUsage": {SONNET: {"inputTokens": 600, "outputTokens": 100,
+                                                              "cacheReadInputTokens": 0,
+                                                              "cacheCreationInputTokens": 0}}}
+        self.write("p", "s1", [assistant("r1", 3, 100, "s1"), cost])
+        res = self.run_check({m(3): {SONNET: tok(100)}, m(15): {SONNET: {"input": 500, "output": 0,
+                                                                          "cache_read": 0, "cache_creation": 0}}})
+        self.assertEqual(len(res["gaps"]), 1)
+
     def test_keys_from_env_then_files(self):
         d = self.projects
         f1, f2 = os.path.join(d, "a.env"), os.path.join(d, "b.env")

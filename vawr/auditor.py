@@ -145,7 +145,12 @@ def _by_model(provider_minutes):
 
 def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="sprint",
                    provider_minutes=None, background_model=BACKGROUND_MODEL,
-                   background_envelope=BACKGROUND_ENVELOPE):
+                   background_envelope=BACKGROUND_ENVELOPE, recorded_totals=None):
+    """recorded_totals: optional [(first_time, last_time, model, {type: tokens}), ...],
+    usage a record shows only as a total over a time span (Claude Code's per-session
+    cost totals include requests its session files don't list one by one: session
+    titles, prompt suggestions, compaction). After per-minute matching, each total
+    covers unmatched billed tokens of its model inside its span, up to its amount."""
     tolerance = tolerance or {t: 0 for t in TOKEN_TYPES}
     if provider_minutes is None:
         env = load_env()
@@ -194,6 +199,25 @@ def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="spri
             prov = {mm: v[mod][t] for mm, v in pm.items() if mod in v and v[mod].get(t)}
             up, ul = match_minutes(prov, logged.get(mod, {}).get(t, {}), minutes, shift)
             unmatched_p[mod][t], unmatched_l[mod][t] = up, ul
+
+    # usage known only as per-span totals covers unmatched billed tokens in its span
+    totals_used = {t: 0 for t in TOKEN_TYPES}
+    for first, last, model, amounts in recorded_totals or ():
+        if model not in unmatched_p:
+            continue
+        a0 = minute_of(parse_ts(first)) - timedelta(minutes=shift)
+        a1 = minute_of(parse_ts(last)) + timedelta(minutes=shift)
+        left = dict(amounts)
+        up = unmatched_p[model]
+        for t in TOKEN_TYPES:
+            for mm in sorted(mm for mm in up[t] if a0 <= mm <= a1):
+                take = min(up[t][mm], left.get(t, 0))
+                if take:
+                    up[t][mm] -= take
+                    left[t] -= take
+                    totals_used[t] += take
+                    if not up[t][mm]:
+                        up[t].pop(mm)
 
     # attribute background requests to logged sessions, one envelope each
     background = {t: 0 for t in TOKEN_TYPES}
@@ -271,6 +295,7 @@ def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="spri
         "provider_tokens": prov_total,
         "logged_tokens": log_total,
         "background_tokens": background,
+        "recorded_totals_tokens": totals_used,
         "background_model": background_model,
         "logged_sessions": len(sessions),
         "per_session": per_session,

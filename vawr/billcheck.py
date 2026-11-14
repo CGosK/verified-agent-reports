@@ -109,6 +109,52 @@ def local_requests(start, end, projects=paths.CLAUDE_PROJECTS):
     return out
 
 
+COST_FIELDS = {"input": "inputTokens", "output": "outputTokens", "cache_read": "cacheReadInputTokens",
+               "cache_creation": "cacheCreationInputTokens"}
+
+
+def session_totals(start, end, projects=paths.CLAUDE_PROJECTS, local=None):
+    """[(first_time, last_time, model, {type: tokens}), ...]: for each API-key session
+    active in [start, end], usage its own cost totals record beyond the requests its
+    session files list one by one (in interactive sessions: session titles, prompt
+    suggestions, compaction)."""
+    local = local if local is not None else local_requests(start, end, projects)
+    by_session = {}
+    for r in local.values():
+        if r["auth"] == "api_key" and r.get("session_id"):
+            by_session.setdefault((r["project"], r["session_id"]), []).append(r)
+    out = []
+    for (project, sid), reqs in by_session.items():
+        path = os.path.join(projects, project, sid + ".jsonl")
+        if not os.path.exists(path):
+            continue
+        model_usage, times = None, []
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                if '"cost-state"' in line or '"timestamp"' in line:
+                    try:
+                        d = json.loads(line)
+                    except ValueError:
+                        continue
+                    if d.get("type") == "cost-state" and d.get("modelUsage"):
+                        model_usage = d["modelUsage"]
+                    if d.get("timestamp"):
+                        times.append(d["timestamp"])
+        if not model_usage or not times:
+            continue
+        listed = {}
+        for r in reqs:
+            m = listed.setdefault(r["model"], {t: 0 for t in COST_FIELDS})
+            for t in COST_FIELDS:
+                m[t] += r["tokens"][t]
+        for model, usage in model_usage.items():
+            extra = {t: max(0, int(usage.get(f) or 0) - listed.get(model, {}).get(t, 0))
+                     for t, f in COST_FIELDS.items()}
+            if any(extra.values()):
+                out.append((min(times), max(times), model, extra))
+    return out
+
+
 def admin_and_key(env=None, files=None):
     """(admin_key, api_key) from the environment, then a .env file in this folder,
     then .env in vawr's data folder (~/.vawr/.env), which works from any project."""
@@ -147,8 +193,9 @@ def check(start, end, admin_key=None, key_id=None, api_key=None, provider_minute
     pad = timedelta(minutes=shift + 1)
     local = local_requests(start - pad, end + pad, projects)
     key_reqs = [dict(r, mode="api_key") for r in local.values() if r["auth"] == "api_key"]
+    totals = session_totals(start - pad, end + pad, projects, local=local)
     res = auditor.check_provider(key_reqs, start, end, shift=shift, key_mode="api_key",
-                                 provider_minutes=provider_minutes)
+                                 provider_minutes=provider_minutes, recorded_totals=totals)
     sessions = {r["session_id"] for r in key_reqs if start <= parse_ts(r["time"]) < end}
     res.update(key_id=key_id, source=source,
                data_refreshed_at=refreshed.isoformat() if hasattr(refreshed, "isoformat") else refreshed,
@@ -165,9 +212,10 @@ def _total(tokens):
 def render(res):
     prov = _total(res["provider_tokens"])
     bg = _total(res["background_tokens"])
+    totals = _total(res.get("recorded_totals_tokens") or {})
     gap = sum(_total(g["tokens"]) for g in res["gaps"])
     excess = sum(_total(g["tokens"]) for g in res["log_excess"])
-    matched = prov - bg - gap
+    matched = prov - bg - gap - totals
     pct = (lambda v: "%5.1f%%" % (100.0 * v / prov)) if prov else (lambda v: "    -")
     start, end = res["window"]
     lines = [
@@ -176,6 +224,8 @@ def render(res):
         "",
         "  Billed by Anthropic               %12s tokens" % "{:,}".format(prov),
         "  In this machine's session files   %12s  %s" % ("{:,}".format(matched), pct(matched)),
+        "  Only in sessions' cost totals     %12s  %s  titles, prompt suggestions, compaction"
+        % ("{:,}".format(totals), pct(totals)),
         "  Claude Code background requests   %12s  %s  billed, recorded nowhere locally (%d sessions)"
         % ("{:,}".format(bg), pct(bg), res["logged_sessions"]),
         "  Unexplained                       %12s  %s" % ("{:,}".format(gap), pct(gap)),
