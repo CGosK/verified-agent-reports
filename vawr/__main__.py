@@ -45,7 +45,7 @@ def cmd_batch(args):
             time.sleep(delay)  # stagger starts so worktree creation doesn't collide
             try:
                 m = run_task(item["task"], mode=args.set, plant=item.get("plant"),
-                             model=item.get("model", "sonnet"))
+                             model=item.get("model", "sonnet"), env_mode=item.get("env", "inherited"))
                 print("%s %s plant=%s exit=%s test=%s cost=%s turns=%s" % (
                     m["run_id"], m["task"], m["plant"], m["exit_code"], m["test_exit"],
                     m["cost_estimate_usd"], m["num_turns"]), flush=True)

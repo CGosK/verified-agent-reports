@@ -1,5 +1,7 @@
 #!/usr/bin/expect -f
 # Drive one interactive Claude Code session the way a person would.
+# Claude Code draws the spaces between words as cursor moves, so the patterns
+# below allow up to 16 characters of anything between words.
 # usage: drive.exp <workdir> <model> <wait_s> <prompt> [<wait_s> <prompt> ...]
 # Startup dialogs (API key, folder trust) are accepted; any permission prompt
 # during the session is declined with Escape, so the agent stays inside the
@@ -16,9 +18,9 @@ while {!$ready} {
   incr tries
   if {$tries > 12} { puts "\nSTARTUP_TIMEOUT"; exit 2 }
   expect {
-    -re {(?i)use this API key} { sleep 0.5; send "\033\[A"; sleep 0.5; send "\r"; sleep 1 }
-    -re {(?i)trust (the files|this folder)} { sleep 0.5; send "\r"; sleep 1 }
-    -re {(?i)for shortcuts|accept edits on|bypass permissions} { set ready 1 }
+    -re {(?i)use.{1,16}this.{1,16}API.{1,16}key} { sleep 0.5; send "\033\[A"; sleep 0.5; send "\r"; sleep 1 }
+    -re {(?i)trust.{1,16}(the.{1,16}files|this.{1,16}folder)} { sleep 0.5; send "\r"; sleep 1 }
+    -re {(?i)for.{1,16}shortcuts|accept.{1,16}edits.{1,16}on|bypass.{1,16}permissions} { set ready 1 }
     timeout { }
     eof { puts "\nEOF_AT_STARTUP"; exit 3 }
   }
@@ -33,7 +35,7 @@ for {set i 2} {$i < [llength $argv]} {incr i 2} {
   set end [expr {[clock seconds] + $wait}]
   while {[clock seconds] < $end} {
     expect {
-      -re {(?i)do you want to (proceed|make this edit|create|allow)} { sleep 0.5; send "\033"; exp_continue }
+      -re {(?i)do.{1,16}you.{1,16}want.{1,16}to.{1,16}(proceed|make|create|allow)} { sleep 0.5; send "\033"; exp_continue }
       timeout { }
       eof { puts "\nEOF_MID_SESSION"; exit 4 }
     }

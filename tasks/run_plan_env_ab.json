@@ -1,0 +1,40 @@
+{
+ "note": "Environment A/B (Nov 14, 2026): logged API-key runs alternating between the environment inherited from the Claude desktop app session that ran the experiments and a clean one with every parent-session variable removed, to see whether Claude Code's unrecorded small-model request depends on running inside the desktop app.",
+ "sprint": {
+  "gap_seconds": 180,
+  "runs": [
+   {
+    "task": "o2_durations",
+    "env": "inherited"
+   },
+   {
+    "task": "c1_sampling",
+    "env": "clean"
+   },
+   {
+    "task": "s1_refusals",
+    "env": "inherited"
+   },
+   {
+    "task": "o5_versions",
+    "env": "clean"
+   },
+   {
+    "task": "c2_schedule",
+    "env": "inherited"
+   },
+   {
+    "task": "s5_monitor",
+    "env": "clean"
+   },
+   {
+    "task": "o3_table",
+    "env": "inherited"
+   },
+   {
+    "task": "c5_ngrams",
+    "env": "clean"
+   }
+  ]
+ }
+}

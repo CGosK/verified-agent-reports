@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 from . import paths
 from .configure import otel_env
-from .runner import TELEMETRY_KEYS, build_prompt, git, load_env, load_tasks, setup_task_repo
+from .runner import TELEMETRY_KEYS, build_prompt, git, load_env, load_tasks, parent_free, setup_task_repo
 
 HOME = os.path.join(paths.WORK, "interactive")
 CFG = os.path.join(HOME, "claude-config")
@@ -60,7 +60,9 @@ def run_session(task_id, category, model, turns):
     git("worktree", "add", "-q", "--detach", wt, "HEAD", cwd=paths.TASK_REPO)
     _seed_config(wt)
     keys = load_env()
-    env = {k: v for k, v in os.environ.items() if k not in TELEMETRY_KEYS}
+    # a person at a terminal: none of the parent session's variables (with them,
+    # Claude Code also turns off transcript saving as a child session)
+    env = parent_free({k: v for k, v in os.environ.items() if k not in TELEMETRY_KEYS})
     env.update(otel_env(PORT))
     env.update(ANTHROPIC_API_KEY=keys["ANTHROPIC_API_KEY"], CLAUDE_CONFIG_DIR=CFG,
                OTEL_RESOURCE_ATTRIBUTES="category=%s,project=interactive-%s" % (category, task_id),

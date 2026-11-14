@@ -562,3 +562,39 @@ def category_variance(extra=2, cases_path=None, out_cache=None):
             "runs": summ([r for r in rows if r["item"].startswith("run:")]),
             "cases": summ([r for r in rows if r["item"].startswith("case:")]),
             "rows": rows}
+
+
+def env_ab(run_ids, provider_minutes, log_path=paths.LOG_PATH, small_model=auditor.BACKGROUND_MODEL):
+    """Per run of the environment A/B: small-model tokens the provider billed in the
+    run's own minutes, minus small-model tokens the log recorded for that run. Runs
+    are 3 minutes apart, so each run's minutes hold only its own usage."""
+    reqs = api_requests(log_path)
+    rows = []
+    for rid in run_ids:
+        m = json.load(open(os.path.join(paths.MANIFESTS, rid + ".json")))
+        a = auditor.minute_of(parse_ts(m["start"]))
+        b = auditor.minute_of(parse_ts(m["end"])) + timedelta(minutes=1)
+        billed = {t: 0 for t in TOKEN_TYPES}
+        mm = a
+        while mm <= b:
+            for model, toks in (provider_minutes.get(mm) or {}).items():
+                if model == small_model:
+                    for t in TOKEN_TYPES:
+                        billed[t] += int(toks.get(t) or 0)
+            mm += timedelta(minutes=1)
+        logged = {t: 0 for t in TOKEN_TYPES}
+        for r in reqs:
+            if r.get("run_id") == rid and r.get("model") == small_model:
+                for t in TOKEN_TYPES:
+                    logged[t] += r["tokens"][t]
+        unrecorded = {t: billed[t] - logged[t] for t in TOKEN_TYPES}
+        rows.append({"run_id": rid, "task": m["task"], "env_mode": m.get("env_mode", "inherited"),
+                     "billed_small_model": billed, "logged_small_model": logged,
+                     "unrecorded_small_model": unrecorded,
+                     "has_unrecorded_request": unrecorded["cache_read"] > 0 or sum(unrecorded.values()) > 0})
+    by_env = {}
+    for env in ("inherited", "clean"):
+        rs = [r for r in rows if r["env_mode"] == env]
+        by_env[env] = {"runs": len(rs), "with_unrecorded_request": sum(r["has_unrecorded_request"] for r in rs),
+                       "cache_read_values": sorted({r["unrecorded_small_model"]["cache_read"] for r in rs})}
+    return {"by_env": by_env, "rows": rows}

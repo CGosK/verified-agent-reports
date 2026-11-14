@@ -91,8 +91,20 @@ def build_prompt(task, plant):
     return prompt
 
 
-def build_env(mode, plant, task, run_id, keys, port=4318):
+# Variables a parent Claude Code session (here, the Claude desktop app that ran
+# the experiments) passes to its children. A person running Claude Code in a
+# terminal has none of them, so "clean" runs drop them all.
+PARENT_SESSION_PREFIXES = ("CLAUDE_", "CLAUDECODE", "AI_AGENT", "MCP_", "ANTHROPIC_BASE_URL")
+
+
+def parent_free(env):
+    return {k: v for k, v in env.items() if not k.startswith(PARENT_SESSION_PREFIXES)}
+
+
+def build_env(mode, plant, task, run_id, keys, port=4318, env_mode="inherited"):
     env = {k: v for k, v in os.environ.items() if k not in TELEMETRY_KEYS}
+    if env_mode == "clean":
+        env = parent_free(env)
     env.pop("ANTHROPIC_API_KEY", None)
     # Background model calls we can turn off are turned off. These two don't
     # stop the unreported small-model request the provider check allows for
@@ -140,7 +152,7 @@ def build_cmd(mode, prompt, model, max_budget_usd):
 
 
 def run_task(task_id, mode="subscription", plant=None, model="sonnet", max_budget_usd=1.0,
-             category_override=None):
+             category_override=None, env_mode="inherited"):
     tasks = load_tasks()
     task = dict(tasks[task_id])
     true_category = task["category"]
@@ -163,7 +175,7 @@ def run_task(task_id, mode="subscription", plant=None, model="sonnet", max_budge
 
     keys = load_env()
     prompt = build_prompt(task, plant)
-    env = build_env(mode, plant, task, run_id, keys)
+    env = build_env(mode, plant, task, run_id, keys, env_mode=env_mode)
     cmd = build_cmd(mode, prompt, model, max_budget_usd)
 
     start = utc_now()
@@ -189,6 +201,7 @@ def run_task(task_id, mode="subscription", plant=None, model="sonnet", max_budge
         "mode": mode,
         "plant": plant,
         "model": model,
+        "env_mode": env_mode,
         "cwd": wt,
         "project_dir": paths.project_dir_name(wt),
         "start": start,
