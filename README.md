@@ -40,17 +40,20 @@ telemetry and session files turned off. Nothing else was flagged.
 
 Two things stand out on any API-key account:
 
-- **Claude Code makes a billed request it doesn't record.** In every API-key
-  session we checked, Claude Code 2.1.322 made one small-model (Haiku) request
-  that we could not find in any of its own records: telemetry events, metrics,
-  session files or cost totals. On small tasks it was about half of each
-  session's billed tokens. Claude Code's background requests have been
-  described publicly before (for example
+- **What Claude Code records depends on how it was launched.** When we ran
+  Claude Code 2.1.322 from inside the Claude desktop app's environment, every
+  API-key session made one billed small-model (Haiku) request that appeared in
+  none of its own records: telemetry events, metrics, session files or cost
+  totals. On small tasks it was about half of each session's billed tokens. The
+  same runs with a clean environment made no such request (0 of 4, against 4
+  of 4). In interactive terminal sessions, session files leave out session
+  titles, prompt suggestions and compaction, which Claude Code's cost totals
+  and telemetry do include; prompt suggestions alone were a quarter to a third
+  of each session's tokens. Background requests have been described publicly
+  before (for example
   [anthropics/claude-code#3404](https://github.com/anthropics/claude-code/issues/3404)
-  and [#82274](https://github.com/anthropics/claude-code/issues/82274)), and
-  others have reported billed requests missing from one record or another; we
-  found no report of one missing from all four. Tools that read session files
-  can't see it; the bill check shows it.
+  and [#82274](https://github.com/anthropics/claude-code/issues/82274)). The
+  bill check accounts for all of this, and anything else shows up.
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
   all show up as unexplained minutes.

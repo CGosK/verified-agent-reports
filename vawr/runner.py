@@ -103,8 +103,20 @@ def parent_free(env):
 
 def build_env(mode, plant, task, run_id, keys, port=4318, env_mode="inherited"):
     env = {k: v for k, v in os.environ.items() if k not in TELEMETRY_KEYS}
+    # env_mode: "inherited"; "clean"; "clean+A,B" (clean plus the parent's A and B);
+    # "clean+all-but:A,B" (clean plus every parent variable except A and B);
+    # "inherited-A,B" (inherited minus A and B). Only names are recorded.
     if env_mode == "clean":
         env = parent_free(env)
+    elif env_mode.startswith("clean+all-but:"):
+        skip = set(env_mode.split(":", 1)[1].split(","))
+        env = {k: v for k, v in env.items() if k not in skip}
+    elif env_mode.startswith("clean+"):
+        keep = set(env_mode[len("clean+"):].split(","))
+        env = dict(parent_free(env), **{k: v for k, v in env.items() if k in keep})
+    elif env_mode.startswith("inherited-"):
+        drop = set(env_mode[len("inherited-"):].split(","))
+        env = {k: v for k, v in env.items() if k not in drop}
     env.pop("ANTHROPIC_API_KEY", None)
     # Background model calls we can turn off are turned off. These two don't
     # stop the unreported small-model request the provider check allows for

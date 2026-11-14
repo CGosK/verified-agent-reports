@@ -1,0 +1,40 @@
+{
+ "note": "Bisection (Nov 14, 2026) of which desktop-app variable makes Claude Code send its unrecorded small-model request: clean runs with one suspect added back, a clean run with every other parent variable, and the inherited environment minus the main suspect, with repeats.",
+ "sprint": {
+  "gap_seconds": 180,
+  "runs": [
+   {
+    "task": "o2_durations",
+    "env": "clean+CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES"
+   },
+   {
+    "task": "c1_sampling",
+    "env": "clean+CLAUDE_CODE_ENTRYPOINT"
+   },
+   {
+    "task": "s1_refusals",
+    "env": "clean+CLAUDE_PREVIEW_CLASSIFIER_FLOOR"
+   },
+   {
+    "task": "o5_versions",
+    "env": "clean+CLAUDE_CODE_DESKTOP_MESSAGE_CARD"
+   },
+   {
+    "task": "c2_schedule",
+    "env": "clean+all-but:CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES,CLAUDE_CODE_ENTRYPOINT,CLAUDE_PREVIEW_CLASSIFIER_FLOOR,CLAUDE_CODE_DESKTOP_MESSAGE_CARD"
+   },
+   {
+    "task": "s5_monitor",
+    "env": "inherited-CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES"
+   },
+   {
+    "task": "o3_table",
+    "env": "clean+CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES"
+   },
+   {
+    "task": "c5_ngrams",
+    "env": "inherited-CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES"
+   }
+  ]
+ }
+}
