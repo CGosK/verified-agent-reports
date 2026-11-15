@@ -219,6 +219,12 @@ def _total(tokens):
     return sum(tokens.values())
 
 
+def window_text(window):
+    """'2026-11-14 00:00 to 07:56', or with the end's date when it falls on another day."""
+    start, end = (w[:16].replace("T", " ") for w in window[:2])
+    return "%s to %s" % (start, end[11:] if end[:10] == start[:10] else end)
+
+
 def render(res):
     prov = _total(res["provider_tokens"])
     bg = _total(res["background_tokens"])
@@ -227,10 +233,8 @@ def render(res):
     excess = sum(_total(g["tokens"]) for g in res["log_excess"])
     matched = prov - bg - gap - totals
     pct = (lambda v: "%5.1f%%" % (100.0 * v / prov)) if prov else (lambda v: "    -")
-    start, end = res["window"]
     lines = [
-        "Bill check, %s to %s UTC%s" % (start[:16].replace("T", " "), end[11:16],
-                                         ", key %s" % res["key_id"] if res.get("key_id") else ""),
+        "Bill check, %s UTC%s" % (window_text(res["window"]), ", key %s" % res["key_id"] if res.get("key_id") else ""),
         "",
         "  Billed by Anthropic               %12s tokens" % "{:,}".format(prov),
         "  In this machine's session files   %12s  %s" % ("{:,}".format(matched), pct(matched)),

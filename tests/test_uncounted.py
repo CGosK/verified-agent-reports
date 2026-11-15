@@ -392,5 +392,15 @@ class TelemetryOffSettingsTest(unittest.TestCase):
                 self.assertEqual(configure.telemetry_off_settings({}, p, d, []), [])
 
 
+class WindowTextTest(unittest.TestCase):
+    def test_end_on_another_day_shows_its_date(self):
+        from vawr.billcheck import window_text
+        self.assertEqual(window_text(("2026-11-14T00:00:00+00:00", "2026-11-15T00:00:00+00:00")),
+                         "2026-11-14 00:00 to 2026-11-15 00:00")
+        self.assertEqual(window_text(("2026-11-14T00:00:00+00:00", "2026-11-14T07:56:00+00:00")),
+                         "2026-11-14 00:00 to 07:56")
+
+
 if __name__ == "__main__":
     unittest.main()
+

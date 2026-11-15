@@ -116,7 +116,7 @@ def run(start, end, log_path, projects, admin_key=None, key_id=None, api_key=Non
 def render(res):
     mark = {True: "PASS", False: "FAIL", None: "SKIP"}
     c, b = res["coverage"], res["bill"]
-    lines = ["vawr check, %s to %s UTC" % (res["window"][0][:16].replace("T", " "), res["window"][1][11:16]), ""]
+    lines = ["vawr check, %s UTC" % billcheck.window_text(res["window"]), ""]
     lines.append("%s  chain        %d entries, head %s" % (
         mark[res["chain"]["ok"]], res["chain"]["entries"], (res["chain"]["head"] or "")[:16]))
     if c["ok"] is None:
