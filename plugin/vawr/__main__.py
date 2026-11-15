@@ -142,6 +142,12 @@ def cmd_receive(args):
     return 0 if out["verdict"] != "failed" else 1
 
 
+def cmd_demo(args):
+    from . import demo
+    verdicts = demo.run(html_dir=args.html)
+    return 0 if verdicts == ["verified", "failed", "failed"] else 1
+
+
 def cmd_team(args):
     from datetime import datetime, timezone
     from . import billcheck, team
@@ -486,7 +492,8 @@ def main(argv=None):
         description="Checkable usage reports for Claude Code: see what Anthropic billed your API key "
                     "that Claude Code didn't record, keep a tamper-evident log of agent work, and "
                     "share a report by category with checks anyone can rerun.",
-        epilog="Start here: `vawr billcheck --since 7d` (needs ANTHROPIC_ADMIN_KEY and ANTHROPIC_API_KEY). "
+        epilog="No keys? `vawr demo` shows what a payer sees. Start here: `vawr billcheck --since 7d` "
+               "(needs ANTHROPIC_ADMIN_KEY and ANTHROPIC_API_KEY). "
                "Then `vawr setup --write`, `vawr start`, work as usual, and `vawr check`.")
     sub = p.add_subparsers(dest="cmd", required=True, metavar="command")
 
@@ -510,6 +517,10 @@ def main(argv=None):
     s.add_argument("--no-previous", action="store_true", help="don't link this report to the last one sent")
     s.add_argument("--allow-text", action="store_true", help="share the log even if it holds prompt or response text")
     s.set_defaults(func=cmd_bundle)
+
+    s = sub.add_parser("demo", help="see what a payer sees, without any keys: three sample bundles, Anthropic's records replayed")
+    s.add_argument("--html", default=None, help="also write each result as a page into this folder")
+    s.set_defaults(func=cmd_demo)
 
     s = sub.add_parser("receive", help="for whoever receives a bundle: check it, with your own Admin key if you own the API key")
     s.add_argument("bundle", help="the .zip from `vawr bundle`")

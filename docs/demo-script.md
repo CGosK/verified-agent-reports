@@ -9,6 +9,9 @@ receives don't change what continuity shows:
 export VAWR_HOME=$(mktemp -d)
 ```
 
+Without the Admin key, `vawr demo` runs sections 3–5 in one go on the same
+bundles, with Anthropic's records replayed from saved responses.
+
 ## 1. The problem (30 s, voice over the README's first screen)
 
 "A team that spends someone else's money on AI agents sends a usage report.

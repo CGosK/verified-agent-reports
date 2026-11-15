@@ -16,3 +16,6 @@ vawr = "vawr.__main__:main"
 
 [tool.setuptools]
 packages = ["vawr"]
+
+[tool.setuptools.package-data]
+vawr = ["demo_data/*"]

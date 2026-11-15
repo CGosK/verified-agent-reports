@@ -1,7 +1,8 @@
 """Collect the paper's headline numbers from the result files into one place."""
 import json, glob, os, sys
-sys.path.insert(0, '/Users/operator/ClaudeWork/personal/verified-agent-reports')
-os.chdir('/Users/operator/ClaudeWork/personal/verified-agent-reports')
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, REPO)
+os.chdir(REPO)
 from vawr import stats
 R = 'work/results/'
 L = lambda f: json.load(open(R + f))
@@ -14,11 +15,15 @@ for f in glob.glob('work/manifests/*.json'):
     m = json.load(open(f)); ms[m['run_id']] = m
 conc = set(json.load(open('work/concurrency_run_ids.json')))
 ab = set(json.load(open('work/env_ab_run_ids.json')))
-bis = set(json.load(open('work/env_bisect_run_ids.json'))) if os.path.exists('work/env_bisect_run_ids.json') else set()
+ids = lambda f: set(json.load(open(f))) if os.path.exists(f) else set()  # noqa: E731
+bis = ids('work/env_bisect_run_ids.json')
+later = {'underperform': ids('work/underperform_run_ids.json'), 'version_2_1_325': ids('work/version_run_ids.json')}
 def batch(rid):
     if rid in conc: return 'concurrency'
     if rid in ab: return 'env_ab'
     if rid in bis: return 'env_bisect'
+    for name, s in later.items():  # Nov 14 afternoon runs, not batch 2
+        if rid in s: return name
     return 'batch1' if rid < '20261114' else 'batch2'
 counts = {}
 for rid, m in ms.items():

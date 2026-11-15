@@ -759,7 +759,7 @@ def _usage(report):
     total_reqs = sum(_int(c.get("requests")) for c in cats)
     with_claims = any(_int(c.get("claims")) for c in cats)
     with_outcomes = any(_int(c.get("outcomes")) for c in cats)
-    head = ["Category", "Share of tokens", "Tokens", "Est. cost", "Runs", "Requests"]
+    head = ["Category", "Share of tokens", "Tokens", "Est. cost (log's estimate)", "Runs", "Requests"]
     if with_claims:
         head.append("Claims held up")
     if with_outcomes:
@@ -850,6 +850,9 @@ def _verify(report, check, billcheck):
     q = shlex.quote(str(path))
     key_id = ((check or {}).get("bill") or {}).get("key_id") if isinstance(check, dict) else None
     key_arg = " \\\n    --key-id %s" % shlex.quote(str(key_id)) if key_id else ""
+    only = check.get("only_projects") if isinstance(check, dict) else None
+    if isinstance(only, list):
+        key_arg += "".join(" \\\n    --project %s" % shlex.quote(str(p)) for p in only)
     if window and all(window):
         since, until = shlex.quote(str(window[0])), shlex.quote(str(window[1]))
     else:

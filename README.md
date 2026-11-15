@@ -19,6 +19,11 @@ have:
    Anthropic's daily count of Claude Code sessions. An organization admin can
    check everyone's bundles at once with `vawr team`.
 
+**See it first, with no keys:** `vawr demo` checks three bundles from our
+tests (an honest day: VERIFIED; batch runs with 25 hidden from the log:
+FAILED; a report edited after the fact: FAILED). The checks run on your
+machine; only Anthropic's records are replayed, from responses we saved.
+
 **If you pay for a team's agent use** and own the API key's organization:
 ask the team for a `vawr bundle` covering whole UTC days, then run
 
@@ -129,7 +134,7 @@ As a Claude Code plugin (slash commands, and a hook that keeps the receiver runn
 ```
 
 Then `/vawr:billcheck`, `/vawr:setup` (once), `/vawr:tag safety`, `/vawr:check`,
-`/vawr:report`, `/vawr:bundle --since 30d`; recipients use `/vawr:receive <file>`
+`/vawr:report`, `/vawr:bundle --since 30d`, `/vawr:demo`; recipients use `/vawr:receive <file>`
 and admins `/vawr:team <files>`. Python 3.9+ must be on PATH.
 
 Or as a command-line tool:

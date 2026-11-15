@@ -435,6 +435,8 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
             out["provider_error"] = "the log made the checks fail: " + crashed
     elif admin_key and not key:
         out["provider_error"] = "the bundle names no API key; pass --key-id with the key you issued"
+    elif admin_key:
+        out["provider_error"] = "not run: the log or the report already failed its own checks"
     out["check"] = res
 
     billing = (rebuilt or {}).get("billing") or {}
@@ -648,6 +650,7 @@ def receive_html(out, title=None):
                     "tamper-evident" if (out.get("check") or {}).get("bill") is None else
                     "provider-unconfirmed" if not (isinstance(sess, dict) and sess.get("ok") is True) else "provider")
     res["verdict"] = out["verdict"]
+    res["only_projects"] = out["manifest"].get("only_projects")
     res["verdict_reasons"] = verdict_reasons(out)
     res["checked_by"] = "the recipient, on their own machine" + (
         " with their own Admin key" if out.get("check") else "")
