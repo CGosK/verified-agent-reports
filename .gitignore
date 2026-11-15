@@ -28,3 +28,6 @@ work/cc-2.1.325/
 work/telemetry_off_otel*/cfg-*/
 work/telemetry_off_otel*/cwd-*/
 work/telemetry_off_otel*/receiver.out
+work/telemetry_off_desktop_env/*/cfg-*/
+work/telemetry_off_desktop_env/*/cwd-*/
+work/telemetry_off_desktop_env/*/receiver.out

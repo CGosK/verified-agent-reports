@@ -86,7 +86,9 @@ def _parse(s):
     if not s:
         return None
     t = datetime.fromisoformat(s.replace("Z", "+00:00"))
-    return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+    # in UTC: Anthropic's records and the sessions check's days are UTC, and a window
+    # written with another offset mustn't shift which day a minute falls on
+    return (t if t.tzinfo else t.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
 
 
 # ---------- the team's side ----------

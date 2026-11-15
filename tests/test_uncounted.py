@@ -30,8 +30,14 @@ class UncountedTest(Home):
         self.assertIn("DISABLE_TELEMETRY", daily.uncounted_text(res))
 
     def test_a_hidden_session_still_fails_beside_an_uncounted_one(self):
-        # Anthropic counted a non-interactive session the log lacks; the log's xterm one wasn't counted
-        res = self.sessions({"non-interactive": (2, {"claude-sonnet-5-5": 250})})
+        # Anthropic counted a non-interactive session the log lacks; the log's xterm one wasn't counted.
+        # The log covers the whole day (it started the day before), so the shortfall can't be outside it.
+        early = [("s0", "grant", "non-interactive", [(-400, "claude-sonnet-5-5", 10)])]
+        write_log(self.log, early + SESSIONS)
+        day0 = T0.replace(hour=0)
+        res = daily.check(None, "apikey_k1", day0, day0 + timedelta(days=1), [self.log], only_projects=["grant"],
+                          now=NOW, key_name="grant key",
+                          fetch=lambda d: cc_records({"non-interactive": (2, {"claude-sonnet-5-5": 250})}))
         self.assertIs(res["ok"], False)
         self.assertEqual(res["days"][0]["status"], "fail")
         self.assertEqual(res["uncounted_days"], [])
@@ -83,12 +89,13 @@ def tok(**kw):
     return dict({"input": 0, "output": 0, "cache_read": 0, "cache_creation": 0}, **kw)
 
 
-def billed(extra_cache_read=0, extra_haiku_input=0):
+def billed(extra_cache_read=0, extra_haiku_input=0, extra_output=0):
     """Anthropic's per-minute bill for the grant project's requests in SESSIONS, plus
     unlogged Haiku usage at minute 5 (where s2 ran)."""
     m = lambda k: iso(T0 + timedelta(minutes=k))  # noqa: E731
     return {m(1): {"claude-sonnet-5-5": tok(input=100)}, m(2): {"claude-sonnet-5-5": tok(input=50)},
-            m(5): {"claude-haiku-5-5": tok(input=30 + extra_haiku_input, cache_read=extra_cache_read)}}
+            m(5): {"claude-haiku-5-5": tok(input=30 + extra_haiku_input, output=extra_output,
+                                           cache_read=extra_cache_read)}}
 
 
 class EndToEndTest(Home):
@@ -156,6 +163,32 @@ class EndToEndTest(Home):
         self.assertIn("couldn't read Anthropic's count", out["check"]["sessions"]["error"])
 
 
+    def test_sessions_the_count_cant_see_buy_no_allowance(self):
+        # re-review: 20 made-up sessions, each with 1 Haiku token taken from s2, hidden from the
+        # sessions check by a session-level tag (subscription auth, another project) or by a first
+        # event two days earlier, passed 199,710 unlogged Haiku tokens as background: VERIFIED
+        s2_short = [SESSIONS[0], ("s2", "grant", "xterm-256color", [(5, "claude-haiku-5-5", 10)])]
+        # exactly 21 allowances (s2 and the 20) at minute 5: 21 x (1,000 input, 1,500 output, 7,010 cache read)
+        bill = billed(extra_haiku_input=21000, extra_output=31500, extra_cache_read=147210)
+        for how in ("auth", "project", "earlier"):
+            with self.subTest(how=how):
+                self.setUp()
+                fakes = [("f%d" % i, "grant", "xterm-256color",
+                          ([(-2880, "claude-haiku-5-5", 0)] if how == "earlier" else []) +
+                          [(5, "claude-haiku-5-5", 1)]) for i in range(20)]
+                write_log(self.log, s2_short)
+                extra = {"auth": {"auth": "account"}, "project": {"project": "other-client"}}.get(how)
+                if extra:
+                    write_log(self.log, fakes, extra_attrs=extra)  # tags only the session's first event
+                else:
+                    write_log(self.log, fakes)
+                path = self.make("a.zip", only_projects=["grant"])
+                self.stub_api(bill, HONEST_CELLS)
+                out = bundle.receive(path, admin_key="x", ledger=self.ledger)
+                self.assertEqual(out["verdict"], "failed", bundle.render_receive(out))
+                self.tearDown()
+
+
 DAY0 = datetime(2026, 11, 13, tzinfo=timezone.utc)
 
 
@@ -201,6 +234,50 @@ class SessionsRulesTest(unittest.TestCase):
             self.assertEqual(run(DAY0 + timedelta(days=1))["days"][0]["status"], "fail")
             self.assertEqual(run(DAY0 + timedelta(hours=7))["days"][0]["status"], "partial")
 
+    def test_background_is_grouped_by_utc_day_whatever_the_offset(self):
+        # re-review: minutes keyed with a -05:00 offset were grouped by their local date
+        sess = daily.summarize({"days": [
+            dict(day="2026-11-13", status="pass", anthropic_sessions=1, log_sessions=1, token_difference={}),
+            dict(day="2026-11-14", status="pass", anthropic_sessions=0, log_sessions=0, token_difference={})]})
+        bill = {"per_minute": {"2026-11-13T23:30:00-05:00": {"background": 7010}}}  # 04:30 UTC on the 14th
+        daily.limit_background(sess, bill, now=NOW)
+        self.assertEqual([r["status"] for r in sess["days"]], ["pass", "fail"])
+        from vawr import billcheck
+        self.assertEqual(billcheck.parse_when("2026-11-13T23:30-05:00").utcoffset(), timedelta(0))
+
+    def test_the_cap_leaves_out_minutes_anthropic_hasnt_counted_yet(self):
+        # re-review: received at 07:10, Anthropic hadn't counted s2 (06:50) yet: a false FAILED
+        sess = daily.summarize({"days": [dict(day="2026-11-13", status="pending", anthropic_sessions=1,
+                                              log_sessions=2, token_difference={})]})
+        bill = {"per_minute": {"2026-11-13T06:01:00+00:00": {"background": 7010},
+                               "2026-11-13T06:50:00+00:00": {"background": 7010}}}
+        daily.limit_background(sess, bill, now=datetime(2026, 11, 13, 7, 10, tzinfo=timezone.utc))
+        self.assertEqual(sess["days"][0]["status"], "pending")
+        daily.limit_background(sess, bill, now=NOW)  # a week later both count, and 1 session justifies one
+        self.assertEqual(sess["days"][0]["status"], "fail")
+
+    def test_a_partial_day_with_both_a_shortfall_and_an_excess_is_partial(self):
+        # re-review: work after the bundle (shortfall) beside a telemetry-off session (excess)
+        self.assertEqual(daily._status(1, {"m": 400}, 2, {"m": 180}, True, True)[0], "partial")
+        self.assertEqual(daily._status(1, {"m": 400}, 2, {"m": 180}, True, False)[0], "fail")
+
+    def test_a_day_with_logged_requests_is_never_before_the_log(self):
+        # re-review: requests without a session ID on day D left the log "starting" on D+1
+        from vawr import chainlog
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "log.jsonl")
+            log = chainlog.ChainLog(p)
+            log.append({"name": "api_request", "time": iso(T0), "attributes": {
+                "project": "grant", "auth": "api_key", "model": "claude-sonnet-5-5", "input_tokens": 500,
+                "output_tokens": 0, "cache_read_tokens": 0, "cache_creation_tokens": 0,
+                "event.timestamp": iso(T0)}})
+            write_log(p, [("s9", "grant", "non-interactive", [(24 * 60, "claude-sonnet-5-5", 100)])])
+            res = daily.check(None, "apikey_k1", DAY0, DAY0 + timedelta(days=2), [p], now=NOW, key_name="grant key",
+                              fetch=lambda day: cc_records({"non-interactive": (1 if day > "2026-11-13" else 2, {
+                                  "claude-sonnet-5-5": 100 if day > "2026-11-13" else 500})}))
+            self.assertNotEqual(res["days"][0]["status"], "before_log")
+            self.assertIsNot(res["ok"], True)
+
     def test_pending_and_partial_days_are_never_confirmed(self):
         for st in ("pending", "partial", "uncounted"):
             self.assertIsNone(daily.overall([{"status": "pass"}, {"status": st}]), st)
@@ -241,6 +318,30 @@ class SessionsRulesTest(unittest.TestCase):
         text = check.render(res)
         self.assertIn("NOTE  sessions", text)
         self.assertIn("couldn't confirm every day", text)
+
+
+class TeamWindowTest(Home):
+    def test_team_doesnt_pass_a_period_that_hasnt_ended(self):
+        write_log(self.log, SESSIONS)
+        path = os.path.join(self.d, "open.zip")
+        bundle.make(path, self.log, T0, T0 + timedelta(days=14), claude_projects=self.projects, key_id="apikey_k1",
+                    only_projects=["grant"])
+        minute = lambda m: iso(T0 + timedelta(minutes=m))  # noqa: E731
+        org = {"apikey_k1": {minute(1): {"claude-sonnet-5-5": tok(input=100)},
+                             minute(2): {"claude-sonnet-5-5": tok(input=50)},
+                             minute(5): {"claude-haiku-5-5": tok(input=30)}}}
+        res = team.run([path], None, ledger=self.ledger, org_minutes=org,
+                       keys=[{"id": "apikey_k1", "name": "grant key"}],
+                       fetch=lambda d: cc_records(HONEST_CELLS) if d == "2026-11-13" else [],
+                       now=T0 + timedelta(hours=3))
+        row = res["keys"][0]
+        self.assertEqual(row["status"], "check")
+        self.assertIn("hasn't ended", row["note"])
+
+    def test_level_when_the_count_couldnt_be_read(self):
+        res = {"chain": {"ok": True}, "coverage": {"ok": None}, "bill": {"gaps": [], "log_excess": []},
+               "sessions": {"ok": None, "error": "couldn't read Anthropic's count"}}
+        self.assertEqual(check.level(res), "provider-unconfirmed")
 
 
 class BadTimeTest(unittest.TestCase):

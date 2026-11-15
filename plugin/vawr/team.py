@@ -9,7 +9,7 @@ tokens: that is usage nobody reported.
 """
 import os
 import tempfile
-from datetime import datetime
+from datetime import datetime, timezone
 
 from . import auditor, bundle, daily, usage_api
 from .logdata import api_requests
@@ -120,7 +120,10 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
                         and (mb["log_id"], r.get("seq")) not in seen):
                     seen.add((mb["log_id"], r.get("seq")))
                     reqs.append(dict(r, mode="api_key"))
-        row["bill"] = auditor.check_provider(reqs, start, end, key_mode="api_key", provider_minutes=minutes)
+        row["bill"] = auditor.check_provider(
+            reqs, start, end, key_mode="api_key", provider_minutes=minutes,
+            allowance_sessions=daily.eligible_sessions([(mb["log"], mb["only_projects"]) for mb in mine])
+            if sessions else None)
         if sessions and not row["in_organization"]:
             row["sessions"] = {"ok": None, "error": "this key isn't in your organization"}
         elif sessions and sum(1 for k in keys if k.get("name") == names.get(kid)) > 1:
@@ -131,7 +134,7 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
                 row["sessions"] = daily.check(admin_key, kid, start, end,
                                               [(mb["log"], mb["only_projects"]) for mb in mine],
                                               key_name=names.get(kid), fetch=fetch, now=now)
-                daily.limit_background(row["sessions"], row["bill"])
+                daily.limit_background(row["sessions"], row["bill"], now=now)
             except Exception as exc:
                 row["sessions"] = {"ok": False, "error": "the logs made the sessions check fail: %s: %s"
                                    % (type(exc).__name__, exc)}
@@ -146,6 +149,9 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
             row["note"] = daily.unconfirmed_text(s) or "Anthropic's session count couldn't confirm every day yet"
         else:
             row["status"] = "pass"
+        if row["status"] == "pass" and end > (now or datetime.now(timezone.utc)):
+            row["status"] = "check"
+            row["note"] = "the period hasn't ended yet; usage after now can't be checked"
         if len({mb["log_id"] for mb in mine}) > 1 and row["status"] == "pass":
             row["status"] = "check"
             row["note"] = "bundles from %d different logs cover this key; give each person their own key" % len(

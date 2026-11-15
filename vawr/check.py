@@ -39,8 +39,8 @@ def level(res):
         return "failed"
     if res.get("bill") is None:
         return "tamper-evident"
-    return "provider-unconfirmed" if sess and (sess.get("unconfirmed_days") or sess.get("uncounted_days")) \
-        else "provider"
+    return "provider-unconfirmed" if sess and (sess.get("unconfirmed_days") or sess.get("uncounted_days")
+                                               or sess.get("error")) else "provider"
 
 
 def provider_checks(reqs, start, end, admin_key=None, key_id=None, api_key=None, provider_minutes=None,
@@ -56,7 +56,9 @@ def provider_checks(reqs, start, end, admin_key=None, key_id=None, api_key=None,
         # requests billed to an API key: tagged runs ("sprint") or auth=api_key
         key_reqs = [dict(r, mode="api_key") for r in reqs if r.get("mode") in ("api_key", "sprint")]
         bill = auditor.check_provider(key_reqs, start, end, shift=shift, key_mode="api_key",
-                                      provider_minutes=provider_minutes)
+                                      provider_minutes=provider_minutes,
+                                      allowance_sessions=daily.eligible_sessions(log_paths, only_projects)
+                                      if sessions and log_paths else None)
         bill["key_id"] = key_id
         bill["source"] = source
     if sessions and admin_key and key_id and log_paths:

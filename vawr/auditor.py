@@ -149,7 +149,7 @@ def _by_model(provider_minutes):
 
 def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="sprint",
                    provider_minutes=None, background_model=BACKGROUND_MODEL,
-                   background_envelope=BACKGROUND_ENVELOPE, recorded_totals=None):
+                   background_envelope=BACKGROUND_ENVELOPE, recorded_totals=None, allowance_sessions=None):
     """recorded_totals: optional [(first_time, last_time, model, {type: tokens}), ...],
     usage a record shows only as a total over a time span (Claude Code's per-session
     cost totals include requests its session files don't list one by one: session
@@ -201,6 +201,10 @@ def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="spri
     # ... and only to a session with usage of its own: a session whose requests carry no
     # tokens is no evidence of the background request that comes with real work
     sessions = {sid: v for sid, v in sessions.items() if any(logged_by_session[sid].values())}
+    # ... and, when the caller says which sessions Anthropic's daily count is compared
+    # with (billed to an API key, in the report's projects), only to those
+    if allowance_sessions is not None:
+        sessions = {sid: v for sid, v in sessions.items() if sid in allowance_sessions}
 
     models = set(logged) | {mod for v in pm.values() for mod in v}
     unmatched_p = {mod: {} for mod in models}

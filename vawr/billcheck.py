@@ -42,7 +42,7 @@ def parse_when(s, now=None):
     except ValueError:
         raise BadTime("%r isn't a time vawr reads: use 90m, 24h or 7d, or a UTC time such as "
                       "2026-11-15T08:43 or 2026-11-15T08:43:00Z" % s) from None
-    return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+    return (t if t.tzinfo else t.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
 
 
 class BadTime(ValueError):

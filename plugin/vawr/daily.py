@@ -117,11 +117,11 @@ def log_days(log_paths, days, only_projects=None, ends=None):
                 n = sum(r["tokens"].values())
                 out[d]["tokens"][r.get("model") or "?"] += n
                 cell(d, (sess.get(r.get("session_id")) or {}).get("terminal"))["tokens"][r.get("model") or "?"] += n
-        starts = [_parse(s["first"]) for s in sess.values()]
-        starts = [t for t in starts if t]
-        first.append(min(starts).isoformat() if starts else None)
+        # the log's span, from every timed event: a day with logged requests is never "before the log"
+        times = [t for t in (_parse(s["first"]) for s in sess.values()) if t]
+        times += [t for t in (_parse(r.get("time")) for r in api_requests(path)) if t]
+        first.append(min(times).isoformat() if times else None)
         if ends is not None:
-            times = starts + [t for t in (_parse(r.get("time")) for r in api_requests(path)) if t]
             ends.append(max(times).isoformat() if times else None)
     return out, first
 
@@ -154,7 +154,7 @@ def _status(a_sessions, a_tokens, l_sessions, l_tokens, complete, partial_log):
     extra = missing < 0 or any(v < 0 for v in diff.values())
     if not short and not extra:
         return ("pass" if complete else "pass_so_far"), diff
-    if partial_log and not extra:
+    if partial_log and short:  # sessions outside the log; an excess beside them can't be judged either
         return "partial", diff
     if short:
         return "fail", diff
@@ -263,24 +263,41 @@ def summarize(res):
     return res
 
 
-def limit_background(sess, bill, envelope=None):
-    """An unconfirmed day (the log has more than Anthropic counted, or the day isn't
-    covered) fails if the bill check credited more background allowance that day than
-    Anthropic's own session count justifies: each logged session earns an allowance,
-    so made-up sessions could otherwise pass unlogged use of the key as background."""
+def eligible_sessions(log_paths, only_projects=None):
+    """Session IDs that earn a background allowance in the bill check: the ones this
+    check counts (billed to an API key, in the report's projects)."""
+    if isinstance(log_paths, str):
+        log_paths = [log_paths]
+    out = set()
+    for p in log_paths:
+        path, only = (p, only_projects) if isinstance(p, str) else tuple(p)
+        out |= {sid for sid, s in log_sessions(path).items()
+                if s["mode"] in API_KEY_MODES and (not only or s["project"] in only)}
+    return out
+
+
+def limit_background(sess, bill, envelope=None, now=None):
+    """A day fails if the bill check credited more background allowance that day than
+    the sessions both Anthropic and the log counted justify (one allowance each): each
+    logged session earns an allowance, so made-up sessions, counted or not, could
+    otherwise pass unlogged use of the key as background. Minutes younger than the
+    count's lag are left out, since Anthropic may not have counted their sessions yet."""
     if not isinstance(sess, dict) or not sess.get("days") or not isinstance(bill, dict):
         return sess
     from .auditor import BACKGROUND_ENVELOPE
     per_session = sum((envelope or BACKGROUND_ENVELOPE).values())
+    cutoff = (now or datetime.now(timezone.utc)) - LAG
     used = Counter()
     for mm, v in (bill.get("per_minute") or {}).items():
-        used[str(mm)[:10]] += (v or {}).get("background", 0) if isinstance(v, dict) else 0
+        t = _parse(str(mm))
+        if t and t < cutoff and isinstance(v, dict):
+            used[t.date().isoformat()] += v.get("background", 0) or 0
     changed = False
     for r in sess["days"]:
-        if r["status"] in ("uncounted", "pending") and used[r["day"]] > r["anthropic_sessions"] * per_session:
+        justified = min(r["anthropic_sessions"], r["log_sessions"]) * per_session
+        if r["status"] != "fail" and used[r["day"]] > justified:
             r["status"] = "fail"
-            r["background_over_count"] = {"credited": used[r["day"]],
-                                          "justified": r["anthropic_sessions"] * per_session}
+            r["background_over_count"] = {"credited": used[r["day"]], "justified": justified}
             changed = True
     return summarize(sess) if changed else sess
 
@@ -335,9 +352,9 @@ def render_lines(res):
         bo = r.get("background_over_count")
         if bo:
             out.append("          the bill check credited %s tokens of background allowance this day; Anthropic's "
-                       "count of %d session%s justifies at most %s, so the log's extra sessions don't explain "
-                       "the usage" % ("{:,}".format(bo["credited"]), r["anthropic_sessions"],
-                                      "" if r["anthropic_sessions"] == 1 else "s", "{:,}".format(bo["justified"])))
+                       "count and the log's (%d and %d sessions) justify at most %s, so sessions the count doesn't "
+                       "see can't explain the usage" % ("{:,}".format(bo["credited"]), r["anthropic_sessions"],
+                                                        r["log_sessions"], "{:,}".format(bo["justified"])))
         if len(r.get("by_terminal") or []) > 1:
             for c in r["by_terminal"]:
                 out.append("          %-16s %-11s Anthropic %d, log %d%s" % (
