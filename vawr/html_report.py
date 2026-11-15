@@ -697,8 +697,10 @@ def _receive_verdict(check):
         return ""
     why = "; ".join(_e(str(r)) for r in (check.get("verdict_reasons") or []))
     cls = {"verified": "ok", "consistent": "consistent", "failed": "attention"}[v]
-    return ('<section class="verdict %s" aria-label="Verdict"><p class="headline">%s</p>%s</section>'
-            % (cls, v.upper(), "<p>%s.</p>" % (why[:1].upper() + why[1:]) if why else ""))
+    demo = ('<p><strong>Demo:</strong> Anthropic&#x27;s records were replayed from responses saved %s UTC, '
+            'not fetched live.</p>' % _e(str(check["replayed"]))) if check.get("replayed") else ""
+    return ('<section class="verdict %s" aria-label="Verdict"><p class="headline">%s</p>%s%s</section>'
+            % (cls, v.upper(), "<p>%s.</p>" % (why[:1].upper() + why[1:]) if why else "", demo))
 
 
 def _verdict(checks, warnings, level=""):

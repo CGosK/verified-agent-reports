@@ -549,8 +549,8 @@ def summary_line(out):
     m = out["manifest"]
     w = m.get("window") or [None, None]
     reasons = verdict_reasons(out)
-    return "%s: %s, %s UTC. %s." % (
-        out["verdict"].upper(), clean(m.get("title") or "untitled report", 80), _window_utc(w),
+    return "%s%s: %s, %s UTC. %s." % (
+        "DEMO, records replayed: " if out.get("replayed") else "", out["verdict"].upper(), clean(m.get("title") or "untitled report", 80), _window_utc(w),
         clean(reasons[0], 300)[:1].upper() + clean(reasons[0], 300)[1:])
 
 
@@ -573,6 +573,9 @@ def render_receive(out):
         ", projects %s" % clean(", ".join(m["only_projects"])) if m.get("only_projects") else ""))
     if out.get("key_checked"):
         name = ((out.get("check") or {}).get("sessions") or {}).get("actor") or {}
+        if out.get("replayed"):
+            lines.append("Anthropic's records: REPLAYED from responses saved %s UTC (vawr demo), not fetched live"
+                         % clean(out["replayed"], 20))
         lines.append("API key checked: %s%s%s" % (out["key_checked"], " (%s)" % clean(name["api_key_name"])
                                                   if name.get("api_key_name") else "",
                                                   "; the bundle names %s" % m["key_id"]
@@ -615,7 +618,8 @@ def render_receive(out):
     if out.get("settling"):
         lines.append("NOTE  the window ended less than %d minutes ago; Anthropic's records for its last minutes may "
                      "not be in yet: run `vawr receive` again after that" % (SETTLE.total_seconds() // 60))
-    lines += ["", VERDICTS[out["verdict"]]]
+    lines += ["", VERDICTS[out["verdict"]] if not (out.get("replayed") and out["verdict"] == "verified")
+              else "VERIFIED  checked against Anthropic's records as saved for this demo (replayed)"]
     why = verdict_reasons(out)
     text = clean("; ".join(why), 600)
     lines.append(("Why: " + text if out["verdict"] != "verified" else text[:1].upper() + text[1:]) + ".")
@@ -654,4 +658,9 @@ def receive_html(out, title=None):
     res["verdict_reasons"] = verdict_reasons(out)
     res["checked_by"] = "the recipient, on their own machine" + (
         " with their own Admin key" if out.get("check") else "")
+    if out.get("replayed"):
+        res["checked_by"] = ("vawr demo, on this machine, with Anthropic's records REPLAYED from responses saved "
+                             "%s UTC (not fetched live)" % clean(out["replayed"], 20))
+        res["replayed"] = out["replayed"]
+        title = "DEMO (Anthropic's records replayed): " + (title or out["manifest"].get("title") or "Agent usage report")
     return html_report.render(rep, check=res, title=title or out["manifest"].get("title") or "Agent usage report")

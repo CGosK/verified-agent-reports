@@ -26,6 +26,7 @@ RECORDS = os.path.join(DATA, "anthropic_records.json")
 HONEST = os.path.join(DATA, "full-day.zip")
 HIDDEN = os.path.join(DATA, "batch-runs-with-hidden.zip")
 HONEST_KEY = "apikey_01ACxYY1jehtHaxqdPihHsqV"  # the day test's key; the batch bundle names its own
+DEMO_KEY = "vawr-demo-replay"  # stands in for an Admin key; only the replay answers it
 
 
 def _key(path, params):
@@ -43,9 +44,20 @@ def _trim(path, data, names, ids):
                         for k in data.get("data") or [] if k.get("id") in ids]
         data["has_more"], data["first_id"], data["last_id"] = False, None, None
     elif "claude_code" in path:
-        data["data"] = [r for r in data.get("data") or []
+        data["data"] = [_trim_row(r) for r in data.get("data") or []
                         if ((r.get("actor") or {}).get("api_key_name")) in names]
     return data
+
+
+def _trim_row(r):
+    """An analytics row with only the fields the sessions check reads."""
+    core = r.get("core_metrics") or {}
+    return {"date": r.get("date"), "terminal_type": r.get("terminal_type"),
+            "actor": {"type": (r.get("actor") or {}).get("type"), "api_key_name": (r.get("actor") or {}).get("api_key_name")},
+            "core_metrics": {k: core.get(k) for k in ("num_sessions", "lines_of_code", "commits_by_claude_code",
+                                                     "pull_requests_by_claude_code")},
+            "model_breakdown": [{"model": m.get("model"), "tokens": m.get("tokens")}
+                                for m in r.get("model_breakdown") or []]}
 
 
 def record(out=RECORDS):
@@ -103,19 +115,22 @@ def run(html_dir=None, out=sys.stdout):
         saved = json.load(fh)
     responses = saved["responses"]
 
-    def replay(admin_key, path, params, **kw):
-        k = _key(path, params)
-        if k not in responses:
-            raise RuntimeError("the demo has no saved Anthropic record for %s" % k)
-        return responses[k]
+    fetched = saved["fetched"].replace("T", " ")[:16]
     real = usage_api._get
-    usage_api._get = replay
+
+    def replay(admin_key, path, params, **kw):
+        if admin_key != DEMO_KEY:  # never answer a real key's request
+            return real(admin_key, path, params, **kw)
+        k = _key(path, params)
+        if k not in responses:  # an OSError reads as "couldn't reach Anthropic", not as the log's fault
+            raise OSError("the demo has no saved Anthropic record for %s" % k)
+        return responses[k]
     w = out.write
-    w("vawr demo: what a payer sees. The checks run here, for real; Anthropic's records for these\n"
-      "bundles are replayed from responses saved with our Admin key on %s UTC.\n"
-      "With your own Admin key, `vawr receive <bundle>` checks live records instead.\n"
-      % saved["fetched"].replace("T", " ")[:16])
     try:
+        usage_api._get = replay
+        w("vawr demo: what a payer sees. The checks run here, for real; Anthropic's records for these\n"
+          "bundles are REPLAYED from responses saved with our Admin key on %s UTC, not fetched live.\n"
+          "With your own Admin key, `vawr receive <bundle>` checks live records instead.\n" % fetched)
         with tempfile.TemporaryDirectory(prefix="vawr-demo-") as d:
             ledger = os.path.join(d, "received.jsonl")  # never your own ledger
             edited = _edited_copy(HONEST, os.path.join(d, "full-day-edited.zip"))
@@ -126,7 +141,8 @@ def run(html_dir=None, out=sys.stdout):
                       "full-day-edited.html")]
             verdicts = []
             for title, path, key, page in cases:
-                res = bundle.receive(path, admin_key="replay", key_id=key, ledger=ledger, record=False)
+                res = bundle.receive(path, admin_key=DEMO_KEY, key_id=key, ledger=ledger, record=False)
+                res["replayed"] = fetched
                 verdicts.append(res["verdict"])
                 w("\n%s\n%s\n\n%s\n" % (title, "=" * len(title), bundle.render_receive(res)))
                 if html_dir:

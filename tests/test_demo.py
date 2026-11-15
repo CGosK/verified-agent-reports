@@ -28,6 +28,20 @@ class DemoTest(unittest.TestCase):
         self.assertIn("replayed", text)
         self.assertIn("not run: the log or the report already failed", text)
         self.assertEqual(pages, ["batch-hidden.html", "full-day-edited.html", "full-day.html"])
+        self.assertEqual(text.count("REPLAYED from responses saved"), 4)  # the header and each case
+        self.assertNotIn("checked against your own Anthropic records", text)
+        self.assertIn("Summary: DEMO, records replayed: VERIFIED", text)
+
+    def test_pages_say_replayed_and_the_patch_is_undone(self):
+        from vawr import usage_api
+        before = usage_api._get
+        with tempfile.TemporaryDirectory() as d:
+            demo.run(html_dir=d, out=io.StringIO())
+            for name in os.listdir(d):
+                page = open(os.path.join(d, name)).read()
+                self.assertIn("replayed", page.lower())
+                self.assertIn("DEMO", page)
+        self.assertIs(usage_api._get, before)
 
     def test_saved_records_hold_no_key_hints_or_other_actors(self):
         with open(demo.RECORDS) as fh:

@@ -34,15 +34,9 @@
 "num_sessions": 119,
 "pull_requests_by_claude_code": 0
 },
-"customer_type": "api",
 "date": "2026-11-14T00:00:00Z",
-"is_remote": false,
 "model_breakdown": [
 {
-"estimated_cost": {
-"amount": 144,
-"currency": "USD"
-},
 "model": "claude-sonnet-5-5",
 "tokens": {
 "cache_creation": 185799,
@@ -52,10 +46,6 @@
 }
 },
 {
-"estimated_cost": {
-"amount": 31,
-"currency": "USD"
-},
 "model": "claude-opus-5-5",
 "tokens": {
 "cache_creation": 23752,
@@ -65,10 +55,6 @@
 }
 },
 {
-"estimated_cost": {
-"amount": 1,
-"currency": "USD"
-},
 "model": "claude-haiku-5-5",
 "tokens": {
 "cache_creation": 32201,
@@ -78,27 +64,7 @@
 }
 }
 ],
-"organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
-"subscription_type": null,
-"terminal_type": "non-interactive",
-"tool_actions": {
-"edit_tool": {
-"accepted": 111,
-"rejected": 0
-},
-"multi_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"notebook_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"write_tool": {
-"accepted": 0,
-"rejected": 0
-}
-}
+"terminal_type": "non-interactive"
 },
 {
 "actor": {
@@ -114,15 +80,9 @@
 "num_sessions": 2,
 "pull_requests_by_claude_code": 0
 },
-"customer_type": "api",
 "date": "2026-11-14T00:00:00Z",
-"is_remote": false,
 "model_breakdown": [
 {
-"estimated_cost": {
-"amount": 0,
-"currency": "USD"
-},
 "model": "claude-haiku-5-5",
 "tokens": {
 "cache_creation": 6351,
@@ -132,27 +92,7 @@
 }
 }
 ],
-"organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
-"subscription_type": null,
-"terminal_type": "xterm",
-"tool_actions": {
-"edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"multi_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"notebook_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"write_tool": {
-"accepted": 0,
-"rejected": 0
-}
-}
+"terminal_type": "xterm"
 },
 {
 "actor": {
@@ -168,15 +108,9 @@
 "num_sessions": 5,
 "pull_requests_by_claude_code": 0
 },
-"customer_type": "api",
 "date": "2026-11-14T00:00:00Z",
-"is_remote": false,
 "model_breakdown": [
 {
-"estimated_cost": {
-"amount": 24,
-"currency": "USD"
-},
 "model": "claude-sonnet-5-5",
 "tokens": {
 "cache_creation": 46390,
@@ -186,10 +120,6 @@
 }
 },
 {
-"estimated_cost": {
-"amount": 0,
-"currency": "USD"
-},
 "model": "claude-haiku-5-5",
 "tokens": {
 "cache_creation": 9067,
@@ -199,27 +129,7 @@
 }
 }
 ],
-"organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
-"subscription_type": null,
-"terminal_type": "xterm-256color",
-"tool_actions": {
-"edit_tool": {
-"accepted": 5,
-"rejected": 0
-},
-"multi_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"notebook_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"write_tool": {
-"accepted": 1,
-"rejected": 0
-}
-}
+"terminal_type": "xterm-256color"
 },
 {
 "actor": {
@@ -235,15 +145,9 @@
 "num_sessions": 5,
 "pull_requests_by_claude_code": 0
 },
-"customer_type": "api",
 "date": "2026-11-14T00:00:00Z",
-"is_remote": false,
 "model_breakdown": [
 {
-"estimated_cost": {
-"amount": 26,
-"currency": "USD"
-},
 "model": "claude-sonnet-5-5",
 "tokens": {
 "cache_creation": 51463,
@@ -253,10 +157,6 @@
 }
 },
 {
-"estimated_cost": {
-"amount": 0,
-"currency": "USD"
-},
 "model": "claude-haiku-5-5",
 "tokens": {
 "cache_creation": 3935,
@@ -266,27 +166,7 @@
 }
 }
 ],
-"organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
-"subscription_type": null,
-"terminal_type": "xterm-256color",
-"tool_actions": {
-"edit_tool": {
-"accepted": 7,
-"rejected": 0
-},
-"multi_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"notebook_edit_tool": {
-"accepted": 0,
-"rejected": 0
-},
-"write_tool": {
-"accepted": 0,
-"rejected": 0
-}
-}
+"terminal_type": "xterm-256color"
 }
 ],
 "has_more": false,
