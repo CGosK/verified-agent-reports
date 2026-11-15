@@ -140,6 +140,39 @@ def telemetry_status(port=4318):
     return (not missing), missing
 
 
+TELEMETRY_OFF = ("DISABLE_TELEMETRY", "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC")
+
+
+def _on(value):
+    return value is not None and str(value).strip().lower() not in ("", "0", "false", "no", "off")
+
+
+def telemetry_off_settings(environ=None, settings_path=None):
+    """Where DISABLE_TELEMETRY or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set: the
+    shell, or the user's Claude Code settings. Claude Code doesn't report sessions run
+    with either to Anthropic (vawr still logs them), so a payer's check of Anthropic's
+    session count can't confirm them."""
+    environ = os.environ if environ is None else environ
+    path = settings_path or user_settings_path()
+    found = ["%s in the shell" % k for k in TELEMETRY_OFF if _on(environ.get(k))]
+    try:
+        with open(path) as fh:
+            env = (json.load(fh) or {}).get("env") or {}
+    except (OSError, ValueError, AttributeError):
+        env = {}
+    found += ["%s in %s" % (k, path) for k in TELEMETRY_OFF if isinstance(env, dict) and _on(env.get(k))]
+    return found
+
+
+def telemetry_off_warning(environ=None, settings_path=None):
+    found = telemetry_off_settings(environ, settings_path)
+    if not found:
+        return ""
+    return ("Note: %s is set. vawr still logs these sessions and the bill check still covers them, but Claude Code "
+            "doesn't report them to Anthropic, so a payer's check of Anthropic's session count can't confirm "
+            "them and their reports stop at CONSISTENT. Unset it for sessions you'll report." % " and ".join(found))
+
+
 def session_start(port=4318):
     """For the plugin's SessionStart hook: start the receiver when telemetry is set
     up; otherwise say once, briefly, how to set it up. Prints hook JSON or nothing."""

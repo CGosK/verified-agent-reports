@@ -148,6 +148,9 @@ def render(res):
             lines.append("SKIP  sessions     needs an Admin key and the key's ID")
     elif s.get("error"):
         lines.append("SKIP  sessions     %s" % s["error"])
+    elif s.get("uncounted_days") and s.get("ok") is not False:
+        lines.append("NOTE  sessions     %s" % daily.uncounted_text(s))
+        lines += daily.render_lines(s)
     else:
         lines.append("%s  sessions     %s" % (mark[s["ok"]], (
             "Anthropic's daily count of Claude Code sessions and tokens on this key vs the log"

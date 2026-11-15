@@ -356,10 +356,12 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
     - "verified": the log and report hold together, continuity holds, and with the
       payer's own Admin key the bill check passed (nothing billed missing from the
       log, nothing in the log that wasn't billed), the sessions check ran without
-      failing, and every token in the report is on that API key;
+      failing or finding days Anthropic counted less than the log has, and every
+      token in the report is on that API key;
     - "consistent": the log and report hold together, but not all of it was checked
       against Anthropic's records (no Admin key, the records couldn't be read, usage
-      marked as a subscription, or a window that hasn't ended);
+      marked as a subscription, a window that hasn't ended, or sessions Claude Code
+      didn't report to Anthropic);
     - "failed": anything failed, including a log that makes the checks crash.
     Raises ValueError for a file that isn't a readable bundle. Without `workdir`, the
     bundle's files are deleted before returning."""
@@ -435,8 +437,8 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
               or (isinstance(sess, dict) and sess.get("ok") is False))
     if failed:
         verdict = "failed"
-    elif (bill is not None and not (isinstance(sess, dict) and sess.get("error")) and not unchecked
-          and not out["window_open"]):
+    elif (bill is not None and not (isinstance(sess, dict) and (sess.get("error") or sess.get("uncounted_days")))
+          and not unchecked and not out["window_open"]):
         verdict = "verified"
     else:
         verdict = "consistent"
@@ -452,7 +454,8 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
 
 VERDICTS = {
     "verified": "VERIFIED  checked against your own Anthropic records",
-    "consistent": "CONSISTENT  the log and report hold together; not checked against Anthropic's records",
+    "consistent": "CONSISTENT  the log and report hold together; not everything was checked against Anthropic's "
+                  "records",
     "failed": "FAILED",
 }
 
@@ -495,7 +498,7 @@ def render_receive(out):
     else:
         for line in check.render(res).splitlines():
             if line.startswith(("PASS  bill", "FAIL  bill", "SKIP  bill", "PASS  sessions", "FAIL  sessions",
-                                "SKIP  sessions", "        ", "          ")):
+                                "SKIP  sessions", "NOTE  sessions", "        ", "          ")):
                 lines.append(clean(line, 400))
         s = res.get("sessions")
         if isinstance(s, dict) and s.get("ok") is not False and any(
@@ -508,9 +511,12 @@ def render_receive(out):
     if out.get("window_open"):
         lines.append("NOTE  the report's window hasn't ended yet; usage after now can't be checked")
     lines += ["", VERDICTS[out["verdict"]]]
-    if out["verdict"] == "consistent":
+    if out["verdict"] == "consistent" and res is None:
         lines.append("Nothing was edited after the fact, but the usage figures rest on the team's log. If you own "
                      "the API key's organization, add your Admin key to check them against Anthropic's records.")
+    elif out["verdict"] == "consistent":
+        lines.append("Nothing was edited after the fact; what the NOTE lines name couldn't be checked against "
+                     "Anthropic's records.")
     other = [x for x in out.get("log_contents") or [] if m.get("only_projects")
              and x["project"] not in m["only_projects"]]
     if other:

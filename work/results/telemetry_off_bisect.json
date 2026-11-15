@@ -1,0 +1,19 @@
+{
+ "checked_at": "2026-11-15T11:21:07.815419+00:00",
+ "by_terminal": {
+  "vt100": 2,
+  "xterm-256color": 5
+ },
+ "only_DISABLE_TELEMETRY_vt52_counted": 0,
+ "only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted": 0,
+ "billed_09_49_to_09_52": {
+  "2026-11-15T09:50:00Z": {
+   "claude-haiku-5-5": {
+    "input": 8,
+    "output": 16,
+    "cache_read": 48467,
+    "cache_creation": 20577
+   }
+  }
+ }
+}

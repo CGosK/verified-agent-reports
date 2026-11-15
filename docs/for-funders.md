@@ -28,11 +28,15 @@ vawr receive their-report.zip --key-id <the key you issued> --html report.html
   you issued agree with it: the bill, minute by minute, with nothing missing and
   nothing extra, and its daily count of Claude Code sessions (for a day not yet
   over, "so far"). Every token in the report is on that key, and the period has
-  ended.
+  ended. Claude Code reports that session count itself, so it catches sessions
+  kept out of the log; the bill is the record nobody can switch off.
 - **CONSISTENT**: the log and report hold together and nothing was edited after
   earlier reports, but not everything was checked against Anthropic's records:
   no Admin key, records that couldn't be read, usage marked as a Claude
-  subscription, or a period that hasn't ended.
+  subscription, a period that hasn't ended, or sessions Claude Code didn't
+  report to Anthropic because the grantee set `DISABLE_TELEMETRY` or
+  `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` (vawr warns them; the bill still
+  covers those tokens).
 - **FAILED**: something didn't match, including usage the log claims on your key
   that Anthropic never billed, or a log that can't be read; the output says what.
 

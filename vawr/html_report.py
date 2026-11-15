@@ -20,6 +20,7 @@ import shlex
 from datetime import datetime, timezone
 
 from . import __version__
+from .daily import UNCOUNTED
 
 CATEGORY_ORDER = ("safety", "capabilities", "other")
 TOKEN_TYPES = (("input", "Input"), ("output", "Output"), ("cache_read", "Cache read"),
@@ -433,7 +434,12 @@ def _sessions(check):
     rows = ss["days"]
     failed = [r for r in rows if r.get("status") == "fail"]
     matched = [r for r in rows if r.get("status") in ("pass", "pass_so_far")]
-    if failed:
+    uncounted = [r for r in rows if r.get("status") == "uncounted"]
+    if uncounted and not failed:
+        status = "skip"
+        result = _e(UNCOUNTED % ", ".join(r["day"] for r in uncounted))
+        short = "could not confirm: Anthropic counted fewer sessions than the log has"
+    elif failed:
         status = "fail"
         missing = sum(max(0, _int(r.get("anthropic_sessions")) - _int(r.get("log_sessions"))) for r in failed)
         result = ("On %s, Anthropic counted Claude Code sessions or tokens on this key that the log does not "

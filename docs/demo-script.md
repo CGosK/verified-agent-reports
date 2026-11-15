@@ -34,7 +34,8 @@ vawr receive work/samples/full-day.zip --key-id apikey_01ACxYY1jehtHaxqdPihHsqV
 
 "This is what a funder runs on the file a grantee sends, with their own Admin
 key." Point at: the report rebuilt from the log; the bill matching to the token
-(550,952); Anthropic's own count of Claude Code sessions, 5 and 5; VERIFIED.
+(550,952); Anthropic's count of Claude Code sessions (which Claude Code reports
+to it), 5 and 5; VERIFIED.
 
 ## 4. A report with hidden work (45 s)
 

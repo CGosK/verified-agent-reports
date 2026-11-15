@@ -1,0 +1,16 @@
+{
+ "exit": 0,
+ "reply": "OK",
+ "log_entries": 12,
+ "log_sessions": {
+  "bc86c8f0-a94c-4d93-91c0-6d8fb66e6ff2": {
+   "first": "2026-11-15T11:22:55.007Z",
+   "terminal": "non-interactive",
+   "mode": "api_key",
+   "project": "telemetry-off-otel",
+   "category": "other"
+  }
+ },
+ "api_requests": 1,
+ "started_utc": "2026-11-15T11:22:51Z"
+}

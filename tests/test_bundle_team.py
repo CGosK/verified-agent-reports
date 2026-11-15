@@ -117,12 +117,14 @@ class SessionsCheckTest(unittest.TestCase):
         early = datetime(2026, 11, 13, 20, tzinfo=timezone.utc)
         self.assertEqual(self.day({"x": (1, {"m": 5})}, {"x": ({"a", "b"}, {"m": 10})}, now=early)["status"],
                          "pending")
-        self.assertEqual(self.day({"x": (1, {"m": 5})}, {"x": ({"a", "b"}, {"m": 10})})["status"], "fail")
+        # once it is, more in the log than Anthropic counted is "uncounted", not a failure (see test_uncounted)
+        self.assertEqual(self.day({"x": (1, {"m": 5})}, {"x": ({"a", "b"}, {"m": 10})})["status"], "uncounted")
 
     def test_overall(self):
         self.assertIsNone(daily.overall([{"status": "partial"}, {"status": "before_log"}]))
         self.assertTrue(daily.overall([{"status": "pass_so_far"}, {"status": "partial"}]))
         self.assertFalse(daily.overall([{"status": "pass"}, {"status": "fail"}]))
+        self.assertIsNone(daily.overall([{"status": "pass"}, {"status": "uncounted"}]))
 
 
 class SessionsOnLogTest(Home):

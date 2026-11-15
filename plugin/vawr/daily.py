@@ -4,12 +4,17 @@ for an API key, compared with the log.
 Anthropic's Claude Code Analytics API (part of the Admin API) reports, for each
 UTC day and actor (an API key's name, or a Console user's email), how many
 Claude Code sessions ran and their tokens by model. Claude Code itself reports
-these to Anthropic: in our tests a session run with DISABLE_TELEMETRY=1 and
-CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 was billed but never counted
-(work/results/telemetry_off_test.json). So the count catches sessions hidden
-only from the team's own log (25 of them on Nov 14, every one counted), but not
-a team that also switches off Claude Code's reporting; the bill is the record a
-team can't switch off. Its tokens matched the log exactly for logged sessions,
+these to Anthropic: in our tests a session run with DISABLE_TELEMETRY=1 or
+CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (either one alone) was billed but
+never counted (work/results/telemetry_off_test.json, telemetry_off_bisect.json).
+So the count catches sessions hidden only from the team's own log (25 of them on
+Nov 14, every one counted), but not a team that also switches off Claude Code's
+reporting; the bill is the record a team can't switch off.
+
+vawr's own log still records such sessions (work/results/telemetry_off_otel_*.json),
+so an honest team with either setting has more in its log than Anthropic counted.
+That isn't hidden work, so it doesn't fail: the day is "uncounted", which the bill
+check still covers but which keeps a report from VERIFIED. Its tokens matched the log exactly for logged sessions,
 and it leaves out the one background request that Claude Code records nowhere
 (see billcheck), which the log doesn't have either.
 
@@ -128,7 +133,7 @@ def _day(s):
     return t.astimezone(timezone.utc).date().isoformat() if t else None
 
 
-RANK = {"fail": 5, "pending": 4, "partial": 3, "pass_so_far": 2, "pass": 1, "before_log": 0}
+RANK = {"fail": 6, "uncounted": 5, "pending": 4, "partial": 3, "pass_so_far": 2, "pass": 1, "before_log": 0}
 
 
 def _status(a_sessions, a_tokens, l_sessions, l_tokens, complete, partial_log):
@@ -144,15 +149,19 @@ def _status(a_sessions, a_tokens, l_sessions, l_tokens, complete, partial_log):
         return "partial", diff
     if short:
         return "fail", diff
-    return ("fail" if complete else "pending"), diff  # the log has more than Anthropic counted
+    # the log has more than Anthropic counted: Claude Code doesn't report sessions run with
+    # DISABLE_TELEMETRY or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC, though vawr logs them.
+    # Not a sign of hidden work (the bill check sees any log entry that wasn't billed).
+    return ("uncounted" if complete else "pending"), diff
 
 
 def compare(anth, logd, now, log_starts=()):
     """Per-day verdicts, per terminal type where the log records it (Anthropic reports
     each actor's sessions by terminal type: "non-interactive" for `claude -p`, or the
     terminal's name). A day fails when Anthropic counted sessions or tokens the log
-    doesn't have, or (once the day is over) the log has more than Anthropic counted.
-    A day the log only partly covers (it started that day) doesn't fail on a shortfall."""
+    doesn't have. Once the day is over, a log with more than Anthropic counted is
+    "uncounted" (see the module docstring). A day the log only partly covers (it
+    started that day) doesn't fail on a shortfall."""
     starts = [_parse(s) for s in log_starts if s]
     rows = []
     for d in sorted(anth):
@@ -186,10 +195,13 @@ def compare(anth, logd, now, log_starts=()):
 
 
 def overall(rows):
-    """False if any day failed; True if none failed and at least one day matched; None
-    if no day could be checked (before or partly before the log, or not over yet)."""
+    """False if any day failed; True if none failed, none was uncounted and at least
+    one day matched; None otherwise (some day uncounted, or none could be checked:
+    before or partly before the log, or not over yet)."""
     if any(r["status"] == "fail" for r in rows):
         return False
+    if any(r["status"] == "uncounted" for r in rows):
+        return None
     return True if any(r["status"] in ("pass", "pass_so_far") for r in rows) else None
 
 
@@ -213,12 +225,25 @@ def check(admin_key, key_id, start, end, log_paths, only_projects=None, now=None
     anth = anthropic_days(admin_key, days, actor, fetch=fetch)
     logd, starts = log_days(log_paths, days, only_projects)
     rows = compare(anth, logd, now, starts)
-    return {"ok": overall(rows), "actor": actor, "key_id": key_id, "days": rows}
+    return {"ok": overall(rows), "actor": actor, "key_id": key_id, "days": rows,
+            "uncounted_days": [r["day"] for r in rows if r["status"] == "uncounted"]}
+
+
+UNCOUNTED = ("Anthropic counted fewer Claude Code sessions or tokens than the log has on %s. That isn't a sign "
+             "of hidden work: Claude Code doesn't report sessions run with DISABLE_TELEMETRY or "
+             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC set, though vawr logs them, and the bill check covers "
+             "their tokens. The count can't confirm these days; unset both for future sessions.")
+
+
+def uncounted_text(res):
+    days = (res or {}).get("uncounted_days") or []
+    return UNCOUNTED % ", ".join(days) if days else ""
 
 
 NOTES = {"pass": "", "pass_so_far": " (day not over)", "partial": " (the log started this day)",
          "before_log": " (before the log started; not checked)",
-         "pending": " (day not over; Anthropic's count lags up to an hour)", "fail": ""}
+         "pending": " (day not over; Anthropic's count lags up to an hour)", "fail": "",
+         "uncounted": " (Anthropic counted fewer than the log has)"}
 
 
 def _diff_text(diff):

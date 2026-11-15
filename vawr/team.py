@@ -139,6 +139,9 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
             row["status"] = "fail"
         elif s.get("error"):
             row["status"] = "check"  # the bill check passed; the session count couldn't run
+        elif s.get("uncounted_days"):
+            row["status"] = "check"  # the bill check passed; Anthropic counted less than the logs have
+            row["note"] = daily.uncounted_text(s)
         else:
             row["status"] = "pass"
         if len({mb["log_id"] for mb in mine}) > 1 and row["status"] == "pass":

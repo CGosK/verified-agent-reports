@@ -211,7 +211,29 @@ def render():
         if tb:
             out += ["- Only DISABLE_TELEMETRY=1 (TERM=vt52): %s of 2 counted" % tb.get("only_DISABLE_TELEMETRY_vt52_counted"),
                     "- Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (TERM=vt320): %s of 2 counted"
-                    % tb.get("only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted")]
+                    % tb.get("only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted"),
+                    "- Billed in that minute, all four: %s Haiku tokens (checked %s UTC, %d minutes after the "
+                    "sessions; the first test's controls appeared within an hour)" % (
+                        "{:,}".format(sum(sum(t.values()) for mv in (tb.get("billed_09_49_to_09_52") or {}).values()
+                                          for t in mv.values())),
+                        (tb.get("checked_at") or "")[11:16], _minutes_after(tb.get("checked_at"), "09:50"))]
+        logged = [(name, _load("telemetry_off_otel_%s.json" % name)) for name in
+                  ("disable_telemetry", "nonessential", "control")]
+        if all(r for _, r in logged):
+            out += ["", "Does vawr still log such a session? One headless session each, OpenTelemetry to a scratch "
+                    "receiver:", ""]
+            labels = {"disable_telemetry": "Only DISABLE_TELEMETRY=1",
+                      "nonessential": "Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1",
+                      "control": "Control (neither)"}
+            for name, r in logged:
+                out.append("- %s: %d session and %d API request logged" % (
+                    labels[name], len(r.get("log_sessions") or {}), r.get("api_requests") or 0))
+            th = _load("telemetry_off_headless.json")
+            if th:
+                out.append("- Anthropic's count of these three headless sessions: %s (only the control should "
+                           "count)" % th.get("non_interactive_counted"))
+            out += ["", "So an honest team with either setting has more in its log than Anthropic counted. The "
+                    "sessions check reports such a day as uncounted: not a failure, but not VERIFIED."]
         out.append("")
     ct = _load("continuity_trials.json")
     if ct:
@@ -221,6 +243,14 @@ def render():
                 "- Edits at or before the earlier head caught: %s" % _fmt(ct["caught_before_earlier_head"]),
                 "- Edits after it caught (by design, none): %s" % _fmt(ct["caught_after_earlier_head"]), ""]
     return "\n".join(out)
+
+
+def _minutes_after(checked_at, hhmm):
+    try:
+        h, m = int(checked_at[11:13]), int(checked_at[14:16])
+        return (h * 60 + m) - (int(hhmm[:2]) * 60 + int(hhmm[3:]))
+    except (TypeError, ValueError):
+        return 0
 
 
 def write():

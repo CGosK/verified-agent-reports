@@ -149,6 +149,17 @@ Nov 15, main key, one-line sessions marked by terminal name; none sent telemetry
 - Control (defaults, TERM=vt100): 2 of 2 counted
 - DISABLE_TELEMETRY=1 and CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (TERM=vt220): 0 of 2 counted
 - Billed in that minute, all four sessions: 69,848 Haiku tokens
+- Only DISABLE_TELEMETRY=1 (TERM=vt52): 0 of 2 counted
+- Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (TERM=vt320): 0 of 2 counted
+- Billed in that minute, all four: 69,068 Haiku tokens (checked 11:21 UTC, 91 minutes after the sessions; the first test's controls appeared within an hour)
+
+Does vawr still log such a session? One headless session each, OpenTelemetry to a scratch receiver:
+
+- Only DISABLE_TELEMETRY=1: 1 session and 1 API request logged
+- Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1: 1 session and 1 API request logged
+- Control (neither): 1 session and 1 API request logged
+
+So an honest team with either setting has more in its log than Anthropic counted. The sessions check reports such a day as uncounted: not a failure, but not VERIFIED.
 
 ## Continuity (relabel and rebuild after an earlier report)
 

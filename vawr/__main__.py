@@ -99,6 +99,11 @@ def cmd_bundle(args):
     if res:
         print(__import__("vawr.check", fromlist=["render"]).render(res))
         print("")
+    from . import configure
+    warn = configure.telemetry_off_warning()
+    if warn:
+        print(warn)
+        print("")
     print("Wrote %s (%s)" % (out, "{:,} bytes".format(os.path.getsize(out))))
     print("Covers %s to %s UTC%s; log head %s…, %d entries%s." % (
         m["window"][0][:16].replace("T", " "), m["window"][1][:16].replace("T", " "),
@@ -247,6 +252,9 @@ def cmd_setup(args):
     print(configure.describe(path, changes, args.write))
     if args.write:
         print("New Claude Code sessions will send their events to the receiver. Start it with `vawr start`.")
+    warn = configure.telemetry_off_warning()
+    if warn:
+        print(warn)
 
 
 def cmd_tag(args):
@@ -291,6 +299,10 @@ def cmd_status(args):
         print("head: %s" % head)
     else:
         print("log: none yet at %s" % args.log)
+    from . import configure
+    warn = configure.telemetry_off_warning()
+    if warn:
+        print(warn)
 
 
 def cmd_report(args):
