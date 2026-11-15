@@ -1,0 +1,2 @@
+12:26 {'non-interactive': 1, 'vt100': 2, 'xterm-256color': 5}
+{"non_interactive_counted": 1, "headless_sessions_run": 3}

@@ -158,6 +158,8 @@ Does vawr still log such a session? One headless session each, OpenTelemetry to 
 - Only DISABLE_TELEMETRY=1: 1 session and 1 API request logged
 - Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1: 1 session and 1 API request logged
 - Control (neither): 1 session and 1 API request logged
+- Anthropic's count of these three headless sessions: 1 of 3, the control (checked 12:31 UTC, about an hour after)
+- Billed on the key 11:22–11:25 UTC, while the three ran: 53,204 Haiku tokens
 
 So an honest team with either setting has more in its log than Anthropic counted. The sessions check reports such a day as uncounted: not a failure, but not VERIFIED.
 

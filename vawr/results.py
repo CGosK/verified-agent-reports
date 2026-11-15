@@ -230,8 +230,16 @@ def render():
                     labels[name], len(r.get("log_sessions") or {}), r.get("api_requests") or 0))
             th = _load("telemetry_off_headless.json")
             if th:
-                out.append("- Anthropic's count of these three headless sessions: %s (only the control should "
-                           "count)" % th.get("non_interactive_counted"))
+                billed = sum(sum(m.values()) for minute in (th.get("billed_11_22_to_11_25") or {}).values()
+                             for m in minute.values())
+                n = th.get("non_interactive_counted")
+                out.append("- Anthropic's count of these three headless sessions: %s of %s, %s (checked %s UTC, "
+                           "about an hour after)" % (
+                               n, th.get("headless_sessions_run"),
+                               "the control" if n == 1 else "where only the control was expected",
+                               th.get("checked_at", "")[11:16]))
+                out.append("- Billed on the key 11:22–11:25 UTC, while the three ran: %s Haiku tokens"
+                           % format(billed, ","))
             out += ["", "So an honest team with either setting has more in its log than Anthropic counted. The "
                     "sessions check reports such a day as uncounted: not a failure, but not VERIFIED."]
         out.append("")

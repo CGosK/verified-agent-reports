@@ -84,7 +84,9 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
   with `DISABLE_TELEMETRY=1` and `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
   were billed (about 34,500 tokens) and never counted, while two identical
   sessions without them were (`work/results/telemetry_off_test.json`); either
-  variable alone does it (0 of 2 each, `telemetry_off_bisect.json`). So the
+  variable alone does it (0 of 2 each, `telemetry_off_bisect.json`; in a
+  headless repeat, Anthropic counted only the same-time control, 1 of 3,
+  `telemetry_off_headless.json`). So the
   count catches sessions kept out of the team's log, not a team that also
   switches off Claude Code's reporting. The bill is the record a team can't
   switch off. vawr still logs sessions run with either variable, so an honest
@@ -301,7 +303,7 @@ intervals (conditional on these tasks and logs) are in
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
 | Anthropic's daily Claude Code session count vs the log (Nov 14, as of 17:17 UTC) | Headless: Anthropic 91, log 66, a shortfall equal to our 25 hidden runs; the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive terminal type: 5 and 5, tokens equal. 2 more sessions were our unlogged plugin test, also flagged by the bill check (35,936 tokens) |
 | Weaker work, told to hide it (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; 8 of those 11 said so anyway; the claim checker flagged all 11 (3 of 3 that hid it) and 0 of 5 controls; the other 4 met hidden tests too |
-| Sessions run with Claude Code's own telemetry off (`DISABLE_TELEMETRY=1`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`) | Billed, but not in Anthropic's session count: 0 of 2 counted with both, 0 of 2 with each alone, against 2 of 2 identical sessions without them; the bill check still sees them, and vawr still logs them (1 of 1 with each) |
+| Sessions run with Claude Code's own telemetry off (`DISABLE_TELEMETRY=1`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`) | Billed, but not in Anthropic's session count: 0 of 2 counted with both, 0 of 2 with each alone, against 2 of 2 identical sessions without them, and 1 of 3 in a headless repeat (the same-time control); the bill check still sees them, and vawr still logs them (1 of 1 with each) |
 | A whole day on a separate key, every session logged (payer's `vawr receive`) | VERIFIED: Anthropic counted 5 sessions, the log 5, no token difference; bill 550,952 tokens, 0 unexplained |
 | Claude Code 2.1.325, environment A/B (desktop app's environment vs clean) | Unrecorded request in 4 of 4 desktop-environment runs (cache read 7,010, as on 2.1.322), 0 of 4 clean; bill and session-file checks pass |
 | A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |

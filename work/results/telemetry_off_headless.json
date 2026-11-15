@@ -1,0 +1,29 @@
+{
+ "checked_at": "2026-11-15T12:31:08.414706+00:00",
+ "by_terminal": {
+  "non-interactive": 1,
+  "vt100": 2,
+  "xterm-256color": 5
+ },
+ "non_interactive_counted": 1,
+ "headless_sessions_run": 3,
+ "headless_control_sessions_run": 1,
+ "billed_11_22_to_11_25": {
+  "2026-11-15T11:22:00Z": {
+   "claude-haiku-5-5": {
+    "input": 2,
+    "output": 4,
+    "cache_read": 11285,
+    "cache_creation": 6235
+   }
+  },
+  "2026-11-15T11:23:00Z": {
+   "claude-haiku-5-5": {
+    "input": 4,
+    "output": 8,
+    "cache_read": 22792,
+    "cache_creation": 12874
+   }
+  }
+ }
+}
