@@ -186,9 +186,11 @@ def telemetry_off_warning(environ=None, settings_path=None, project_dir=None, ma
     found = telemetry_off_settings(environ, settings_path, project_dir, managed_paths)
     if not found:
         return ""
-    return ("Note: %s is set. vawr still logs these sessions and the bill check still covers them, but Claude Code "
-            "doesn't report them to Anthropic, so a payer's check of Anthropic's session count can't confirm "
-            "them and their reports stop at CONSISTENT. Unset it for sessions you'll report." % " and ".join(found))
+    return ("Note: %s is set. Claude Code doesn't report these sessions to Anthropic, so a payer's check of "
+            "Anthropic's session count can't confirm them and their reports stop at CONSISTENT. vawr still logs "
+            "them, except that with DISABLE_TELEMETRY in the Claude desktop app's environment Claude Code didn't "
+            "send vawr one ~1,200-token request per session in our test, which the bill check then flags. Unset it "
+            "for sessions you'll report." % " and ".join(found))
 
 
 def session_start(port=4318):

@@ -161,6 +161,20 @@ out += ["## Table 8. Can a team switch off Anthropic's session count?", "",
         "{:,}, cache creation {:,}), so the counted session is identified, not inferred. Run 2 had no same-time "
         "control.".format(t3["counted_row_tokens"]["cache_read"], t3["counted_row_tokens"]["cache_creation"])
         % t3["non_interactive_counted"], ""]
+de = L("telemetry_off_desktop_env.json")["runs"]
+out += ["Table 8b. The same three settings in the Claude desktop app's environment "
+        "(`CLAUDE_CODE_ENTRYPOINT=claude-desktop`), one headless session each, Nov 15 16:56–17:03 UTC.", "",
+        "| Setting | Requests logged by vawr | Billed tokens not in the log | Bill check |", "| --- | --- | --- | --- |"]
+for k, lab in (("control", "Neither"), ("disable_telemetry", "`DISABLE_TELEMETRY` only"),
+               ("nonessential", "`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only")):
+    r = de[k]
+    bc = r["bill_check"]
+    out.append("| %s | %d | {:,} | %s |".format(r["billed_minus_logged"]) % (
+        lab, r["log_api_requests"], "passes (background allowance %s)" % "{:,}".format(sum(bc["background"].values()))
+        if bc["ok"] else "flags {:,} tokens".format(sum(sum(g.values()) for g in bc["unexplained"]))))
+out += ["", "The control's unlogged tokens are the known background request (cache read 7,010). With "
+        "`DISABLE_TELEMETRY`, that request didn't happen, but a ~1,174-input-token request the control logged wasn't "
+        "sent to vawr, and its tokens exceed the allowance's 1,000 input tokens.", ""]
 
 ver = L("version_2_1_325.json")
 ct = L("continuity_trials.json")

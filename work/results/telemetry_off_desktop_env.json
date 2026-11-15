@@ -1,0 +1,111 @@
+{
+ "runs": {
+  "control": {
+   "exit": 0,
+   "reply": "OK",
+   "started": "2026-11-15T16:56:15.774406+00:00",
+   "ended": "2026-11-15T16:56:20.350771+00:00",
+   "log_sessions": 1,
+   "log_api_requests": 2,
+   "logged_tokens": {
+    "input": 1176,
+    "output": 20,
+    "cache_read": 0,
+    "cache_creation": 19800
+   },
+   "billed_in_minutes": {
+    "claude-haiku-5-5": {
+     "input": 1242,
+     "output": 61,
+     "cache_read": 7010,
+     "cache_creation": 19800
+    }
+   },
+   "billed_minus_logged": 7117,
+   "bill_check": {
+    "ok": true,
+    "background": {
+     "input": 66,
+     "output": 41,
+     "cache_read": 7010,
+     "cache_creation": 0
+    },
+    "unexplained": []
+   }
+  },
+  "disable_telemetry": {
+   "exit": 0,
+   "reply": "OK",
+   "started": "2026-11-15T16:59:28.597432+00:00",
+   "ended": "2026-11-15T16:59:30.531047+00:00",
+   "log_sessions": 1,
+   "log_api_requests": 1,
+   "logged_tokens": {
+    "input": 2,
+    "output": 4,
+    "cache_read": 0,
+    "cache_creation": 19071
+   },
+   "billed_in_minutes": {
+    "claude-haiku-5-5": {
+     "input": 1176,
+     "output": 11,
+     "cache_read": 0,
+     "cache_creation": 19071
+    }
+   },
+   "billed_minus_logged": 1181,
+   "bill_check": {
+    "ok": false,
+    "background": {
+     "input": 1000,
+     "output": 7,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "unexplained": [
+     {
+      "input": 174,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+     }
+    ]
+   }
+  },
+  "nonessential": {
+   "exit": 0,
+   "reply": "OK",
+   "started": "2026-11-15T17:02:38.774081+00:00",
+   "ended": "2026-11-15T17:02:40.967417+00:00",
+   "log_sessions": 1,
+   "log_api_requests": 1,
+   "logged_tokens": {
+    "input": 2,
+    "output": 4,
+    "cache_read": 0,
+    "cache_creation": 17710
+   },
+   "billed_in_minutes": {
+    "claude-haiku-5-5": {
+     "input": 2,
+     "output": 4,
+     "cache_read": 0,
+     "cache_creation": 17710
+    }
+   },
+   "billed_minus_logged": 0,
+   "bill_check": {
+    "ok": true,
+    "background": {
+     "input": 0,
+     "output": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "unexplained": []
+   }
+  }
+ },
+ "checked_at": "2026-11-15T17:33:02.387474+00:00"
+}

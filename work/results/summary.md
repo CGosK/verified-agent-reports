@@ -162,6 +162,13 @@ Does vawr still log such a session? One headless session each, OpenTelemetry to 
 - Billed on the key 11:22–11:25 UTC, while the three ran: 53,204 Haiku tokens
 - Bill check (`vawr billcheck`, Nov 15, against this machine's session files, which these sessions' separate config folders kept out): run 1 69,848 of 69,848 billed tokens unexplained; run 2 69,068 of 69,068 billed tokens unexplained; run 3 53,204 of 53,204 billed tokens unexplained
 
+In the Claude desktop app's environment (CLAUDE_CODE_ENTRYPOINT=claude-desktop, the trigger for the unrecorded background request), one headless session each, 16:56 UTC, billed minus logged tokens:
+
+- Control (neither): 2 requests logged; 7,117 billed tokens not in the log (input 66, output 41, cache read 7,010)
+- Only DISABLE_TELEMETRY=1: 1 request logged; 1,181 billed tokens not in the log (input 1,174, output 7)
+- Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1: 1 request logged; 0 billed tokens not in the log (none)
+- Bill check on each: Control passes; DISABLE_TELEMETRY=1 flags 174 tokens (input 174); CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 passes
+
 So an honest team with either setting has more in its log than Anthropic counted. The sessions check reports such a day as uncounted: not a failure, but not VERIFIED.
 
 ## Continuity (relabel and rebuild after an earlier report)

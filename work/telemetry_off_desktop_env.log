@@ -1,0 +1,10 @@
+control {"exit": 0, "reply": "OK", "started": "2026-11-15T16:56:15.774406+00:00", "ended": "2026-11-15T16:56:20.350771+00:00", "log_sessions": 1, "log_api_requests": 2, "logged_tokens": {"input": 1176, "output": 20, "cache_read": 0, "cache_creation": 19800}}
+disable_telemetry {"exit": 0, "reply": "OK", "started": "2026-11-15T16:59:28.597432+00:00", "ended": "2026-11-15T16:59:30.531047+00:00", "log_sessions": 1, "log_api_requests": 1, "logged_tokens": {"input": 2, "output": 4, "cache_read": 0, "cache_creation": 19071}}
+nonessential {"exit": 0, "reply": "OK", "started": "2026-11-15T17:02:38.774081+00:00", "ended": "2026-11-15T17:02:40.967417+00:00", "log_sessions": 1, "log_api_requests": 1, "logged_tokens": {"input": 2, "output": 4, "cache_read": 0, "cache_creation": 17710}}
+17:07 {'control': 0, 'disable_telemetry': 0, 'nonessential': 0} {'control': 20996, 'disable_telemetry': 19077, 'nonessential': 17716}
+17:12 {'control': 0, 'disable_telemetry': 0, 'nonessential': 0} {'control': 20996, 'disable_telemetry': 19077, 'nonessential': 17716}
+17:17 {'control': 0, 'disable_telemetry': 0, 'nonessential': 0} {'control': 20996, 'disable_telemetry': 19077, 'nonessential': 17716}
+17:22 {'control': 28113, 'disable_telemetry': 20258, 'nonessential': 0} {'control': 20996, 'disable_telemetry': 19077, 'nonessential': 17716}
+17:27 {'control': 28113, 'disable_telemetry': 20258, 'nonessential': 0} {'control': 20996, 'disable_telemetry': 19077, 'nonessential': 17716}
+17:33 {'control': 28113, 'disable_telemetry': 20258, 'nonessential': 17716} {'control': 20996, 'disable_telemetry': 19077, 'nonessential': 17716}
+{"control": 7117, "disable_telemetry": 1181, "nonessential": 0}

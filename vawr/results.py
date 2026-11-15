@@ -250,6 +250,30 @@ def render():
                                    n, format(sum(sum(g["tokens"].values()) for g in r["gaps"]), ","),
                                    format(sum(r["provider_tokens"].values()), ","))
                                for n, r in bc))
+            de = _load("telemetry_off_desktop_env.json")
+            if de and all("billed_minus_logged" in r for r in de.get("runs", {}).values()):
+                lab = {"control": "Control (neither)", "disable_telemetry": "Only DISABLE_TELEMETRY=1",
+                       "nonessential": "Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1"}
+                out += ["", "In the Claude desktop app's environment (CLAUDE_CODE_ENTRYPOINT=claude-desktop, the "
+                        "trigger for the unrecorded background request), one headless session each, %s UTC, "
+                        "billed minus logged tokens:" % de["runs"]["control"]["started"][11:16], ""]
+                for k, r in de["runs"].items():
+                    b = {
+                        t: sum(m.get(t, 0) for m in r["billed_in_minutes"].values()) for t in r["logged_tokens"]}
+                    extra = {t: b[t] - r["logged_tokens"][t] for t in b}
+                    out.append("- %s: %d request%s logged; %s billed tokens not in the log (%s)" % (
+                        lab[k], r["log_api_requests"], "" if r["log_api_requests"] == 1 else "s",
+                        format(r["billed_minus_logged"], ","),
+                        ", ".join("%s %s" % (t.replace("_", " "), format(v, ",")) for t, v in extra.items() if v)
+                        or "none"))
+                bc = {k: r.get("bill_check") for k, r in de["runs"].items()}
+                if all(bc.values()):
+                    out.append("- Bill check on each: %s" % "; ".join(
+                        "%s %s" % (lab[k].split(" (")[0].replace("Only ", ""), "passes" if v["ok"] else
+                                   "flags %s tokens (%s)" % (format(sum(sum(g.values()) for g in v["unexplained"]), ","),
+                                                             ", ".join("%s %s" % (t.replace("_", " "), n)
+                                                                       for g in v["unexplained"] for t, n in g.items() if n)))
+                        for k, v in bc.items()))
             out += ["", "So an honest team with either setting has more in its log than Anthropic counted. The "
                     "sessions check reports such a day as uncounted: not a failure, but not VERIFIED."]
         out.append("")

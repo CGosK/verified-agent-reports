@@ -101,6 +101,16 @@ Nov 15, main key, one-line Haiku sessions. Runs 1 and 2 were told apart by termi
 
 Run 3's count rose by 1; the counted row's tokens equal the control's request exactly (cache read 11,507, cache creation 6,555), so the counted session is identified, not inferred. Run 2 had no same-time control.
 
+Table 8b. The same three settings in the Claude desktop app's environment (`CLAUDE_CODE_ENTRYPOINT=claude-desktop`), one headless session each, Nov 15 16:56–17:03 UTC.
+
+| Setting | Requests logged by vawr | Billed tokens not in the log | Bill check |
+| --- | --- | --- | --- |
+| Neither | 2 | 7,117 | passes (background allowance 7,117) |
+| `DISABLE_TELEMETRY` only | 1 | 1,181 | flags 174 tokens |
+| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | 1 | 0 | passes (background allowance 0) |
+
+The control's unlogged tokens are the known background request (cache read 7,010). With `DISABLE_TELEMETRY`, that request didn't happen, but a ~1,174-input-token request the control logged wasn't sent to vawr, and its tokens exceed the allowance's 1,000 input tokens.
+
 ## Table B2. Claude Code 2.1.325 and continuity (appendix)
 
 | Test | Result |
