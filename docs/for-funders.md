@@ -9,7 +9,8 @@ want a usage report they can check without taking the recipient's word for it.
    grantee their own API key from it, named after them (Anthropic's session
    counts name keys, not IDs, so names must be unique).
 2. Create an Admin API key for that organization and put it in `~/.vawr/.env`
-   as `ANTHROPIC_ADMIN_KEY` on the machine you'll check from.
+   as `ANTHROPIC_ADMIN_KEY` on the machine you'll check from. Always pass the
+   key you issued with `--key-id`, so the check can't be pointed at another key.
 3. Ask grantees to install vawr, run `vawr setup --write` and `vawr start`
    before they start work, and tag each project (`vawr tag safety --write`).
 
@@ -22,13 +23,18 @@ zip. You run:
 vawr receive their-report.zip --key-id <the key you issued> --html report.html
 ```
 
-- **VERIFIED**: the report matches the log, the log hasn't been rewritten since
-  earlier reports, and Anthropic's own records for the key you issued (the bill,
-  minute by minute, and its daily count of Claude Code sessions) agree with it.
-- **CONSISTENT**: the log and report hold together, but nothing was checked
-  against Anthropic's records (no Admin key, or the key isn't in your
-  organization).
-- **FAILED**: something didn't match; the output says what.
+- **VERIFIED**: the report matches the log; the log extends earlier reports
+  you received from it entry for entry; and Anthropic's own records for the key
+  you issued agree with it: the bill, minute by minute, with nothing missing and
+  nothing extra, and its daily count of Claude Code sessions (for a day not yet
+  over, "so far"). Every token in the report is on that key, and the period has
+  ended.
+- **CONSISTENT**: the log and report hold together and nothing was edited after
+  earlier reports, but not everything was checked against Anthropic's records:
+  no Admin key, records that couldn't be read, usage marked as a Claude
+  subscription, or a period that hasn't ended.
+- **FAILED**: something didn't match, including usage the log claims on your key
+  that Anthropic never billed, or a log that can't be read; the output says what.
 
 `vawr team a.zip b.zip ...` checks every key in your organization at once and
 lists keys that used credits with no report.
@@ -37,8 +43,9 @@ lists keys that used credits with no report.
 
 - Usage on a Claude subscription (Pro, Max, Team): Anthropic offers no usage
   records for it, so such work is tamper-evident only.
-- Whether the work was good. The report's "work passing its tests" column helps
-  where projects have tests; it's not a review.
+- Whether the work was good. vawr checks usage, labels and history, not quality;
+  the research harness's claim checker and test-outcome column aren't part of
+  the report yet.
 - Whether a category label is right for generic code; the category check flags
   labels the work contradicts.
 

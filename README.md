@@ -70,16 +70,18 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
   all show up as unexplained minutes.
-- **Anthropic counts Claude Code sessions on its side, and the count matches.**
+- **Anthropic's daily count of Claude Code sessions matches the log.**
   Anthropic's Claude Code Analytics API (Admin API, daily, per API key and
-  terminal type) counted all 91 Claude Code sessions on our key on Nov 14,
-  including the 25 we hid from the log. Its Sonnet and Opus tokens beyond the
-  log's equal, to the token, what the bill check found unexplained in the hidden
-  runs. For the interactive sessions it matched the log exactly (5 sessions,
-  730,927 tokens). It leaves out the desktop background request, which is the
-  only place its tokens differ from the bill (Haiku only). So a session that never reached
-  the log shows up as a missing session, even when it ran in the same minute
-  as logged work, which per-minute billing can't separate.
+  terminal type) counted 98 Claude Code sessions on our key on Nov 14 (as of
+  17:17 UTC). The 91 headless ones are the 66 the log has plus exactly the 25
+  we hid; its Sonnet and Opus tokens beyond the log's equal, to the token,
+  what the bill check found unexplained in those runs. The 5 in the
+  interactive sessions' terminal type match the log, tokens included. The
+  other 2 were our own plugin test at 10:45 UTC, run without telemetry: the
+  bill check flags exactly their 35,936 Haiku tokens too. Its tokens differ
+  from the bill only by the desktop background request (Haiku) and 9 tokens of
+  an older Haiku. Whether a team can switch this count off: see
+  `work/results/telemetry_off_test.json`.
 
 ## Install
 
@@ -155,7 +157,7 @@ Example, from four real interactive sessions:
 | Chain | No entry was edited, deleted or reordered since it was written | That the log was never rebuilt end to end by whoever holds it |
 | Coverage | Every request in this machine's session files reached the log | Work on another machine, or with session files turned off |
 | Bill | Everything billed to the API key is in the log, apart from Claude Code's own background requests | Usage on other keys or providers; subscription usage |
-| Sessions | Anthropic's daily count of Claude Code sessions and tokens on the key equals the log's, per terminal type | Days the log only partly covers; anything within the last hour |
+| Sessions | Anthropic's daily count of Claude Code sessions and tokens on the key equals the log's, per terminal type (a count, not a list: it shows how many are missing, not which) | Days the log only partly covers; anything within the last hour |
 
 Each result carries a level: **checked against Anthropic's records** (the
 chain is intact and the bill check passed), **tamper-evident only** (chain
@@ -217,15 +219,20 @@ fails both the bill check and the sessions check (non-interactive: Anthropic
 
 `receive` rebuilds the report from the log for exactly the window, projects
 and head the bundle states (a report.json claiming anything narrower fails),
-checks the chain, and keeps a ledger of the head hashes it has received
-(`~/.vawr/received.jsonl`). The next report from the same log must contain
-every earlier head (continuity), so history can't be rewritten between
-reports; a report for the same API key from a different log fails, and keeps
-failing, until someone explains why. VERIFIED needs the payer's Admin key and
-a bill check with nothing billed missing from the log and nothing in the log
-that wasn't billed; if the sessions check can't run, the verdict drops to
-CONSISTENT (nothing edited after the fact, not checked against a bill), as it
-is without an Admin key. `--html` builds a fresh report page on the
+checks the chain, and keeps a ledger of what it has received
+(`~/.vawr/received.jsonl`, with each log's entry hashes beside it). A later
+report from the same log must match the earlier one entry for entry wherever
+they overlap (continuity), so history can't be rewritten between reports; once
+a report for an API key has been verified, a report for that key from a
+different log fails until someone explains why. VERIFIED needs the payer's
+Admin key, a bill check with nothing billed missing from the log and nothing
+in the log that wasn't billed, a sessions check that ran without failing (a
+day not yet over counts "so far"), a window that has ended, and every token in
+the report on that key. Usage marked as a Claude subscription can't be
+checked, so a report with any is CONSISTENT, as is one received without an
+Admin key (the log and report hold together; nothing was checked against a
+bill). A log that makes the checks crash, or has negative token counts, is
+FAILED. `--html` builds a fresh report page on the
 recipient's machine from the log and their own checks; the team's own page in
 the bundle is for reading without vawr and isn't checked. The zip is treated as
 untrusted: only its five known files are read, no path from it is used, sizes
@@ -249,36 +256,43 @@ The category check (`vawr validate category` in this repository) adds an
 outside view of the labels: a separate model reads what each run was asked to
 do and what it changed, and flags labels it disagrees with.
 
-Whether the work got done: the claim checker pulls "done", "tests pass",
-"added tests" and "blocked by X" out of each run's final message and checks
-them against the code (a "done" holds only if the change is there and the
-tests pass), and the report's "work passing its tests" column re-runs each
-run's tests whatever it claimed. In a planted test of weaker work described
-without false claims, both caught all 11 runs whose work broke the tests and
-flagged none of 5 controls; the 4 other planted runs met both the visible
-tests and hidden ones written from the task descriptions. Work that passes a
+Whether the work got done (research harness, `vawr validate claims`, not yet a
+user command): the claim checker pulls "done", "tests pass", "added tests" and
+"blocked by X" out of each run's final message and checks them against the
+code; a "done" holds only if the change is there and the task's tests pass. We
+told 15 safety-task runs to do a deliberately partial job and hide it. 11 left
+work that fails the tests, but 8 of those 11 said so in their summaries anyway
+(one refused to hide it); the claim checker flagged all 11, including the 3
+that hid it, because each still claimed the work was done. It flagged none of
+5 normal runs. The other 4 planted runs met both the visible tests and hidden
+ones written afterwards from the task descriptions. Work that passes a
 project's tests but is subtly worse needs tests or rubrics only the recipient
 holds.
 
 ## How well it works
 
-We planted failures on purpose and counted what each check caught, over 131
-Claude Code runs on a dedicated API key and a Claude subscription (Nov 13–14,
-2026, Claude Code 2.1.322) plus four real interactive sessions. Exact 95%
-intervals are in `work/results/summary.md` and the Sprint report.
+We planted failures on purpose and counted what each check caught: 131
+validation runs on a dedicated API key and a Claude subscription (Nov 13–14,
+2026, Claude Code 2.1.322), four real interactive sessions, then 20 runs of
+planted weaker work, 8 runs on Claude Code 2.1.325 and a 5-session day on a
+second key. All tasks are 15 small ones we wrote, on one machine; exact 95%
+intervals (conditional on these tasks and logs) are in
+`work/results/summary.md` and the Sprint report.
 
 | What we planted or checked | Result |
 | --- | --- |
 | Runs hidden from the log (telemetry off, some with session files off too) | 26 of 26 caught by the bill (provider) check; 0 of 36 logged runs flagged |
+| Hidden runs that left no session files, against the bill from session files alone (`vawr billcheck`) | 15 of 15 flagged (3 batch 1, 10 batch 2, 2 concurrency) |
 | Hidden runs that still wrote session files | 13 of 13 caught by the session-file check |
 | Hidden runs among three overlapping logged sessions | 5 of 5 windows caught; 1 of 5 clean windows also flagged (9 tokens, most likely a test session we started on the same key that minute) |
 | Edits to a copy of the log that change recorded usage | 207 of 207 caught by the session-file check, including all 50 made with the hash chain rebuilt |
-| A run relabeled (say, capabilities work as safety) and the chain rebuilt | 0 of 50 caught by the log checks; the category check caught 157 of 162 relabels of held-out runs, and every relabel of capabilities work as safety |
+| A run relabeled (say, capabilities work as safety) and the chain rebuilt | 0 of 50 caught by the log checks; in 50 fresh trials of the same edit the category check caught 48 |
+| Category check against a keyword baseline | Real runs: 92 of 100 each (our task folders give the purpose away); written held-out cases, clear: model 24 of 24, keywords 15 of 24; borderline: 10 of 12 vs 5 of 12 |
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
-| Anthropic's daily Claude Code session count vs the log (Nov 14) | Non-interactive: Anthropic 91, log 66; the 25 missing are exactly our 25 hidden runs, and the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive sessions: 5 and 5, tokens equal |
-| Weaker work, described without false claims (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; the claim checker and the outcome column each caught 11 of 11, and flagged 0 of 5 controls; the other 4 met hidden tests too (as do 41 of 41 normal runs) |
+| Anthropic's daily Claude Code session count vs the log (Nov 14, as of 17:17 UTC) | Headless: Anthropic 91, log 66, a shortfall equal to our 25 hidden runs; the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive terminal type: 5 and 5, tokens equal. 2 more sessions were our unlogged plugin test, also flagged by the bill check (35,936 tokens) |
+| Weaker work, told to hide it (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; 8 of those 11 said so anyway; the claim checker flagged all 11 (3 of 3 that hid it) and 0 of 5 controls; the other 4 met hidden tests too |
 | A whole day on a separate key, every session logged (payer's `vawr receive`) | VERIFIED: Anthropic counted 5 sessions, the log 5, no token difference; bill 550,952 tokens, 0 unexplained |
-| Claude Code 2.1.325 (the version that changed cost reporting), environment A/B | Unrecorded request in 4 of 4 desktop-environment runs (cache read 7,010, as on 2.1.322), 0 of 4 clean; bill and session-file checks pass |
+| Claude Code 2.1.325, environment A/B (desktop app's environment vs clean) | Unrecorded request in 4 of 4 desktop-environment runs (cache read 7,010, as on 2.1.322), 0 of 4 clean; bill and session-file checks pass |
 | A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |
 
 Session files from those interactive sessions left out about a third of

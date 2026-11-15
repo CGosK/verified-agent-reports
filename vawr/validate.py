@@ -809,3 +809,65 @@ def version_ab(bin_marker="cc-2.1.325", version="2.1.325"):
                       "bill_ok": bill.get("ok"), "gaps": bill.get("gaps"), "log_excess": bill.get("log_excess"),
                       "provider_tokens": bill.get("provider_tokens"), "background_tokens": bill.get("background_tokens"),
                       "level": chk["level"]}}
+
+
+# Fixed before scoring (Nov 15) and not tuned afterwards: the most obvious words for each category.
+KEYWORDS = {
+    "safety": ("safety", "safe", "refusal", "refuse", "red-team", "red team", "redteam", "jailbreak", "monitor",
+               "alignment", "harm", "redact", "contamination", "eval", "guard", "misuse", "oversight", "sandbag"),
+    "capabilities": ("throughput", "latency", "speed", "faster", "batch", "cache", "sampling", "sampler",
+                     "schedule", "scheduler", "benchmark score", "accuracy", "train", "optimizer", "inference",
+                     "kernel", "tokens per second", "performance"),
+}
+
+
+def keyword_category(text):
+    """The category whose keywords appear most often in the text; "other" if none do."""
+    t = text.lower()
+    counts = {c: sum(t.count(w) for w in ws) for c, ws in KEYWORDS.items()}
+    best = max(counts, key=counts.get)
+    return best if counts[best] else "other"
+
+
+def category_baselines(seed=19, trials=50):
+    """Two checks a judge asked for. (1) A keyword baseline on the same inputs the model
+    reads: the real runs (prompt and file path) and the written held-out cases (prompt and
+    diff). (2) The relabel-and-rebuild trials the log checks miss (0 of 50): relabel a random
+    logged request's category and ask whether the category check's reading of that run
+    disagrees with the new label."""
+    rng = random.Random(seed)
+    cc = json.load(open(os.path.join(paths.WORK, "results", "category_check.json")))
+    cases = json.load(open(os.path.join(paths.WORK, "category_heldout", "cases.json")))["cases"]
+    tasks = runner.load_tasks()
+    runs = []
+    for row in cc["rows"]:
+        m = json.load(open(os.path.join(paths.MANIFESTS, row["run_id"] + ".json")))
+        text = runner.build_prompt(tasks[m["task"]], None) + " " + tasks[m["task"]]["path"]
+        runs.append({"run_id": row["run_id"], "true": row["true_category"], "model": row["classified"],
+                     "keyword": keyword_category(text)})
+    written = [{"id": c["id"], "true": c["intended"], "borderline": c["borderline"],
+                "keyword": keyword_category(c["prompt"] + " " + c["diff"])} for c in cases]
+    model_written = {r["id"]: r["classified"] for r in json.load(open(os.path.join(paths.WORK, "results",
+                                                                                    "category_heldout.json")))["rows"]}
+    for w in written:
+        w["model"] = model_written.get(w["id"])
+    clear = [w for w in written if not w["borderline"]]
+    border = [w for w in written if w["borderline"]]
+    agree = lambda rows, who: stats.rate(sum(r[who] == r["true"] for r in rows), len(rows))  # noqa: E731
+    by_run = {r["run_id"]: r for r in runs}
+    reqs = [r for r in api_requests(paths.LOG_PATH) if r.get("run_id") in by_run]
+    rel = []
+    for _ in range(trials):
+        r = rng.choice(reqs)
+        new = rng.choice([c for c in ("safety", "capabilities", "other") if c != r["category"]])
+        rel.append({"run_id": r["run_id"], "seq": r["seq"], "from": r["category"], "to": new,
+                    "model_reads": by_run[r["run_id"]]["model"],
+                    "caught": by_run[r["run_id"]]["model"] != new})
+    return {"keyword_lists": {k: list(v) for k, v in KEYWORDS.items()},
+            "real_runs": {"model_agrees": agree(runs, "model"), "keyword_agrees": agree(runs, "keyword")},
+            "written_clear": {"model_agrees": agree(clear, "model"), "keyword_agrees": agree(clear, "keyword")},
+            "written_borderline": {"model_agrees": agree(border, "model"), "keyword_agrees": agree(border, "keyword")},
+            "relabel_rebuild_trials": {"trials": trials, "seed": seed,
+                                       "caught_by_category_check": stats.rate(sum(t["caught"] for t in rel), trials),
+                                       "rows": rel},
+            "runs": runs, "written": written}

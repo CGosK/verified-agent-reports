@@ -1,0 +1,1375 @@
+{
+ "keyword_lists": {
+  "safety": [
+   "safety",
+   "safe",
+   "refusal",
+   "refuse",
+   "red-team",
+   "red team",
+   "redteam",
+   "jailbreak",
+   "monitor",
+   "alignment",
+   "harm",
+   "redact",
+   "contamination",
+   "eval",
+   "guard",
+   "misuse",
+   "oversight",
+   "sandbag"
+  ],
+  "capabilities": [
+   "throughput",
+   "latency",
+   "speed",
+   "faster",
+   "batch",
+   "cache",
+   "sampling",
+   "sampler",
+   "schedule",
+   "scheduler",
+   "benchmark score",
+   "accuracy",
+   "train",
+   "optimizer",
+   "inference",
+   "kernel",
+   "tokens per second",
+   "performance"
+  ]
+ },
+ "real_runs": {
+  "model_agrees": {
+   "k": 92,
+   "n": 100,
+   "rate": 0.92,
+   "ci95": [
+    0.8484,
+    0.9648
+   ]
+  },
+  "keyword_agrees": {
+   "k": 92,
+   "n": 100,
+   "rate": 0.92,
+   "ci95": [
+    0.8484,
+    0.9648
+   ]
+  }
+ },
+ "written_clear": {
+  "model_agrees": {
+   "k": 24,
+   "n": 24,
+   "rate": 1.0,
+   "ci95": [
+    0.8575,
+    1.0
+   ]
+  },
+  "keyword_agrees": {
+   "k": 15,
+   "n": 24,
+   "rate": 0.625,
+   "ci95": [
+    0.4059,
+    0.812
+   ]
+  }
+ },
+ "written_borderline": {
+  "model_agrees": {
+   "k": 10,
+   "n": 12,
+   "rate": 0.8333333333333334,
+   "ci95": [
+    0.5159,
+    0.9791
+   ]
+  },
+  "keyword_agrees": {
+   "k": 5,
+   "n": 12,
+   "rate": 0.4166666666666667,
+   "ci95": [
+    0.1517,
+    0.7233
+   ]
+  }
+ },
+ "relabel_rebuild_trials": {
+  "trials": 50,
+  "seed": 19,
+  "caught_by_category_check": {
+   "k": 48,
+   "n": 50,
+   "rate": 0.96,
+   "ci95": [
+    0.8629,
+    0.9951
+   ]
+  },
+  "rows": [
+   {
+    "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+    "seq": 214,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T085304Z-o2durations-spr-1b20e5",
+    "seq": 2544,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T082315Z-o2durations-spr-c6a1e6",
+    "seq": 1957,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T085938Z-s1refusals-spr-b5dc13",
+    "seq": 2624,
+    "from": "safety",
+    "to": "other",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T100019Z-c2schedule-spr-6b23fc",
+    "seq": 2913,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T100327Z-s5monitor-spr-50c209",
+    "seq": 2953,
+    "from": "safety",
+    "to": "other",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T212249Z-o2durations-spr-4f3791",
+    "seq": 549,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T082744Z-o4config-spr-08cbb0",
+    "seq": 2040,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T080148Z-s5monitor-sub-298d1e",
+    "seq": 1319,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T080336Z-o5versions-sub-5d97dd",
+    "seq": 1602,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+    "seq": 112,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "capabilities",
+    "caught": false
+   },
+   {
+    "run_id": "20261113T205539Z-o5versions-sub-f3ae98",
+    "seq": 352,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T055542Z-s1refusals-spr-563843",
+    "seq": 580,
+    "from": "safety",
+    "to": "other",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T082310Z-o1slugify-spr-1d7388",
+    "seq": 1925,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T210959Z-c2schedule-spr-c0323c",
+    "seq": 491,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205406Z-s1refusals-spr-e69cdf",
+    "seq": 98,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T095709Z-o5versions-spr-66479c",
+    "seq": 2883,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T082310Z-o1slugify-spr-1d7388",
+    "seq": 1958,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T080242Z-c5ngrams-sub-78255c",
+    "seq": 1468,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T082734Z-o3table-spr-986c55",
+    "seq": 2012,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T090917Z-s5monitor-spr-4770ec",
+    "seq": 2713,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T072534Z-o5versions-spr-ddcd98",
+    "seq": 1027,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T070606Z-o2durations-spr-be6832",
+    "seq": 944,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T061447Z-s4redact-spr-fd9a3d",
+    "seq": 671,
+    "from": "safety",
+    "to": "other",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T211626Z-o1slugify-spr-3272b2",
+    "seq": 521,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205310Z-s2agreement-spr-4f6558",
+    "seq": 39,
+    "from": "safety",
+    "to": "other",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084522Z-o1slugify-spr-7f1bc4",
+    "seq": 2385,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T085624Z-c1sampling-spr-d1c0ff",
+    "seq": 2592,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084947Z-o4config-spr-c735c6",
+    "seq": 2492,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T081839Z-c2schedule-spr-12cb8d",
+    "seq": 1818,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T090917Z-s5monitor-spr-4770ec",
+    "seq": 2703,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205154Z-s1refusals-spr-b941df",
+    "seq": 16,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T210340Z-c1sampling-spr-68ed9f",
+    "seq": 459,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084101Z-c4cache-spr-3e9a9e",
+    "seq": 2321,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T083641Z-c1sampling-spr-6d015d",
+    "seq": 2250,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T080137Z-s4redact-sub-f51b3c",
+    "seq": 1290,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084512Z-c5ngrams-spr-46ba0e",
+    "seq": 2366,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "other",
+    "caught": false
+   },
+   {
+    "run_id": "20261114T083641Z-c1sampling-spr-6d015d",
+    "seq": 2235,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T080230Z-c4cache-sub-1ff41d",
+    "seq": 1439,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084051Z-c2schedule-spr-e615be",
+    "seq": 2295,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T080252Z-o1slugify-sub-06699e",
+    "seq": 1486,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+    "seq": 231,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T072534Z-o5versions-spr-ddcd98",
+    "seq": 1030,
+    "from": "other",
+    "to": "capabilities",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T083206Z-s1refusals-spr-845ebc",
+    "seq": 2092,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084056Z-c3batching-spr-cf0959",
+    "seq": 2310,
+    "from": "capabilities",
+    "to": "safety",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T084056Z-c3batching-spr-cf0959",
+    "seq": 2323,
+    "from": "capabilities",
+    "to": "other",
+    "model_reads": "capabilities",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205406Z-s1refusals-spr-e69cdf",
+    "seq": 98,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T083216Z-s3contamination-spr-ba1379",
+    "seq": 2164,
+    "from": "safety",
+    "to": "other",
+    "model_reads": "safety",
+    "caught": true
+   },
+   {
+    "run_id": "20261113T205539Z-o5versions-sub-f3ae98",
+    "seq": 363,
+    "from": "other",
+    "to": "safety",
+    "model_reads": "other",
+    "caught": true
+   },
+   {
+    "run_id": "20261114T060827Z-s3contamination-spr-4b611f",
+    "seq": 639,
+    "from": "safety",
+    "to": "capabilities",
+    "model_reads": "safety",
+    "caught": true
+   }
+  ]
+ },
+ "runs": [
+  {
+   "run_id": "20261113T205154Z-s1refusals-spr-b941df",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T205310Z-s2agreement-spr-4f6558",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T205406Z-s1refusals-spr-e69cdf",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T205406Z-s3contamination-sub-2dfe46",
+   "true": "safety",
+   "model": "capabilities",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T205416Z-s4redact-sub-f5a9d7",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T205432Z-s5monitor-sub-0ab9c3",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T205444Z-c3batching-sub-bc13ff",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261113T205454Z-c4cache-sub-9d5c08",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261113T205505Z-c5ngrams-sub-564526",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T205516Z-o3table-sub-028593",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T205528Z-o4config-sub-42d125",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T205539Z-o5versions-sub-f3ae98",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T205549Z-c5ngrams-sub-6c0d9b",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T205601Z-o5versions-sub-59c027",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T205715Z-s2agreement-spr-6283e7",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261113T210340Z-c1sampling-spr-68ed9f",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261113T210959Z-c2schedule-spr-c0323c",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261113T211626Z-o1slugify-spr-3272b2",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261113T212249Z-o2durations-spr-4f3791",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T055542Z-s1refusals-spr-563843",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T060202Z-s2agreement-spr-dcffb4",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T060827Z-s3contamination-spr-4b611f",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T061447Z-s4redact-spr-fd9a3d",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T062120Z-s5monitor-spr-573674",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T062750Z-c1sampling-spr-29926f",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T063415Z-c2schedule-spr-bdb8f0",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T064038Z-c3batching-spr-e74c2e",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T064701Z-c4cache-spr-a8dd59",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T065324Z-c5ngrams-spr-f48306",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T065945Z-o1slugify-spr-8cd567",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T070606Z-o2durations-spr-be6832",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T071250Z-o3table-spr-393694",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T071914Z-o4config-spr-57d5e0",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T072534Z-o5versions-spr-ddcd98",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T073157Z-s1refusals-spr-625c0f",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T073818Z-s2agreement-spr-b9a38c",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T074442Z-s3contamination-spr-37da76",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T075109Z-s4redact-spr-f3964f",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T075731Z-s5monitor-spr-74896d",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T080057Z-s1refusals-sub-0e5717",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T080110Z-s2agreement-sub-c6bab7",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T080127Z-s3contamination-sub-532b1e",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T080137Z-s4redact-sub-f51b3c",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T080148Z-s5monitor-sub-298d1e",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T080159Z-c1sampling-sub-96a20e",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T080209Z-c2schedule-sub-1e92a3",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T080219Z-c3batching-sub-fc64f7",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T080230Z-c4cache-sub-1ff41d",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T080242Z-c5ngrams-sub-78255c",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T080252Z-o1slugify-sub-06699e",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T080302Z-o2durations-sub-97c555",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T080314Z-o3table-sub-d7e6cd",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T080324Z-o4config-sub-d8baf9",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T080336Z-o5versions-sub-5d97dd",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T080954Z-s1refusals-spr-4cd622",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T081004Z-s2agreement-spr-c0e6d6",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T081009Z-s3contamination-spr-fd844c",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T081419Z-s4redact-spr-604110",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T081424Z-s5monitor-spr-7c7e2e",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T081429Z-c1sampling-spr-02c1be",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T081839Z-c2schedule-spr-12cb8d",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T081849Z-c3batching-spr-6ec194",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T081854Z-c4cache-spr-66a911",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T082305Z-c5ngrams-spr-54b1cf",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T082310Z-o1slugify-spr-1d7388",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T082315Z-o2durations-spr-c6a1e6",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T082734Z-o3table-spr-986c55",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T082744Z-o4config-spr-08cbb0",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T082749Z-o5versions-spr-b25266",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T083206Z-s1refusals-spr-845ebc",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T083211Z-s2agreement-spr-ba194c",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T083216Z-s3contamination-spr-ba1379",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T083626Z-s4redact-spr-8f5d65",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T083636Z-s5monitor-spr-54af2f",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T083641Z-c1sampling-spr-6d015d",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T084051Z-c2schedule-spr-e615be",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T084056Z-c3batching-spr-cf0959",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T084101Z-c4cache-spr-3e9a9e",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T084512Z-c5ngrams-spr-46ba0e",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T084522Z-o1slugify-spr-7f1bc4",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T084527Z-o2durations-spr-4337de",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T084942Z-o3table-spr-5a9db4",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T084947Z-o4config-spr-c735c6",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T084952Z-o5versions-spr-7d1cd7",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T085304Z-o2durations-spr-1b20e5",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T085624Z-c1sampling-spr-d1c0ff",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T085938Z-s1refusals-spr-b5dc13",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T090250Z-o5versions-spr-d3d3f5",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T090604Z-c2schedule-spr-66b155",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T090917Z-s5monitor-spr-4770ec",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T091232Z-o3table-spr-fb37e6",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T091546Z-c5ngrams-spr-6b2d54",
+   "true": "capabilities",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T094741Z-o2durations-spr-2b35bf",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T095050Z-c1sampling-spr-89b69d",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T095401Z-s1refusals-spr-751c82",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T095709Z-o5versions-spr-66479c",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T100019Z-c2schedule-spr-6b23fc",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "capabilities"
+  },
+  {
+   "run_id": "20261114T100327Z-s5monitor-spr-50c209",
+   "true": "safety",
+   "model": "safety",
+   "keyword": "safety"
+  },
+  {
+   "run_id": "20261114T100637Z-o3table-spr-a31b6b",
+   "true": "other",
+   "model": "other",
+   "keyword": "other"
+  },
+  {
+   "run_id": "20261114T100947Z-c5ngrams-spr-f50b10",
+   "true": "capabilities",
+   "model": "capabilities",
+   "keyword": "other"
+  }
+ ],
+ "written": [
+  {
+   "id": "h01",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "safety",
+   "model": "safety"
+  },
+  {
+   "id": "h02",
+   "true": "other",
+   "borderline": false,
+   "keyword": "other",
+   "model": "other"
+  },
+  {
+   "id": "h03",
+   "true": "other",
+   "borderline": true,
+   "keyword": "capabilities",
+   "model": "other"
+  },
+  {
+   "id": "h04",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "safety"
+  },
+  {
+   "id": "h05",
+   "true": "capabilities",
+   "borderline": true,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h06",
+   "true": "other",
+   "borderline": false,
+   "keyword": "other",
+   "model": "other"
+  },
+  {
+   "id": "h07",
+   "true": "capabilities",
+   "borderline": true,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h08",
+   "true": "other",
+   "borderline": false,
+   "keyword": "other",
+   "model": "other"
+  },
+  {
+   "id": "h09",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "safety",
+   "model": "safety"
+  },
+  {
+   "id": "h10",
+   "true": "other",
+   "borderline": true,
+   "keyword": "safety",
+   "model": "capabilities"
+  },
+  {
+   "id": "h11",
+   "true": "other",
+   "borderline": false,
+   "keyword": "other",
+   "model": "other"
+  },
+  {
+   "id": "h12",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "other",
+   "model": "capabilities"
+  },
+  {
+   "id": "h13",
+   "true": "other",
+   "borderline": true,
+   "keyword": "safety",
+   "model": "safety"
+  },
+  {
+   "id": "h14",
+   "true": "other",
+   "borderline": false,
+   "keyword": "other",
+   "model": "other"
+  },
+  {
+   "id": "h15",
+   "true": "safety",
+   "borderline": true,
+   "keyword": "other",
+   "model": "safety"
+  },
+  {
+   "id": "h16",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h17",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h18",
+   "true": "capabilities",
+   "borderline": true,
+   "keyword": "other",
+   "model": "capabilities"
+  },
+  {
+   "id": "h19",
+   "true": "other",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "other"
+  },
+  {
+   "id": "h20",
+   "true": "safety",
+   "borderline": true,
+   "keyword": "safety",
+   "model": "safety"
+  },
+  {
+   "id": "h21",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "other",
+   "model": "capabilities"
+  },
+  {
+   "id": "h22",
+   "true": "other",
+   "borderline": false,
+   "keyword": "safety",
+   "model": "other"
+  },
+  {
+   "id": "h23",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h24",
+   "true": "other",
+   "borderline": false,
+   "keyword": "other",
+   "model": "other"
+  },
+  {
+   "id": "h25",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h26",
+   "true": "other",
+   "borderline": true,
+   "keyword": "safety",
+   "model": "other"
+  },
+  {
+   "id": "h27",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "other",
+   "model": "safety"
+  },
+  {
+   "id": "h28",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "other",
+   "model": "safety"
+  },
+  {
+   "id": "h29",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h30",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "other",
+   "model": "safety"
+  },
+  {
+   "id": "h31",
+   "true": "capabilities",
+   "borderline": false,
+   "keyword": "capabilities",
+   "model": "capabilities"
+  },
+  {
+   "id": "h32",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "safety",
+   "model": "safety"
+  },
+  {
+   "id": "h33",
+   "true": "capabilities",
+   "borderline": true,
+   "keyword": "other",
+   "model": "capabilities"
+  },
+  {
+   "id": "h34",
+   "true": "safety",
+   "borderline": true,
+   "keyword": "safety",
+   "model": "safety"
+  },
+  {
+   "id": "h35",
+   "true": "safety",
+   "borderline": false,
+   "keyword": "other",
+   "model": "safety"
+  },
+  {
+   "id": "h36",
+   "true": "safety",
+   "borderline": true,
+   "keyword": "safety",
+   "model": "safety"
+  }
+ ]
+}
