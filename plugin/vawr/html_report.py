@@ -420,12 +420,12 @@ def _sessions(check):
     ss = check.get("sessions") if isinstance(check, dict) else None
     if not isinstance(ss, dict):
         return None
-    means = ("Anthropic counts each API key's Claude Code sessions and their tokens by model, per day, on its "
-             "own side. On a day the log fully covers, the two counts should be equal; a session that never "
-             "reached the log shows up here even if it ran at the same time as logged work.")
-    limits = ("Whole UTC days only, an hour or more behind, and only usage on Anthropic's API (not a Claude "
-              "subscription, Bedrock or Vertex). Anthropic's count leaves out the one background request "
-              "Claude Code records nowhere, which the bill check covers.")
+    means = ("Anthropic's daily count of each API key's Claude Code sessions and their tokens by model. On a "
+             "day the log fully covers, the two counts should be equal; a session kept out of the log shows up "
+             "here even if it ran at the same time as logged work.")
+    limits = ("Claude Code reports this count itself, so a session run with Claude Code's own telemetry "
+              "switched off isn't counted; the bill check still sees it. Whole UTC days only, an hour or more "
+              "behind, and only usage on Anthropic's API (not a Claude subscription, Bedrock or Vertex).")
     if ss.get("error") or not ss.get("days"):
         return {"key": "sessions", "status": "skip", "short": "could not run",
                 "result": "Not run: %s." % _e(ss.get("error") or "no days in the window"),

@@ -1,0 +1,30 @@
+{
+ "checked_at": "2026-11-15T09:50:01.983881+00:00",
+ "key_id": "apikey_014nm6SadTU7zy9DoURcd48j",
+ "by_terminal": {
+  "vt100": {
+   "sessions": 2,
+   "tokens": {
+    "claude-haiku-5-5": 35322
+   }
+  },
+  "xterm-256color": {
+   "sessions": 5,
+   "tokens": {
+    "claude-haiku-5-5": 131724
+   }
+  }
+ },
+ "billed_08_43_to_08_46": {
+  "2026-11-15T08:44:00Z": {
+   "claude-haiku-5-5": {
+    "input": 8,
+    "output": 16,
+    "cache_read": 46419,
+    "cache_creation": 23405
+   }
+  }
+ },
+ "control_vt100_counted": 2,
+ "telemetry_off_vt220_counted": 0
+}

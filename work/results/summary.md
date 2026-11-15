@@ -142,6 +142,14 @@ Key apikey_01ACxYY1jehtHaxqdPihHsqV, bundle received with the organization's Adm
 - Unrecorded small-model request: 4 of 4 runs in the desktop app's environment (cache read [7010]), 0 of 4 clean
 - Checks over the window: chain intact, session files pass, bill pass (0 gaps, 0 excess), level provider
 
+## Can a team switch off Anthropic's session count?
+
+Nov 15, main key, one-line sessions marked by terminal name; none sent telemetry to vawr.
+
+- Control (defaults, TERM=vt100): 2 of 2 counted
+- DISABLE_TELEMETRY=1 and CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (TERM=vt220): 0 of 2 counted
+- Billed in that minute, all four sessions: 69,848 Haiku tokens
+
 ## Continuity (relabel and rebuild after an earlier report)
 
 200 trials on a copy of work/log/events_upto_20261114T0917Z.jsonl (2783 entries): an earlier report's head at a random point, one API request relabeled at a random point and the chain rebuilt.

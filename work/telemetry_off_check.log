@@ -3,3 +3,12 @@
 08:54 {}
 08:59 {}
 09:04 {}
+09:09 {}
+09:14 {}
+09:19 {}
+09:24 {}
+09:29 {}
+09:34 {'xterm-256color': 5}
+09:39 {'xterm-256color': 5}
+09:44 {'vt100': 2, 'xterm-256color': 5}
+{"control_vt100_counted": 2, "telemetry_off_vt220_counted": 0}

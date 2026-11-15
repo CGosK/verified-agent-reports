@@ -1,13 +1,17 @@
-"""The sessions check: Anthropic's own daily count of Claude Code sessions and
-tokens for an API key, compared with the log.
+"""The sessions check: Anthropic's daily count of Claude Code sessions and tokens
+for an API key, compared with the log.
 
 Anthropic's Claude Code Analytics API (part of the Admin API) reports, for each
 UTC day and actor (an API key's name, or a Console user's email), how many
-Claude Code sessions ran and their tokens by model. Anthropic counts these on its
-side. In our runs it counted every session on the key, including 25 whose
-telemetry never reached the log, and its tokens matched the log exactly for
-sessions that were logged. It leaves out the one background request that Claude
-Code records nowhere (see billcheck), which the log doesn't have either.
+Claude Code sessions ran and their tokens by model. Claude Code itself reports
+these to Anthropic: in our tests a session run with DISABLE_TELEMETRY=1 and
+CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 was billed but never counted
+(work/results/telemetry_off_test.json). So the count catches sessions hidden
+only from the team's own log (25 of them on Nov 14, every one counted), but not
+a team that also switches off Claude Code's reporting; the bill is the record a
+team can't switch off. Its tokens matched the log exactly for logged sessions,
+and it leaves out the one background request that Claude Code records nowhere
+(see billcheck), which the log doesn't have either.
 
 So on a day when everything was logged, the log's sessions and tokens per model
 equal Anthropic's. A session that never reached the log shows up as a missing

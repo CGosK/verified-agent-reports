@@ -269,7 +269,8 @@ def api_keys(admin_key):
 def claude_code_day(admin_key, day):
     """Anthropic's Claude Code Analytics records for one UTC day ("YYYY-MM-DD"): one
     record per actor (API key name or Console user's email) and terminal type, with
-    num_sessions and tokens by model. Counted on Anthropic's side; data younger than
+    num_sessions and tokens by model. Reported by Claude Code itself (a session with its
+    own telemetry switched off isn't counted); data younger than
     an hour is left out."""
     out, page = [], None
     while True:

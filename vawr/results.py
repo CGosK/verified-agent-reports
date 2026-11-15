@@ -198,6 +198,21 @@ def render():
                     "intact" if c["chain_ok"] else "BROKEN", "pass" if c["coverage"]["ok"] else "FAIL",
                     "pass" if c["bill_ok"] else "FAIL", len(c["gaps"] or []), len(c["log_excess"] or []), c["level"]),
                 ""]
+    tt = _load("telemetry_off_test.json")
+    if tt:
+        tb = _load("telemetry_off_bisect.json") or {}
+        out += ["## Can a team switch off Anthropic's session count?", "",
+                "Nov 15, main key, one-line sessions marked by terminal name; none sent telemetry to vawr.", "",
+                "- Control (defaults, TERM=vt100): %s of 2 counted" % tt.get("control_vt100_counted"),
+                "- DISABLE_TELEMETRY=1 and CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (TERM=vt220): %s of 2 counted"
+                % tt.get("telemetry_off_vt220_counted"),
+                "- Billed in that minute, all four sessions: %s Haiku tokens" % "{:,}".format(
+                    sum(sum(t.values()) for mv in (tt.get("billed_08_43_to_08_46") or {}).values() for t in mv.values()))]
+        if tb:
+            out += ["- Only DISABLE_TELEMETRY=1 (TERM=vt52): %s of 2 counted" % tb.get("only_DISABLE_TELEMETRY_vt52_counted"),
+                    "- Only CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (TERM=vt320): %s of 2 counted"
+                    % tb.get("only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted")]
+        out.append("")
     ct = _load("continuity_trials.json")
     if ct:
         out += ["## Continuity (relabel and rebuild after an earlier report)", "",

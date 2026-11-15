@@ -16,7 +16,7 @@ from records you already have:
    puts the report, the checks and the log in one file. Whoever owns the API
    key's account runs `vawr receive` on it with their own Admin key, and checks
    it against Anthropic's records for that key: the bill minute by minute, and
-   Anthropic's own daily count of Claude Code sessions. An organization admin can
+   Anthropic's daily count of Claude Code sessions. An organization admin can
    check everyone's bundles at once with `vawr team`.
 
 Chris Graham, AI x Epistemics Research Sprint (Track 2, Trust Infrastructure),
@@ -80,8 +80,13 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
   other 2 were our own plugin test at 10:45 UTC, run without telemetry: the
   bill check flags exactly their 35,936 Haiku tokens too. Its tokens differ
   from the bill only by the desktop background request (Haiku) and 9 tokens of
-  an older Haiku. Whether a team can switch this count off: see
-  `work/results/telemetry_off_test.json`.
+  an older Haiku. But Claude Code reports this count itself: two sessions run
+  with `DISABLE_TELEMETRY=1` and `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
+  were billed (about 34,500 tokens) and never counted, while two identical
+  sessions without them were (`work/results/telemetry_off_test.json`). So the
+  count catches sessions kept out of the team's log, not a team that also
+  switches off Claude Code's reporting. The bill is the record a team can't
+  switch off.
 
 ## Install
 
@@ -157,7 +162,7 @@ Example, from four real interactive sessions:
 | Chain | No entry was edited, deleted or reordered since it was written | That the log was never rebuilt end to end by whoever holds it |
 | Coverage | Every request in this machine's session files reached the log | Work on another machine, or with session files turned off |
 | Bill | Everything billed to the API key is in the log, apart from Claude Code's own background requests | Usage on other keys or providers; subscription usage |
-| Sessions | Anthropic's daily count of Claude Code sessions and tokens on the key equals the log's, per terminal type (a count, not a list: it shows how many are missing, not which) | Days the log only partly covers; anything within the last hour |
+| Sessions | Anthropic's daily count of Claude Code sessions and tokens on the key equals the log's, per terminal type (a count, not a list: it shows how many are missing, not which) | Sessions run with Claude Code's own telemetry off (it doesn't count them); days the log only partly covers; anything within the last hour |
 
 Each result carries a level: **checked against Anthropic's records** (the
 chain is intact and the bill check passed), **tamper-evident only** (chain
@@ -291,6 +296,7 @@ intervals (conditional on these tasks and logs) are in
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
 | Anthropic's daily Claude Code session count vs the log (Nov 14, as of 17:17 UTC) | Headless: Anthropic 91, log 66, a shortfall equal to our 25 hidden runs; the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive terminal type: 5 and 5, tokens equal. 2 more sessions were our unlogged plugin test, also flagged by the bill check (35,936 tokens) |
 | Weaker work, told to hide it (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; 8 of those 11 said so anyway; the claim checker flagged all 11 (3 of 3 that hid it) and 0 of 5 controls; the other 4 met hidden tests too |
+| Sessions run with Claude Code's own telemetry off (`DISABLE_TELEMETRY=1`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`) | Billed, but not in Anthropic's session count: 0 of 2 counted, against 2 of 2 identical sessions without the variables; the bill check still sees them |
 | A whole day on a separate key, every session logged (payer's `vawr receive`) | VERIFIED: Anthropic counted 5 sessions, the log 5, no token difference; bill 550,952 tokens, 0 unexplained |
 | Claude Code 2.1.325, environment A/B (desktop app's environment vs clean) | Unrecorded request in 4 of 4 desktop-environment runs (cache read 7,010, as on 2.1.322), 0 of 4 clean; bill and session-file checks pass |
 | A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |
