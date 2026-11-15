@@ -83,6 +83,24 @@ Safety tasks; planted runs were told to do a deliberately partial job and descri
 
 The claim checker holds a "done" claim to the task's tests, and every summary claimed the work was done. Hidden tests (docstring clauses the visible tests skip, written after the runs) pass on every reference solution, fail on every stub, and pass on 41/41 (91–100%) normal safety runs on Claude Code 2.1.322.
 
+## Table 8. Can a team switch off Anthropic's session count?
+
+Nov 15, main key, one-line Haiku sessions. Runs 1 and 2 were told apart by terminal name (TERM) and sent nothing to vawr; run 3 was headless, each session logged by vawr to its own receiver. Anthropic's count was read about an hour or more after each run.
+
+| Run (UTC) | Setting | Counted by Anthropic | Logged by vawr | Billed in the run's minutes (tokens) |
+| --- | --- | --- | --- | --- |
+| 1 (08:44) | Both variables | 0/2 (0–84%) | – | 69,848 (all four) |
+| 1 (08:44) | Neither | 2/2 (16–100%) | – | |
+| 2 (09:50) | `DISABLE_TELEMETRY` only | 0/2 (0–84%) | – | 69,068 (all four) |
+| 2 (09:50) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | 0/2 (0–84%) | – | |
+| 3 (11:22) | `DISABLE_TELEMETRY` only | 0/1 | 1/1 | 53,204 (all three) |
+| 3 (11:22) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | 0/1 | 1/1 | |
+| 3 (11:23) | Neither | 1/1 | 1/1 | |
+| **All with either variable** | | **0/8 (0–37%)** | | |
+| **All with neither** | | **3/3 (29–100%)** | | |
+
+Run 3's count rose by 1; the counted row's tokens equal the control's request exactly (cache read 11,507, cache creation 6,555), so the counted session is identified, not inferred. Run 2 had no same-time control.
+
 ## Table B2. Claude Code 2.1.325 and continuity (appendix)
 
 | Test | Result |

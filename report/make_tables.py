@@ -130,6 +130,38 @@ out += ["## Table 7. Weaker work, told to hide it", "",
         "done. Hidden tests (docstring clauses the visible tests skip, written after the runs) pass on every reference "
         "solution, fail on every stub, and pass on %s normal safety runs on Claude Code 2.1.322." % fmt(hs["normal_runs_pass_hidden"]), ""]
 
+t1, t2, t3 = L("telemetry_off_test.json"), L("telemetry_off_bisect.json"), L("telemetry_off_headless.json")
+og = {k: L("telemetry_off_otel_%s.json" % k) for k in ("disable_telemetry", "nonessential", "control")}
+billed = lambda mins: "{:,}".format(sum(sum(m.values()) for minute in mins.values() for m in minute.values()))  # noqa: E731
+logged = lambda k: "%d/1" % len(og[k].get("log_sessions") or {})  # noqa: E731
+ident = t3.get("counted_row_matches") == ["control"]
+off = t1["telemetry_off_vt220_counted"] + t2["only_DISABLE_TELEMETRY_vt52_counted"] + \
+    t2["only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted"] + (t3["non_interactive_counted"] - (1 if ident else 0))
+out += ["## Table 8. Can a team switch off Anthropic's session count?", "",
+        "Nov 15, main key, one-line Haiku sessions. Runs 1 and 2 were told apart by terminal name (TERM) and sent "
+        "nothing to vawr; run 3 was headless, each session logged by vawr to its own receiver. Anthropic's count was "
+        "read about an hour or more after each run.", "",
+        "| Run (UTC) | Setting | Counted by Anthropic | Logged by vawr | Billed in the run's minutes (tokens) |",
+        "| --- | --- | --- | --- | --- |",
+        "| 1 (08:44) | Both variables | %s | – | %s (all four) |" % (fmt((t1["telemetry_off_vt220_counted"], 2)),
+                                                                   billed(t1["billed_08_43_to_08_46"])),
+        "| 1 (08:44) | Neither | %s | – | |" % fmt((t1["control_vt100_counted"], 2)),
+        "| 2 (09:50) | `DISABLE_TELEMETRY` only | %s | – | %s (all four) |" % (
+            fmt((t2["only_DISABLE_TELEMETRY_vt52_counted"], 2)), billed(t2["billed_09_49_to_09_52"])),
+        "| 2 (09:50) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | %s | – | |" % fmt(
+            (t2["only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted"], 2)),
+        "| 3 (11:22) | `DISABLE_TELEMETRY` only | %s | %s | %s (all three) |" % (
+            "0/1" if ident else "?", logged("disable_telemetry"), billed(t3["billed_11_22_to_11_25"])),
+        "| 3 (11:22) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | %s | %s | |" % (
+            "0/1" if ident else "?", logged("nonessential")),
+        "| 3 (11:23) | Neither | %s | %s | |" % ("1/1" if ident else "?", logged("control")),
+        "| **All with either variable** | | **%s** | | |" % fmt((off, 8)),
+        "| **All with neither** | | **%s** | | |" % fmt((t1["control_vt100_counted"] + (1 if ident else 0), 3)), "",
+        "Run 3's count rose by %d; the counted row's tokens equal the control's request exactly (cache read "
+        "{:,}, cache creation {:,}), so the counted session is identified, not inferred. Run 2 had no same-time "
+        "control.".format(t3["counted_row_tokens"]["cache_read"], t3["counted_row_tokens"]["cache_creation"])
+        % t3["non_interactive_counted"], ""]
+
 ver = L("version_2_1_325.json")
 ct = L("continuity_trials.json")
 be = ver["ab"]["by_env"]

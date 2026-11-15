@@ -25,5 +25,34 @@
     "cache_creation": 12874
    }
   }
- }
+ },
+ "counted_row_tokens": {
+  "input": 2,
+  "output": 4,
+  "cache_read": 11507,
+  "cache_creation": 6555
+ },
+ "logged_tokens_by_run": {
+  "disable_telemetry": {
+   "input": 2,
+   "output": 4,
+   "cache_read": 11285,
+   "cache_creation": 6235
+  },
+  "nonessential": {
+   "input": 2,
+   "output": 4,
+   "cache_read": 11285,
+   "cache_creation": 6319
+  },
+  "control": {
+   "input": 2,
+   "output": 4,
+   "cache_read": 11507,
+   "cache_creation": 6555
+  }
+ },
+ "counted_row_matches": [
+  "control"
+ ]
 }

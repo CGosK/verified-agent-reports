@@ -236,7 +236,9 @@ def render():
                 out.append("- Anthropic's count of these three headless sessions: %s of %s, %s (checked %s UTC, "
                            "about an hour after)" % (
                                n, th.get("headless_sessions_run"),
-                               "the control" if n == 1 else "where only the control was expected",
+                               ("the control: the counted row's tokens equal the control's request exactly"
+                                if th.get("counted_row_matches") == ["control"] else
+                                "not identified by tokens") if n == 1 else "where only the control was expected",
                                th.get("checked_at", "")[11:16]))
                 out.append("- Billed on the key 11:22–11:25 UTC, while the three ran: %s Haiku tokens"
                            % format(billed, ","))
