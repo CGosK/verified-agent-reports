@@ -11,13 +11,14 @@ import os
 import tempfile
 from datetime import datetime, timezone
 
-from . import auditor, bundle, daily, usage_api
+from . import auditor, bundle, chainlog, daily, usage_api
 from .logdata import api_requests
 from .sessions import parse_ts
 
 
 def _parse(s):
-    return datetime.fromisoformat(s.replace("Z", "+00:00")) if s else None
+    """Aware UTC datetime (a manifest may carry any offset; the API is asked in UTC)."""
+    return bundle._parse(s) if s else None
 
 
 def run(bundle_paths, admin_key, start=None, end=None, ledger=bundle.RECEIVED, record=True, sessions=True,
@@ -45,6 +46,26 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
                         "log": out["files"]["log.jsonl"], "log_id": m["log"]["id"], "chain_ok": out["chain"]["ok"],
                         "report_ok": out["report"]["ok"], "continuity": out["continuity"],
                         "head": out["chain"]["head"], "entries": out["chain"]["entries"]})
+    # two bundles naming the same log must agree entry by entry where they overlap: a rewritten copy
+    # sharing the first entry would otherwise be merged with the honest one and counted once
+    by_id = {}
+    for mb in members:
+        if mb["chain_ok"]:  # a broken chain fails on its own; it can't put an honest log under suspicion
+            by_id.setdefault(mb["log_id"], []).append(mb)
+    for group in by_id.values():
+        if len(group) < 2:
+            continue
+        seqs = []
+        for mb in group:
+            try:
+                seqs.append({e.get("seq"): e.get("hash") for _, e in chainlog.read_entries(mb["log"])
+                             if isinstance(e, dict)})
+            except (OSError, ValueError):
+                seqs.append({})
+        for i, mb in enumerate(group):
+            for j, other in enumerate(seqs):
+                if i != j and any(other.get(q, h) != h for q, h in seqs[i].items()):
+                    mb["fork"] = True
     # teammates' logs on the same key don't count against each other, but only logs whose chains verified
     verified_ids = {mb["log_id"] for mb in members if mb["chain_ok"]}
     for mb in members:
@@ -58,6 +79,9 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
     end = end or (max(ends) if ends else None)
     if not (start and end):
         raise ValueError("no time window: give --since and --until, or readable bundles that carry one")
+    if (end - start).days > bundle.MAX_WINDOW_DAYS:
+        raise ValueError("the bundles together span more than %d days; check them in smaller groups, or give "
+                         "--since and --until" % bundle.MAX_WINDOW_DAYS)
 
     if org_minutes is None:
         org_minutes = usage_api.org_minute_usage(admin_key, start, end)
@@ -82,11 +106,12 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
         for mb in members:
             if mb["chain_ok"]:
                 row = next((r for r in rows if r["key_id"] == mb["key_id"]), None)
-                verdict = ("failed" if not mb["report_ok"] or mb["continuity"]["ok"] is False else
+                verdict = ("failed" if not mb["report_ok"] or mb["continuity"]["ok"] is False or mb.get("fork") else
                            "verified" if row and row["status"] == "pass" else "consistent")
                 bundle.record_received(ledger, mb["log_id"], mb["head"], mb["entries"],
                                        [x.isoformat() for x in mb["window"]], mb["key_id"], mb["only_projects"],
-                                       verdict, os.path.basename(mb["bundle"]), bundle.log_hashes(mb["log"]))
+                                       verdict, os.path.basename(mb["bundle"]),
+                                       None if mb.get("fork") else bundle.log_hashes(mb["log"]))
     total = sum(r["billed_tokens"] for r in rows)
     reported = sum(max(0, r["billed_tokens"] - _gap(r)) for r in rows if r["status"] == "pass")
     return {"window": [start.isoformat(), end.isoformat()], "members": [
@@ -138,7 +163,10 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
             except Exception as exc:
                 row["sessions"] = {"ok": False, "error": "the logs made the sessions check fail: %s: %s"
                                    % (type(exc).__name__, exc)}
-        broken = [mb for mb in mine if not mb["chain_ok"] or not mb["report_ok"] or mb["continuity"]["ok"] is False]
+        broken = [mb for mb in mine if not mb["chain_ok"] or not mb["report_ok"] or mb["continuity"]["ok"] is False
+                  or mb.get("fork")]
+        if any(mb.get("fork") for mb in mine):
+            row["error"] = "two bundles name the same log but their entries differ: one of them was rewritten"
         s = row["sessions"] or {}
         if broken or not row["bill"]["ok"] or s.get("ok") is False or not row["in_organization"]:
             row["status"] = "fail"
@@ -152,6 +180,10 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
         if row["status"] == "pass" and end > (now or datetime.now(timezone.utc)):
             row["status"] = "check"
             row["note"] = "the period hasn't ended yet; usage after now can't be checked"
+        elif row["status"] == "pass" and end + bundle.SETTLE > (now or datetime.now(timezone.utc)):
+            row["status"] = "check"
+            row["note"] = ("the period ended less than %d minutes ago; Anthropic's records for its last minutes may "
+                           "not be in yet: run `vawr team` again after that" % (bundle.SETTLE.total_seconds() // 60))
         if len({mb["log_id"] for mb in mine}) > 1 and row["status"] == "pass":
             row["status"] = "check"
             row["note"] = "bundles from %d different logs cover this key; give each person their own key" % len(

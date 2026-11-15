@@ -690,6 +690,17 @@ def _level_line(check, report):
     return '<p class="level"><strong>Level: %s.</strong> %s%s%s</p>' % (_e(head), _e(text), split, by)
 
 
+def _receive_verdict(check):
+    """The recipient's verdict word and reasons, at the top of a page `vawr receive` built."""
+    v = (check or {}).get("verdict") if isinstance(check, dict) else None
+    if v not in ("verified", "consistent", "failed"):
+        return ""
+    why = "; ".join(_e(str(r)) for r in (check.get("verdict_reasons") or []))
+    cls = {"verified": "ok", "consistent": "consistent", "failed": "attention"}[v]
+    return ('<section class="verdict %s" aria-label="Verdict"><p class="headline">%s</p>%s</section>'
+            % (cls, v.upper(), "<p>%s.</p>" % (why[:1].upper() + why[1:]) if why else ""))
+
+
 def _verdict(checks, warnings, level=""):
     failed = [c for c in checks if c["status"] == "fail"]
     passed = [c for c in checks if c["status"] == "pass"]
@@ -837,6 +848,8 @@ def _verify(report, check, billcheck):
             window = src["window"]
             break
     q = shlex.quote(str(path))
+    key_id = ((check or {}).get("bill") or {}).get("key_id") if isinstance(check, dict) else None
+    key_arg = " \\\n    --key-id %s" % shlex.quote(str(key_id)) if key_id else ""
     if window and all(window):
         since, until = shlex.quote(str(window[0])), shlex.quote(str(window[1]))
     else:
@@ -844,7 +857,7 @@ def _verify(report, check, billcheck):
     commands = "\n".join([  # continuation lines keep each line short enough for a phone or paper
         "vawr status --log %s" % q,
         "vawr verify-report report.json --log %s" % q,
-        "vawr check --no-coverage --since %s \\\n    --until %s \\\n    --log %s" % (since, until, q),
+        "vawr check --no-coverage --since %s \\\n    --until %s \\\n    --log %s%s" % (since, until, q, key_arg),
     ])
     head = log.get("head")
     facts = [("Log file", "<code>%s</code>" % _e(path)),
@@ -920,6 +933,7 @@ code.hash,code.id{word-break:break-all}
 .verdict{background:var(--panel);border:1px solid var(--rule);border-left:6px solid var(--pass);
 border-radius:6px;padding:.9rem 1.1rem}
 .verdict.attention{border-left-color:var(--fail)}
+.verdict.consistent{border-left-color:var(--skip)}
 .verdict .headline{font-size:1.15rem;font-weight:650;margin:0}
 .verdict ul{margin:.5rem 0 0;padding-left:1.2rem}
 .verdict li{margin:.2rem 0}
@@ -1014,7 +1028,7 @@ def render(report, check=None, billcheck=None, categories=None, claims=None, tit
         "<meta name=\"generator\" content=\"vawr %s\">" % _e(__version__),
         "<title>%s</title><style>%s</style></head><body><main>" % (_e(title), CSS),
         "<header><h1>%s</h1><p class=\"meta\">%s</p></header>" % (_e(title), " · ".join(meta)),
-        _verdict(checks, warnings, _level_line(check, report)),
+        _receive_verdict(check) + _verdict(checks, warnings, _level_line(check, report)),
         _usage(report),
         _checks_section(checks),
         _verify(report, check, billcheck),

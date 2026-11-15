@@ -225,6 +225,13 @@ def window_text(window):
     return "%s to %s" % (start, end[11:] if end[:10] == start[:10] else end)
 
 
+def clock(t, window):
+    """'08:32' for a time in a one-day window, '11-14 08:32' when the window spans days."""
+    t = t or ""
+    same_day = bool(window) and window[0][:10] == window[1][:10]
+    return t[11:16] if same_day else t[5:16].replace("T", " ")
+
+
 def render(res):
     prov = _total(res["provider_tokens"])
     bg = _total(res["background_tokens"])
@@ -246,7 +253,7 @@ def render(res):
     ]
     for g in res["gaps"]:
         models = ", ".join(sorted(g["by_model"]))
-        span = g["start"][11:16] + ("" if g["start"] == g["end"] else "-" + g["end"][11:16])
+        span = clock(g["start"], res["window"]) + ("" if g["start"] == g["end"] else "-" + clock(g["end"], res["window"]))
         lines.append("      %-11s %10s tokens  %s" % (span, "{:,}".format(_total(g["tokens"])), models))
     lines += ["  In session files, not billed here  %12s" % "{:,}".format(excess), ""]
     if gap:

@@ -1,7 +1,7 @@
 # vawr: checkable usage reports for Claude Code
 
-`vawr` answers three questions about AI agent work that nothing else answers
-from records you already have:
+`vawr` answers three questions about AI agent work from records you already
+have:
 
 1. **Is everything Anthropic billed you accounted for?** `vawr billcheck`
    compares what Anthropic billed an API key, minute by minute, with what
@@ -18,6 +18,19 @@ from records you already have:
    it against Anthropic's records for that key: the bill minute by minute, and
    Anthropic's daily count of Claude Code sessions. An organization admin can
    check everyone's bundles at once with `vawr team`.
+
+**If you pay for a team's agent use** and own the API key's organization:
+ask the team for a `vawr bundle` covering whole UTC days, then run
+
+```bash
+export ANTHROPIC_ADMIN_KEY=...   # your organization's Admin key
+vawr receive their-report.zip --html report.html
+```
+
+It answers VERIFIED, CONSISTENT or FAILED, says why, and gives a one-line
+summary to paste into an email. `docs/for-funders.md` says what to ask for;
+`work/samples/` holds two real bundles (one VERIFIED, one FAILED: see
+[Send a report](#send-a-report-to-whoever-pays)).
 
 Chris Graham, AI x Epistemics Research Sprint (Track 2, Trust Infrastructure),
 Apart Research, November 2026. Python 3.9+, standard library only. MIT license.
@@ -44,15 +57,15 @@ Bill check, 2026-11-13 20:50 to 21:36 UTC, key apikey_…
 The three unexplained minutes are the three runs we deliberately ran with
 telemetry and session files turned off. Nothing else was flagged.
 
-Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322):
+Three things stood out in our runs (one API key, one machine, Claude Code 2.1.322):
 
 - **What Claude Code records depends on how it was launched.** When Claude
   Code 2.1.322 was told it was running inside the Claude desktop app
   (`CLAUDE_CODE_ENTRYPOINT=claude-desktop`, which the app sets for the
   sessions it starts), every headless API-key session we ran (`claude -p`) made one billed small-model
   (Haiku) request that appeared in none of its own records: telemetry events,
-  metrics, session files or cost totals. On our small tasks it was a quarter
-  to a half of each session's billed tokens. Every run with that setting had
+  metrics, session files or cost totals. On our small tasks it was 23–54% of
+  each session's billed tokens. Every run with that setting had
   it (65 of 65) and no run without it did (0 of 9); a controlled A/B and a
   bisection isolated the variable. In interactive terminal sessions, session
   files leave out session titles, prompt suggestions and compaction, which
@@ -71,11 +84,11 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
   all show up as unexplained minutes.
-- **Anthropic's daily count of Claude Code sessions matches the log.**
+- **Anthropic's daily count of Claude Code sessions finds the hidden runs.**
   Anthropic's Claude Code Analytics API (Admin API, daily, per API key and
-  terminal type) counted 98 Claude Code sessions on our key on Nov 14 (as of
-  17:17 UTC). The 91 headless ones are the 66 the log has plus exactly the 25
-  we hid; its Sonnet and Opus tokens beyond the log's equal, to the token,
+  terminal type) counted 126 Claude Code sessions on our key on Nov 14 (the
+  whole day, read after it closed). The 119 headless ones are the 94 the log
+  has plus exactly the 25 we hid; its Sonnet and Opus tokens beyond the log's equal, to the token,
   what the bill check found unexplained in those runs. The 5 in the
   interactive sessions' terminal type match the log, tokens included. The
   other 2 were our own plugin test at 10:45 UTC, run without telemetry: the
@@ -111,7 +124,8 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
 As a Claude Code plugin (slash commands, and a hook that keeps the receiver running):
 
 ```
-/plugin install vawr --marketplace <owner>/<repo>
+/plugin marketplace add CGosK/verified-agent-reports
+/plugin install vawr@vawr
 ```
 
 Then `/vawr:billcheck`, `/vawr:setup` (once), `/vawr:tag safety`, `/vawr:check`,
@@ -121,7 +135,7 @@ and admins `/vawr:team <files>`. Python 3.9+ must be on PATH.
 Or as a command-line tool:
 
 ```bash
-git clone <this repository> vawr && cd vawr
+git clone https://github.com/CGosK/verified-agent-reports vawr && cd vawr
 pipx install .        # or: pip install .
 ```
 
@@ -183,7 +197,10 @@ Example, from four real interactive sessions:
 | Sessions | Anthropic's daily count of Claude Code sessions and tokens on the key equals the log's, per terminal type (a count, not a list: it shows how many are missing, not which) | Sessions run with Claude Code's own telemetry off (it doesn't count them); days the log only partly covers; anything within the last hour |
 
 Each result carries a level: **checked against Anthropic's records** (the
-chain is intact and the bill check passed), **tamper-evident only** (chain
+chain is intact and the bill check passed), **bill checked, session count
+couldn't confirm every day** (the bill check passed, but Anthropic's daily
+count couldn't confirm a day: one the log only partly covers, one not over
+yet, or one with sessions Anthropic didn't count), **tamper-evident only** (chain
 intact, no bill check: no Admin key, or a Claude subscription, for which
 Anthropic offers no usage records to anyone) or **a check failed**. Reports
 show how much of their usage was on an API key and how much on a subscription.
@@ -213,32 +230,37 @@ Whoever receives it runs:
 vawr receive vawr-report-20261101T0000_20261201T0000.zip --html report.html
 ```
 
-On our four interactive sessions, with the account's Admin key:
+On the sample bundle `work/samples/full-day.zip`, a separate key whose every
+session on Nov 14 was logged (3 interactive, 2 headless), with the account's
+Admin key:
 
 ```
-PASS  chain        293 entries, head b5816ab239402278
+vawr receive full-day.zip
+
+Report: Grant demo, 2026-11-14, 2026-11-14 00:00 to 2026-11-15 00:00 UTC, projects grant-demo
+API key checked: apikey_01ACxYY1jehtHaxqdPihHsqV (vawr-daytest)
+
+PASS  chain        276 entries, head 8eab021fbe1d0d9a
 PASS  report       rebuilt from the log: same tokens per category
 SKIP  continuity   first report from this log
-PASS  bill         730,927 tokens billed: 730,927 logged, 0 Claude Code background, 0 unexplained
-SKIP  sessions     no whole day the log covers to compare yet
-        2026-11-14  Anthropic counted 98 Claude Code sessions, the log has 5 (the log started this day); ...
-          non-interactive  partial     Anthropic 91, log 0; ...
-          xterm            partial     Anthropic 2, log 0; ...
-          xterm-256color   pass so far Anthropic 5, log 5
-        the last day isn't over: run `vawr receive` again an hour after it ends (UTC) for the final count
+PASS  bill         550,952 tokens billed: 550,952 logged, 0 Claude Code background, 0 unexplained
+PASS  sessions     Anthropic's daily count of Claude Code sessions and tokens on this key vs the log
+        2026-11-14  Anthropic counted 5 Claude Code sessions, the log has 5
 
 VERIFIED  checked against your own Anthropic records
+Every token Anthropic billed the key in this period is in the log, and Anthropic's daily count of Claude Code sessions matches the log on every day.
+Usage: 550,952 tokens in the log: safety 44% (2 runs), capabilities 35% (1 run), other 21% (2 runs).
+Summary: VERIFIED: Grant demo, 2026-11-14, 2026-11-14 00:00 to 2026-11-15 00:00 UTC. Every token Anthropic billed the key in this period is in the log, and Anthropic's daily count of Claude Code sessions matches the log on every day.
+Figures: the report rebuilt from the log (--html writes it as a page); the team's own report.html in the bundle is not checked.
 ```
 
-(The key also ran our batch tests that day, so the day as a whole can't be
-compared; the interactive sessions' own terminal type matches exactly.) On a
-separate key whose every session that day was logged (3 interactive, 2
-headless), the whole day checks out: Anthropic counted 5 Claude Code sessions
-and the log has 5, with no token difference; 550,952 tokens billed, all
-logged; VERIFIED. The
-same bundle of our batch runs, which include 25 runs hidden from the log,
-fails both the bill check and the sessions check (non-interactive: Anthropic
-91, log 66).
+The other sample, `work/samples/batch-runs-with-hidden.zip`, holds our batch
+runs, 25 of which we hid from the log: it FAILS the bill check (430,844
+tokens unexplained, minute by minute). Its window ends at 09:17 UTC, so
+Anthropic's whole-day count can't confirm Nov 14 from it; compared with every
+log we kept, that day falls short by exactly the 25 hidden runs. On our four
+real interactive sessions the log equalled the bill to the token (730,927
+tokens).
 
 `receive` rebuilds the report from the log for exactly the window, projects
 and head the bundle states (a report.json claiming anything narrower fails),
@@ -316,7 +338,7 @@ intervals (conditional on these tasks and logs) are in
 | A run relabeled (say, capabilities work as safety) and the chain rebuilt | 0 of 50 caught by the log checks; in 50 fresh trials of the same edit the category check caught 48 |
 | Category check against a keyword baseline | Real runs: 92 of 100 each (our task folders give the purpose away); written held-out cases, clear: model 24 of 24, keywords 15 of 24; borderline: 10 of 12 vs 5 of 12 |
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
-| Anthropic's daily Claude Code session count vs the log (Nov 14, as of 17:17 UTC) | Headless: Anthropic 91, log 66, a shortfall equal to our 25 hidden runs; the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive terminal type: 5 and 5, tokens equal. 2 more sessions were our unlogged plugin test, also flagged by the bill check (35,936 tokens) |
+| Anthropic's daily Claude Code session count vs the log (Nov 14, whole day) | Headless: Anthropic 119, log 94, a shortfall equal to our 25 hidden runs; the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive terminal type: 5 and 5, tokens equal. 2 more sessions were our unlogged plugin test, also flagged by the bill check (35,936 tokens) |
 | Weaker work, told to hide it (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; 8 of those 11 said so anyway; the claim checker flagged all 11 (3 of 3 that hid it) and 0 of 5 controls; the other 4 met hidden tests too |
 | Sessions run with Claude Code's own telemetry off (`DISABLE_TELEMETRY=1`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`) | Billed, but not in Anthropic's session count: 0 of 2 counted with both, 0 of 2 with each alone, against 2 of 2 identical sessions without them, and 1 of 3 in a headless repeat (the same-time control, identified by its tokens); the bill check flagged every billed token of all three runs (69,848, 69,068 and 53,204), and vawr still logs such sessions (1 of 1 with each). In the desktop app's environment, `DISABLE_TELEMETRY` kept one 1,181-token request out of vawr's log (the bill check flags 174 tokens of it); `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` didn't (1 session each) |
 | A whole day on a separate key, every session logged (payer's `vawr receive`) | VERIFIED: Anthropic counted 5 sessions, the log 5, no token difference; bill 550,952 tokens, 0 unexplained |
@@ -343,12 +365,16 @@ Sprint (Nov 13–15, 2026).
 
 ## Data
 
-`work/` holds everything the results come from: the hash-chained logs
-(`work/log/`, `work/pilot/log/`, `work/interactive/log/`), one manifest per run
+`work/` holds what the results come from: the hash-chained logs
+(`work/log/`, with two dated snapshots the tables were built from;
+`work/pilot/log/`, `work/interactive/log/`), one manifest per run
 (`work/manifests/`), Anthropic's saved per-minute usage records for the test
 key (`work/provider_minutes.json`), and every result file (`work/results/`).
-Identity attributes are dropped before hashing; file paths in manifests show
-the machine's username.
+Two inputs aren't in it: Claude Code's session files (read from
+`~/.claude/projects` on the machine that ran the tests, for the session-file
+columns) and the per-run git worktrees (`work/runs/`, regenerable, for the
+claim checker). Identity attributes are dropped before hashing; file paths in
+`work/` show the machine's username.
 
 ## Reproducing the Sprint results
 
@@ -362,10 +388,29 @@ python3 -m vawr batch --set sprint --plan tasks/run_plan.json
 python3 -m vawr batch --set sprint --plan tasks/run_plan_batch2.json
 python3 -m vawr batch --set sprint --plan tasks/run_plan_concurrency.json
 python3 -m vawr provider-cache --start <UTC start> --end <UTC end>   # once records cover the runs
-python3 -m vawr validate all                           # tamper, off-log, claims, category
+python3 -m vawr validate all                           # tamper, off-log, claims, category (calls Claude for runs with no saved verdict)
 python3 -m vawr results                                # writes work/results/summary.md
-python3 -m unittest discover -s tests -t .             # tool tests
+python3 report/make_tables.py                          # writes report/tables.md from work/results/
+python3 -m unittest discover -s tests                  # tool tests
 ```
+
+Each table from its result file and command (offline unless marked):
+
+| Table (`report/tables.md`) | Result file | Command |
+| --- | --- | --- |
+| 1 Off-log work | `off_log.json`, `concurrency.json` | `vawr validate offlog`, `vawr validate concurrency` (session-file column: this machine only) |
+| 2 Tampered copies | `tamper_summary.json` | `vawr validate tamper` (log snapshot to 09:17 UTC Nov 14) |
+| 3 Category check | `category_check.json`, `category_heldout.json` | `vawr validate category` (log snapshot to 10:10 UTC; saved verdicts) |
+| 4 Claim checker | `claims_summary.json` | `vawr validate claims` (needs `work/runs/` and Claude) |
+| 5 Allocation report | `allocation_report.json` | `vawr report --log work/log/events_upto_20261114T1010Z.jsonl --claims work/results/claims_real.json --out ...` |
+| 6 Session count | `cc_analytics.json`, `daytest_received.json` | `vawr validate cc-analytics` (Admin key; raw records saved in the file); the separate-key row is the saved `vawr receive` of the day test |
+| 7 Weaker work | `underperform.json` | `vawr validate underperform` |
+| 8, 8b Telemetry off | `telemetry_off_test.json`, `telemetry_off_bisect.json`, `telemetry_off_headless.json`, `telemetry_off_otel_*.json`, `telemetry_off_desktop_env.json` | `work/telemetry_off_*.py` (Admin key, runs Claude) |
+| B1 Hidden runs | `off_log.json` | as Table 1 |
+| B2 2.1.325, continuity | `version_2_1_325.json`, `continuity_trials.json` | `vawr validate version` (Admin key), `vawr validate continuity` |
+
+Figure 1 is `vawr.figure.build` over 2026-11-13 20:50 to 21:36 UTC (from
+`work/provider_minutes.json`, `work/log/` and `work/manifests/`).
 
 Runs on a Claude subscription use `--setting-sources project`,
 `--strict-mcp-config` and `--disable-slash-commands` so the person's own

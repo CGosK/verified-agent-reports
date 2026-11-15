@@ -128,7 +128,7 @@ def render(res):
     for s in c["unlogged_sessions"][:10]:
         lines.append("        not logged: %s session %s… (%s), %d requests, %s tokens, from %s" % (
             s["project"][-40:], (s["session"] or "?")[:8], s["auth"], s["requests"],
-            "{:,}".format(s["tokens"]), (s["first"] or "")[11:16]))
+            "{:,}".format(s["tokens"]), billcheck.clock(s["first"], res["window"])))
     if len(c["unlogged_sessions"]) > 10:
         lines.append("        ... and %d more sessions" % (len(c["unlogged_sessions"]) - 10))
     if b is None:
@@ -142,7 +142,8 @@ def render(res):
             "{:,}".format(gap)))
         for g in b["gaps"]:
             lines.append("        unexplained %s-%s: %s tokens (%s)" % (
-                g["start"][11:16], g["end"][11:16], "{:,}".format(sum(g["tokens"].values())),
+                billcheck.clock(g["start"], res["window"]), billcheck.clock(g["end"], res["window"]),
+                "{:,}".format(sum(g["tokens"].values())),
                 ", ".join(sorted(g["by_model"]))))
         if b["log_excess"]:
             lines.append("        the log has %d minute(s) with %s tokens more than was billed to this key "
@@ -187,7 +188,7 @@ def verify_report(log_path, report_path, expect=None):
         return {"ok": False, "head_found": False, "head": None, "note": note, "differences": {}}
     try:
         with open(report_path) as fh:
-            pub = json.load(fh)
+            pub = json.load(fh, parse_int=chainlog.safe_int)
     except (OSError, ValueError) as exc:
         return bad("report.json can't be read: %s" % exc)
     if not isinstance(pub, dict) or not isinstance(pub.get("categories", []), list) or not isinstance(

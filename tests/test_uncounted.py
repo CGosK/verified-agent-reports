@@ -9,7 +9,10 @@ import unittest
 import urllib.error
 from datetime import datetime, timedelta, timezone
 
-from test_bundle_team import NOW, SESSIONS, T0, Home, cc_records, iso, write_log
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # works with `-s tests` and `-s tests -t .`
+from test_bundle_team import NOW, SESSIONS, T0, Home, cc_records, iso, write_log  # noqa: E402
 from vawr import auditor, bundle, check, configure, daily, team, usage_api
 
 ONLY_NONINTERACTIVE = {"non-interactive": (1, {"claude-sonnet-5-5": 150})}  # s2 (xterm) went uncounted

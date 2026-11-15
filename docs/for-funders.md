@@ -57,5 +57,4 @@ lists keys that used credits with no report.
   labels the work contradicts.
 
 vawr is a small Python program (standard library only, MIT licensed). It
-reads Anthropic's records with your Admin key; Anthropic documents its Claude
-Code Analytics API as free to use.
+reads Anthropic's records with your Admin key.

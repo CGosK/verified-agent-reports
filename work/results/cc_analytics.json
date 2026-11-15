@@ -63,40 +63,40 @@
     },
     "2026-11-14": {
       "anthropic_sessions_by_terminal": {
-        "non-interactive": 91,
+        "non-interactive": 119,
         "xterm": 2,
         "xterm-256color": 5
       },
       "anthropic_tokens_by_model": {
-        "claude-sonnet-5-5": 1235851,
+        "claude-sonnet-5-5": 1452693,
         "claude-opus-5-5": 74764,
         "claude-haiku-5-5": 278545
       },
       "billed_tokens_by_model": {
-        "claude-haiku-5-5": 894662,
-        "claude-sonnet-5-5": 1235851,
+        "claude-haiku-5-5": 925032,
+        "claude-sonnet-5-5": 1452693,
         "claude-opus-5-5": 74764,
         "claude-haiku-4-5-20251001": 9
       },
       "billed_minus_anthropic": {
         "claude-haiku-4-5-20251001": 9,
-        "claude-haiku-5-5": 616117
+        "claude-haiku-5-5": 646487
       },
-      "sprint_key_runs_in_manifests": 91,
+      "sprint_key_runs_in_manifests": 119,
       "hidden_runs_in_manifests": 25,
       "comparison": {
         "day": "2026-11-14",
         "status": "fail",
-        "complete": false,
-        "anthropic_sessions": 98,
-        "log_sessions": 71,
+        "complete": true,
+        "anthropic_sessions": 126,
+        "log_sessions": 99,
         "anthropic_tokens": {
-          "claude-sonnet-5-5": 1235851,
+          "claude-sonnet-5-5": 1452693,
           "claude-opus-5-5": 74764,
           "claude-haiku-5-5": 278545
         },
         "log_tokens": {
-          "claude-sonnet-5-5": 1153218,
+          "claude-sonnet-5-5": 1370060,
           "claude-haiku-5-5": 146954
         },
         "token_difference": {
@@ -108,8 +108,8 @@
           {
             "terminal": "non-interactive",
             "status": "fail",
-            "anthropic_sessions": 91,
-            "log_sessions": 66,
+            "anthropic_sessions": 119,
+            "log_sessions": 94,
             "token_difference": {
               "claude-haiku-5-5": 95655,
               "claude-opus-5-5": 74764,
@@ -127,15 +127,15 @@
           },
           {
             "terminal": "xterm-256color",
-            "status": "pass_so_far",
+            "status": "pass",
             "anthropic_sessions": 5,
             "log_sessions": 5,
             "token_difference": {}
           }
         ],
         "work": {
-          "lines_added": 896,
-          "lines_removed": 84,
+          "lines_added": 1084,
+          "lines_removed": 109,
           "commits": 0,
           "pull_requests": 0
         }
@@ -238,17 +238,17 @@
         "subscription_type": null,
         "is_remote": false,
         "core_metrics": {
-          "num_sessions": 91,
+          "num_sessions": 119,
           "lines_of_code": {
-            "added": 848,
-            "removed": 80
+            "added": 1036,
+            "removed": 105
           },
           "commits_by_claude_code": 0,
           "pull_requests_by_claude_code": 0
         },
         "tool_actions": {
           "edit_tool": {
-            "accepted": 86,
+            "accepted": 111,
             "rejected": 0
           },
           "multi_edit_tool": {
@@ -268,14 +268,14 @@
           {
             "model": "claude-sonnet-5-5",
             "tokens": {
-              "input": 626,
-              "output": 69523,
-              "cache_read": 437998,
-              "cache_creation": 143731
+              "input": 850,
+              "output": 91654,
+              "cache_read": 590417,
+              "cache_creation": 185799
             },
             "estimated_cost": {
               "currency": "USD",
-              "amount": 110
+              "amount": 144
             }
           },
           {
@@ -400,19 +400,6 @@
         },
         "model_breakdown": [
           {
-            "model": "claude-haiku-5-5",
-            "tokens": {
-              "input": 5975,
-              "output": 1607,
-              "cache_read": 130305,
-              "cache_creation": 9067
-            },
-            "estimated_cost": {
-              "currency": "USD",
-              "amount": 0
-            }
-          },
-          {
             "model": "claude-sonnet-5-5",
             "tokens": {
               "input": 5616,
@@ -423,6 +410,19 @@
             "estimated_cost": {
               "currency": "USD",
               "amount": 24
+            }
+          },
+          {
+            "model": "claude-haiku-5-5",
+            "tokens": {
+              "input": 5975,
+              "output": 1607,
+              "cache_read": 130305,
+              "cache_creation": 9067
+            },
+            "estimated_cost": {
+              "currency": "USD",
+              "amount": 0
             }
           }
         ]

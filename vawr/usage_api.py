@@ -39,6 +39,7 @@ def _get(admin_key, path, params, attempts=4, headers=None):
                 return json.load(r)
         except urllib.error.HTTPError as exc:
             if exc.code != 429 and exc.code < 500 or i == attempts - 1:
+                _keep_body(exc)
                 raise
         except (OSError, ValueError):
             if i == attempts - 1:
@@ -75,6 +76,7 @@ def minute_usage(admin_key, key_id, start, end):
     (UTC datetimes). Requests are made in chunks of at most 1,440 one-minute
     buckets."""
     out = {}
+    start, end = _utc(start), _utc(end)
     t = start.replace(second=0, microsecond=0)
     while t < end:
         chunk_end = min(end, t + timedelta(minutes=1440))
@@ -109,13 +111,18 @@ def minute_usage(admin_key, key_id, start, end):
 def raw_sample(admin_key, key_id, start, end):
     """One raw response, for checking field names."""
     return _get(admin_key, "/v1/organizations/usage_report/messages", {
-        "starting_at": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "ending_at": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "starting_at": _iso(start),
+        "ending_at": _iso(end),
         "bucket_width": "1m", "api_key_ids[]": [key_id], "limit": 60})
 
 
+def _utc(t):
+    """Aware UTC datetime: the API reads every time as UTC, so local digits would shift the window."""
+    return t.astimezone(timezone.utc) if t.tzinfo else t.replace(tzinfo=timezone.utc)
+
+
 def _iso(t):
-    return t.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return _utc(t).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _parse_iso(s):
@@ -212,17 +219,51 @@ def _legacy_retired(exc):
         return True
     if not isinstance(code, int) or not 400 <= code < 500 or code == 429:
         return False
-    try:
-        body = exc.read() or b""
-    except Exception:
-        body = b""
+    return bool(_RETIRED.search("%s %s" % (api_message(exc), getattr(exc, "reason", "") or "")))
+
+
+def _keep_body(exc):
+    """Read an HTTP error's body once and keep it on the exception (it can only be read once)."""
+    if "vawr_body" not in vars(exc):  # hasattr on an HTTPError without a body raises KeyError
+        try:
+            exc.vawr_body = exc.read() or b""
+        except Exception:
+            exc.vawr_body = b""
+
+
+def api_message(exc):
+    """The error type and message from an Anthropic API error's JSON body, or its raw text."""
+    _keep_body(exc)
+    body = exc.vawr_body
     text = body.decode("utf-8", "replace") if isinstance(body, bytes) else str(body)
     try:
         err = json.loads(text).get("error") or {}
-        text = "%s %s" % (err.get("type") or "", err.get("message") or "")
+        return ("%s %s" % (err.get("type") or "", err.get("message") or "")).strip()
     except (ValueError, AttributeError):
-        pass
-    return bool(_RETIRED.search("%s %s" % (text, getattr(exc, "reason", "") or "")))
+        return text.strip()[:300]
+
+
+def explain(exc):
+    """One plain sentence for a failed call to Anthropic's API: what went wrong and what to do."""
+    code = getattr(exc, "code", None)
+    if not isinstance(exc, urllib.error.HTTPError):
+        return "couldn't reach Anthropic's API (%s); check the network connection and try again." % (
+            getattr(exc, "reason", None) or exc)
+    said = api_message(exc)
+    said = " (Anthropic says: %s)" % said if said else ""
+    if code == 401:
+        return ("Anthropic rejected the Admin key (HTTP 401)%s. ANTHROPIC_ADMIN_KEY must be an Admin key "
+                "(it starts sk-ant-admin), made in the Claude Console under Settings > Admin keys." % said)
+    if code == 403:
+        return ("this Admin key can't read usage (HTTP 403)%s. The Admin API needs a Console organization: an "
+                "individual account has to be turned into one first, and the key must be that organization's "
+                "Admin key." % said)
+    if code in (400, 404):
+        return ("Anthropic refused the request (HTTP %d)%s. Most often the API key ID isn't in this Admin key's "
+                "organization: pass --key-id with the ID (apikey_...) of a key on the Console's API keys page." % (code, said))
+    if code == 429 or (isinstance(code, int) and code >= 500):
+        return "Anthropic's API is busy or failing (HTTP %d)%s; try again in a few minutes." % (code, said)
+    return "Anthropic's API returned HTTP %s%s." % (code, said)
 
 
 def minute_usage_any(admin_key, key_id, start, end, source="auto"):
@@ -288,6 +329,7 @@ def org_minute_usage(admin_key, start, end):
     """{key_id: {minute_start_iso: {model: tokens}}} for every key in the organization
     between start and end; usage with no API key (e.g. the Console) is under None."""
     out = {}
+    start, end = _utc(start), _utc(end)
     t = start.replace(second=0, microsecond=0)
     while t < end:
         chunk_end = min(end, t + timedelta(minutes=1440))

@@ -615,6 +615,7 @@ def continuity_trials(log_path=paths.LOG_PATH, n=200, seed=13):
     rows = []
     with tempfile.TemporaryDirectory() as d:
         path = os.path.join(d, "rebuilt.jsonl")
+        ledger = os.path.join(d, "received.jsonl")  # continuity compares against the hashes kept here
         for _ in range(n):
             h = rng.randrange(len(entries) // 4, 3 * len(entries) // 4)
             i = rng.choice(api_idx)
@@ -630,7 +631,8 @@ def continuity_trials(log_path=paths.LOG_PATH, n=200, seed=13):
             new_lid = es[0]["hash"]
             known = [{"log_id": lid, "head": entries[h]["hash"], "key_id": "k", "only_projects": None,
                       "received": "2026-01-01T00:00:00"}]
-            c = bundle.continuity(new_lid, path, known, head=es[-1]["hash"], key_id="k")
+            bundle._store_hashes(ledger, lid, [e["hash"] for e in entries[:h + 1]])  # the earlier report
+            c = bundle.continuity(new_lid, path, known, head=es[-1]["hash"], key_id="k", ledger=ledger)
             rows.append({"edit_at": i, "earlier_head_at": h, "before_head": i <= h, "caught": c["ok"] is False})
     before = [r for r in rows if r["before_head"]]
     after = [r for r in rows if not r["before_head"]]

@@ -3,6 +3,7 @@
 import argparse
 import json
 import sys
+import urllib.error
 
 from . import chainlog
 from .paths import LOG_PATH
@@ -81,7 +82,7 @@ def cmd_bundle(args):
     from datetime import datetime, timedelta, timezone
     from . import billcheck, bundle, paths
     now = datetime.now(timezone.utc)
-    start = billcheck.parse_when(args.since, now)
+    start = billcheck.parse_when(args.since, now).replace(second=0, microsecond=0)  # the bill is per minute
     end = (billcheck.parse_when(args.until, now) if args.until
            else now - timedelta(minutes=billcheck.LAG_MINUTES)).replace(second=0, microsecond=0)
     admin, api_key = (None, None) if args.no_bill else billcheck.admin_and_key()
@@ -149,8 +150,8 @@ def cmd_team(args):
         print("vawr team needs the organization's Admin key in ANTHROPIC_ADMIN_KEY")
         return 1
     now = datetime.now(timezone.utc)
-    start = billcheck.parse_when(args.since, now) if args.since else None
-    end = billcheck.parse_when(args.until, now) if args.until else None
+    start = billcheck.parse_when(args.since, now).replace(second=0, microsecond=0) if args.since else None
+    end = billcheck.parse_when(args.until, now).replace(second=0, microsecond=0) if args.until else None
     try:
         res = team.run(args.bundles, admin, start=start, end=end, record=not args.no_record)
     except Exception as exc:
@@ -378,11 +379,15 @@ def cmd_provider_cache(args):
 def cmd_validate(args):
     from . import auditor, claims, validate
     if args.what in ("tamper", "all"):
-        res = validate.tamper_trials()
+        import os
+        snap = os.path.join(validate.paths.WORK, "log", "events_upto_20261114T0917Z.jsonl")  # the log Table 2 used
+        used = snap if os.path.exists(snap) else validate.paths.LOG_PATH
+        res = validate.tamper_trials(log_path=used)
         summary = validate.summarize_tamper(res)
         _save("tamper_trials.json", res)
         print("tamper:", json.dumps({"baseline_flags": res["baseline_flags"], "summary": summary}, indent=2))
-        _save("tamper_summary.json", {"baseline_flags": res["baseline_flags"], "summary": summary})
+        _save("tamper_summary.json", {"log": os.path.relpath(used, validate.paths.REPO),
+                                      "baseline_flags": res["baseline_flags"], "summary": summary})
     if args.what in ("flags", "all"):
         ff = validate.false_flags()
         _save("false_flags.json", ff)
@@ -422,7 +427,9 @@ def cmd_validate(args):
         import os
         hist = os.path.join(validate.paths.WORK, "category_dev", "history.json")
         dev_ids = json.load(open(hist)).get("dev_run_ids") if os.path.exists(hist) else []
-        res = validate.category_check(dev_ids=dev_ids)
+        snap = os.path.join(validate.paths.WORK, "log", "events_upto_20261114T1010Z.jsonl")  # Table 3's runs
+        res = validate.category_check(log_path=snap if os.path.exists(snap) else validate.paths.LOG_PATH,
+                                      dev_ids=dev_ids)
         _save("category_check.json", res)
         print("category:", json.dumps(res["summary"], indent=2))
         cases = os.path.join(validate.paths.WORK, "category_heldout", "cases.json")
@@ -663,6 +670,10 @@ def main(argv=None):
         return 1
     try:
         return args.func(args) or 0
+    except urllib.error.URLError as exc:  # Anthropic's API: say what went wrong, not a traceback
+        from . import usage_api
+        print("vawr %s: %s" % (args.cmd, usage_api.explain(exc)), file=sys.stderr)
+        return 2
     except ValueError as exc:
         from .billcheck import BadTime
         if not isinstance(exc, BadTime):

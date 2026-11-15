@@ -30,13 +30,28 @@ def utc_now():
     return datetime.now(timezone.utc).isoformat(timespec="microseconds")
 
 
+MAX_INT_DIGITS = 40  # token counts and sequence numbers are far shorter
+
+
+def safe_int(s):
+    """json parse_int hook: Python 3.9 parses a huge integer in quadratic time, so a
+    crafted bundle could stall `receive`; refuse anything longer than any real count."""
+    if len(s.lstrip("-")) > MAX_INT_DIGITS:
+        raise ValueError("an integer with %d digits" % len(s))
+    return int(s)
+
+
+def loads(text):
+    return json.loads(text, parse_int=safe_int)
+
+
 def read_entries(path):
     """Yield (line_number, entry) for every line; raises on unparsable JSON."""
     with open(path, "r", encoding="utf-8") as fh:
         for n, line in enumerate(fh, 1):
             line = line.strip()
             if line:
-                yield n, json.loads(line)
+                yield n, loads(line)
 
 
 def last_entry(path):

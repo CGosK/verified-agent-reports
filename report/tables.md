@@ -61,12 +61,12 @@ Anthropic's Claude Code Analytics API, per API key, UTC day and terminal type, a
 
 | Key, day | Terminal | Anthropic's sessions | Log's sessions | Tokens, Anthropic minus log | Result |
 | --- | --- | --- | --- | --- | --- |
-| Main key, Nov 14 | non-interactive | 91 | 66 | haiku-5-5 +95,655, opus-5-5 +74,764, sonnet-5-5 +82,633 | fail |
+| Main key, Nov 14 | non-interactive | 119 | 94 | haiku-5-5 +95,655, opus-5-5 +74,764, sonnet-5-5 +82,633 | fail |
 | Main key, Nov 14 | xterm | 2 | 0 | haiku-5-5 +35,936 | fail |
-| Main key, Nov 14 | xterm-256color | 5 | 5 | none | pass so far |
+| Main key, Nov 14 | xterm-256color | 5 | 5 | none | pass |
 | Separate key, Nov 14 | all | 5 | 5 | none | pass |
 
-Main key, Nov 14: 91 runs on the key in the manifests, 25 of them hidden from the log. Billed minus Anthropic's count: haiku-4-5-20251001 +9, haiku-5-5 +616,117.
+Main key, Nov 14: 119 runs on the key in the manifests, 25 of them hidden from the log. Billed minus Anthropic's count: haiku-4-5-20251001 +9, haiku-5-5 +646,487.
 
 ## Table 7. Weaker work, told to hide it
 
@@ -94,7 +94,7 @@ Nov 15, main key, one-line Haiku sessions. Runs 1 and 2 were told apart by termi
 | 2 (09:50) | `DISABLE_TELEMETRY` only | 0/2 (0–84%) | – | 69,068 (all four) |
 | 2 (09:50) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | 0/2 (0–84%) | – | |
 | 3 (11:22) | `DISABLE_TELEMETRY` only | 0/1 | 1/1 | 53,204 (all three) |
-| 3 (11:22) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | 0/1 | 1/1 | |
+| 3 (11:23) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | 0/1 | 1/1 | |
 | 3 (11:23) | Neither | 1/1 | 1/1 | |
 | **All with either variable** | | **0/8 (0–37%)** | | |
 | **All with neither** | | **3/3 (29–100%)** | | |

@@ -24,7 +24,7 @@ import re
 import shutil
 import tempfile
 import zipfile
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from . import __version__, chainlog, check, paths, report as report_mod
 from .logdata import sessions as log_sessions
@@ -47,7 +47,7 @@ def bundle_log_id(bundle_path):
         info = z.getinfo("bundle.json")
         if info.file_size > 1024 ** 2:
             raise ValueError("bundle.json is too large")
-        m = json.loads(z.read(info))
+        m = chainlog.loads(z.read(info).decode("utf-8", "replace"))
     return ((m.get("log") or {}) if isinstance(m, dict) else {}).get("id")
 
 
@@ -120,6 +120,9 @@ def make(out_path, log_path, start, end, only_projects=None, title=None, admin_k
     """Write a bundle; returns its manifest. `previous`: a head hash (or None to use the
     last bundle sent from this log for the same key and projects; "" for none)."""
     from . import html_report
+    if not os.path.exists(log_path) or log_id(log_path) is None:
+        raise ValueError("the log is empty: there's nothing to report yet (start the receiver with `vawr start`, "
+                         "then use Claude Code)")
     if not allow_text:
         text = text_in_log(log_path)
         if text:
@@ -176,6 +179,7 @@ MAX_RATIO = 200                  # our logs compress about 10:1; far more is a z
 KEY_ID = re.compile(r"apikey_[A-Za-z0-9]{1,64}")   # used with fullmatch: no trailing newline sneaks through
 HASH = re.compile(r"[0-9a-f]{64}")
 MAX_WINDOW_DAYS = 100
+SETTLE = timedelta(minutes=60)  # Anthropic's usage records for a minute can take this long to appear
 
 
 def clean(value, limit=200):
@@ -228,7 +232,7 @@ def read_manifest(path):
     """bundle.json, checked field by field; raises ValueError on anything malformed."""
     try:
         with open(path) as fh:
-            m = json.load(fh)
+            m = json.load(fh, parse_int=chainlog.safe_int)
     except ValueError as exc:
         raise ValueError("bundle.json isn't JSON: %s" % exc)
     if not isinstance(m, dict) or m.get("format") != FORMAT:
@@ -242,6 +246,8 @@ def read_manifest(path):
         raise ValueError("bundle.json's window isn't two ISO times")
     if not start < end:
         raise ValueError("bundle.json's window ends before it starts")
+    if start.second or start.microsecond or end.second or end.microsecond:
+        raise ValueError("bundle.json's window must start and end on whole UTC minutes (the bill is per minute)")
     if (end - start).days > MAX_WINDOW_DAYS or start.year < 2023:
         raise ValueError("bundle.json's window is longer than %d days or starts before 2023; ask for a report "
                          "per month or quarter" % MAX_WINDOW_DAYS)
@@ -368,6 +374,7 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
     Raises ValueError for a file that isn't a readable bundle. Without `workdir`, the
     bundle's files are deleted before returning."""
     import urllib.error
+    from . import usage_api
     if workdir is None:
         with tempfile.TemporaryDirectory(prefix="vawr-receive-") as tmp:
             out = receive(bundle_path, admin_key, key_id, ledger, record, tmp, known, siblings, now)
@@ -419,7 +426,9 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
         try:
             res = check.run(start, end, log, None, admin_key=admin_key, key_id=key, coverage=False,
                             only_projects=only)
-        except (urllib.error.URLError, OSError) as exc:  # couldn't read Anthropic's records
+        except urllib.error.URLError as exc:  # couldn't read Anthropic's records
+            out["provider_error"] = clean(usage_api.explain(exc), 400)
+        except OSError as exc:
             out["provider_error"] = "%s: %s" % (type(exc).__name__, clean(exc, 200))
         except Exception as exc:  # the log itself broke the checks: no honest log does that
             crashed = "%s: %s" % (type(exc).__name__, clean(exc, 200))
@@ -434,13 +443,16 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
     out["window_open"] = end > now
     bill = (res or {}).get("bill")
     sess = (res or {}).get("sessions")
+    out["settling"] = not (end > now) and end + SETTLE > now
+    # while the last minutes may not be billed yet, a log ahead of the bill isn't a failure (a gap still is)
+    unbilled_yet = out["settling"] and bill is not None and not bill.get("gaps")
     failed = (crashed or not chain["ok"] or not out["report"]["ok"] or out["continuity"]["ok"] is False
-              or (bill is not None and not bill.get("ok"))
+              or (bill is not None and not bill.get("ok") and not unbilled_yet)
               or (isinstance(sess, dict) and sess.get("ok") is False))
     if failed:
         verdict = "failed"
     elif (bill is not None and isinstance(sess, dict) and sess.get("ok") is True  # every day confirmed
-          and not unchecked and not out["window_open"]):
+          and bill.get("ok") and not unchecked and not out["window_open"] and not out["settling"]):
         verdict = "verified"
     else:
         verdict = "consistent"
@@ -462,14 +474,100 @@ VERDICTS = {
 }
 
 
+def _gap_tokens(bill):
+    return sum(sum((g.get("tokens") or {}).values()) for g in (bill or {}).get("gaps") or [])
+
+
+def verdict_reasons(out):
+    """Plain reasons for the verdict, most serious first."""
+    res = out.get("check") or {}
+    bill, sess = res.get("bill"), res.get("sessions")
+    if out["verdict"] == "verified":
+        bg = sum(((bill or {}).get("background_tokens") or {}).values())
+        return ["every token Anthropic billed the key in this period is in the log%s, and Anthropic's daily count "
+                "of Claude Code sessions matches the log on every day"
+                % (" or is Claude Code's known background request (%s tokens)" % "{:,}".format(bg) if bg else "")]
+    why = []
+    if not out["chain"]["ok"]:
+        why.append("the log's hash chain is broken, so entries were changed or removed")
+    if not out["report"]["ok"]:
+        why.append("the report's figures differ from the log")
+    if out["continuity"]["ok"] is False:
+        why.append("continuity: %s" % clean(out["continuity"].get("short") or "doesn't match a report you received", 200))
+    if "the log made the checks fail" in (out.get("provider_error") or ""):
+        why.append("the log made the checks fail, which no honest log does")
+    if isinstance(bill, dict) and not bill.get("ok"):
+        gap = _gap_tokens(bill)
+        if gap:
+            why.append("Anthropic billed the key %s tokens that the log doesn't account for" % "{:,}".format(gap))
+        if bill.get("log_excess"):
+            why.append("the log claims usage that wasn't billed to this key")
+    if isinstance(sess, dict) and sess.get("ok") is False:
+        why.append("Anthropic's daily count of Claude Code sessions and tokens doesn't match the log")
+    if out["verdict"] == "failed":
+        return why or ["a check failed"]
+    # consistent: what kept it from VERIFIED
+    if not out.get("check"):
+        why.append("not checked against Anthropic's records (%s)" % (
+            out.get("provider_error") or "no Admin key; pass yours to check the bill"))
+    elif bill is None:
+        why.append("the bill check didn't run")
+    if out.get("check") and isinstance(sess, dict) and sess.get("ok") is not True:
+        why.append("Anthropic's daily session count couldn't confirm every day" + (
+            " (%s)" % sess["error"] if sess.get("error") else ""))
+    if out.get("unchecked_tokens"):
+        why.append("%s tokens were on a Claude subscription or unknown billing, which no record you can read covers"
+                   % "{:,}".format(out["unchecked_tokens"]))
+    if out.get("window_open"):
+        why.append("the period hasn't ended")
+    if out.get("settling"):
+        why.append("the period ended too recently for Anthropic's records of its last minutes" + (
+            " (the log has usage not billed yet)" if bill is not None and bill.get("log_excess") else ""))
+    return why or ["not everything could be checked against Anthropic's records"]
+
+
+def usage_line(rebuilt):
+    """'1,214,264 tokens: safety 34% (36 runs), ...' from the report rebuilt from the log."""
+    cats = [c for c in (rebuilt or {}).get("categories") or [] if isinstance(c, dict)]
+    def tok(c):
+        t = c.get("total_tokens")
+        return t if isinstance(t, (int, float)) else sum(v for v in (c.get("tokens") or {}).values()
+                                                          if isinstance(v, (int, float)))
+    total = sum(tok(c) for c in cats)
+    if not cats or not total:
+        return ""
+    parts = ["%s %d%%%s" % (clean(str(c.get("category") or "?"), 40), round(100.0 * tok(c) / total),
+                            " (%d run%s)" % (c["runs"], "" if c["runs"] == 1 else "s") if isinstance(c.get("runs"), int) else "")
+             for c in sorted(cats, key=tok, reverse=True)]
+    return "%s tokens in the log: %s." % ("{:,}".format(int(total)), ", ".join(parts))
+
+
+def summary_line(out):
+    """One line a payer can paste into an email."""
+    m = out["manifest"]
+    w = m.get("window") or [None, None]
+    reasons = verdict_reasons(out)
+    return "%s: %s, %s UTC. %s." % (
+        out["verdict"].upper(), clean(m.get("title") or "untitled report", 80), _window_utc(w),
+        clean(reasons[0], 300)[:1].upper() + clean(reasons[0], 300)[1:])
+
+
+def _window_utc(w):
+    """The window as checked, converted to UTC (a manifest may carry any offset)."""
+    from .billcheck import window_text
+    try:
+        return window_text([_parse(w[0]).isoformat(), _parse(w[1]).isoformat()])
+    except (TypeError, ValueError, AttributeError, IndexError):
+        return "%s to %s" % (clean(str((w or ["?"])[0]))[:16], clean(str((w or ["?", "?"])[-1]))[:16])
+
+
 def render_receive(out):
     m = out["manifest"]
     mark = {True: "PASS", False: "FAIL", None: "SKIP"}
     lines = ["vawr receive %s" % clean(os.path.basename(out["bundle"])), ""]
     w = m.get("window") or [None, None]
-    lines.append("Report: %s, %s to %s UTC%s" % (
-        m.get("title") or "untitled", clean(w[0] or "?")[:16].replace("T", " "),
-        clean(w[1] or "?")[:16].replace("T", " "),
+    lines.append("Report: %s, %s UTC%s" % (
+        m.get("title") or "untitled", _window_utc(w),
         ", projects %s" % clean(", ".join(m["only_projects"])) if m.get("only_projects") else ""))
     if out.get("key_checked"):
         name = ((out.get("check") or {}).get("sessions") or {}).get("actor") or {}
@@ -512,13 +610,17 @@ def render_receive(out):
                      "Anthropic record you can read covers them" % "{:,}".format(out["unchecked_tokens"]))
     if out.get("window_open"):
         lines.append("NOTE  the report's window hasn't ended yet; usage after now can't be checked")
+    if out.get("settling"):
+        lines.append("NOTE  the window ended less than %d minutes ago; Anthropic's records for its last minutes may "
+                     "not be in yet: run `vawr receive` again after that" % (SETTLE.total_seconds() // 60))
     lines += ["", VERDICTS[out["verdict"]]]
-    if out["verdict"] == "consistent" and res is None:
-        lines.append("Nothing was edited after the fact, but the usage figures rest on the team's log. If you own "
-                     "the API key's organization, add your Admin key to check them against Anthropic's records.")
-    elif out["verdict"] == "consistent":
-        lines.append("Nothing was edited after the fact; what the NOTE lines name couldn't be checked against "
-                     "Anthropic's records.")
+    why = verdict_reasons(out)
+    text = clean("; ".join(why), 600)
+    lines.append(("Why: " + text if out["verdict"] != "verified" else text[:1].upper() + text[1:]) + ".")
+    usage = usage_line(out.get("rebuilt_report"))
+    if usage:
+        lines.append("Usage: " + usage)
+    lines.append("Summary: " + summary_line(out))
     other = [x for x in out.get("log_contents") or [] if m.get("only_projects")
              and x["project"] not in m["only_projects"]]
     if other:
@@ -541,9 +643,12 @@ def receive_html(out, title=None):
     res["chain"] = out["chain"]
     res["coverage"] = None  # only the team can run it, on its own session files
     res["continuity"] = out["continuity"]
+    sess = (out.get("check") or {}).get("sessions")
     res["level"] = ("failed" if out["verdict"] == "failed" else
-                    "provider" if out["verdict"] == "verified" else
-                    "provider-unconfirmed" if (out.get("check") or {}).get("bill") is not None else "tamper-evident")
+                    "tamper-evident" if (out.get("check") or {}).get("bill") is None else
+                    "provider-unconfirmed" if not (isinstance(sess, dict) and sess.get("ok") is True) else "provider")
+    res["verdict"] = out["verdict"]
+    res["verdict_reasons"] = verdict_reasons(out)
     res["checked_by"] = "the recipient, on their own machine" + (
         " with their own Admin key" if out.get("check") else "")
     return html_report.render(rep, check=res, title=title or out["manifest"].get("title") or "Agent usage report")

@@ -35,7 +35,7 @@ vawr receive work/samples/full-day.zip --key-id apikey_01ACxYY1jehtHaxqdPihHsqV
 "This is what a funder runs on the file a grantee sends, with their own Admin
 key." Point at: the report rebuilt from the log; the bill matching to the token
 (550,952); Anthropic's count of Claude Code sessions (which Claude Code reports
-to it), 5 and 5; VERIFIED.
+to it), 5 and 5; VERIFIED, with the reason and a one-line Summary a funder can paste into an email.
 
 ## 4. A report with hidden work (45 s)
 
@@ -44,12 +44,12 @@ vawr receive work/samples/batch-runs-with-hidden.zip
 ```
 
 Point at: FAIL bill (430,844 tokens unexplained: the runs we hid, minute by
-minute); the sessions NOTE (this bundle's log stops at 09:17, and Anthropic's
+minute); the sessions NOTE (this bundle's window ends at 09:17, and Anthropic's
 whole-day count includes runs logged after that, so vawr says the day can't be
 confirmed rather than guessing); and the NOTE that subscription usage can't be
 checked against any record. (Anthropic's count for that day, compared with
-every log we kept, is Table 6 in the paper: a shortfall of exactly the 25 runs
-we hid.)
+every log we kept, is in the paper: a shortfall of exactly the 25 runs we
+hid.)
 
 ## 5. Someone edits the report (30 s)
 

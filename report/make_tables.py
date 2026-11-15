@@ -137,6 +137,7 @@ logged = lambda k: "%d/1" % len(og[k].get("log_sessions") or {})  # noqa: E731
 ident = t3.get("counted_row_matches") == ["control"]
 off = t1["telemetry_off_vt220_counted"] + t2["only_DISABLE_TELEMETRY_vt52_counted"] + \
     t2["only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted"] + (t3["non_interactive_counted"] - (1 if ident else 0))
+started3 = lambda run: L("telemetry_off_otel_%s.json" % run)["started_utc"][11:16]  # noqa: E731
 out += ["## Table 8. Can a team switch off Anthropic's session count?", "",
         "Nov 15, main key, one-line Haiku sessions. Runs 1 and 2 were told apart by terminal name (TERM) and sent "
         "nothing to vawr; run 3 was headless, each session logged by vawr to its own receiver. Anthropic's count was "
@@ -150,11 +151,12 @@ out += ["## Table 8. Can a team switch off Anthropic's session count?", "",
             fmt((t2["only_DISABLE_TELEMETRY_vt52_counted"], 2)), billed(t2["billed_09_49_to_09_52"])),
         "| 2 (09:50) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | %s | – | |" % fmt(
             (t2["only_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC_vt320_counted"], 2)),
-        "| 3 (11:22) | `DISABLE_TELEMETRY` only | %s | %s | %s (all three) |" % (
-            "0/1" if ident else "?", logged("disable_telemetry"), billed(t3["billed_11_22_to_11_25"])),
-        "| 3 (11:22) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | %s | %s | |" % (
-            "0/1" if ident else "?", logged("nonessential")),
-        "| 3 (11:23) | Neither | %s | %s | |" % ("1/1" if ident else "?", logged("control")),
+        "| 3 (%s) | `DISABLE_TELEMETRY` only | %s | %s | %s (all three) |" % (
+            started3("disable_telemetry"), "0/1" if ident else "?", logged("disable_telemetry"),
+            billed(t3["billed_11_22_to_11_25"])),
+        "| 3 (%s) | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` only | %s | %s | |" % (
+            started3("nonessential"), "0/1" if ident else "?", logged("nonessential")),
+        "| 3 (%s) | Neither | %s | %s | |" % (started3("control"), "1/1" if ident else "?", logged("control")),
         "| **All with either variable** | | **%s** | | |" % fmt((off, 8)),
         "| **All with neither** | | **%s** | | |" % fmt((t1["control_vt100_counted"] + (1 if ident else 0), 3)), "",
         "Run 3's count rose by %d; the counted row's tokens equal the control's request exactly (cache read "

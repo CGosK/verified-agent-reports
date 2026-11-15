@@ -1,0 +1,16 @@
+# Nov 14 10:45 UTC plugin test (2 sessions, run without telemetry): the bill check against the main log
+# python3 -m vawr check --no-coverage --since 2026-11-14T10:30 --until 2026-11-14T11:00 --log work/log/events.jsonl   (run 2026-11-15T20:12Z)
+
+vawr check, 2026-11-14 10:30 to 11:00 UTC
+
+PASS  chain        3830 entries, head a8924b5bc78342ff
+SKIP  coverage     not run (--no-coverage); 0 requests in the log
+FAIL  bill         35,936 tokens billed: 0 logged, 0 Claude Code background, 35,936 unexplained
+        unexplained 10:45-10:46: 35,936 tokens (claude-haiku-5-5)
+NOTE  sessions     The log starts or ends partway through 2026-11-14, so Anthropic's whole-day count can't confirm it; the bill check covers the window minute by minute. Report whole UTC days to get VERIFIED.
+        2026-11-14  Anthropic counted 126 Claude Code sessions, the log has 94 (the log starts or ends during this day); tokens Anthropic minus log: claude-haiku-5-5 +278545, claude-opus-5-5 +74764, claude-sonnet-5-5 +666606
+          non-interactive  partial     Anthropic 119, log 94; tokens Anthropic minus log: claude-haiku-5-5 +95655, claude-opus-5-5 +74764, claude-sonnet-5-5 +82633
+          xterm            partial     Anthropic 2, log 0; tokens Anthropic minus log: claude-haiku-5-5 +35936
+          xterm-256color   partial     Anthropic 5, log 0; tokens Anthropic minus log: claude-haiku-5-5 +146954, claude-sonnet-5-5 +583973
+
+Level: A check failed
