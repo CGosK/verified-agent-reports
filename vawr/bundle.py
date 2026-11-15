@@ -436,7 +436,7 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
     elif admin_key and not key:
         out["provider_error"] = "the bundle names no API key; pass --key-id with the key you issued"
     elif admin_key:
-        out["provider_error"] = "not run: the log or the report already failed its own checks"
+        out["provider_error"] = "the log or the report already failed its own checks, so it wasn't run"
     out["check"] = res
 
     billing = (rebuilt or {}).get("billing") or {}
@@ -645,7 +645,7 @@ def receive_html(out, title=None):
     rep["log"] = dict(rep.get("log") or {}, path="log.jsonl")
     res = dict(out["check"]) if out.get("check") else {
         "window": out["manifest"].get("window") or [None, None], "chain": out["chain"], "coverage": None,
-        "bill": None, "sessions": None}
+        "bill": {"reason": out["provider_error"]} if out.get("provider_error") else None, "sessions": None}
     res["chain"] = out["chain"]
     res["coverage"] = None  # only the team can run it, on its own session files
     res["continuity"] = out["continuity"]

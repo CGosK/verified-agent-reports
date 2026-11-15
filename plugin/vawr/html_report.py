@@ -370,9 +370,11 @@ def _bill(report, check, billcheck):
         if check is None and billcheck is None:
             return None
         why = cb.get("skipped") if isinstance(cb, dict) else None
+        reason = cb.get("reason") if isinstance(cb, dict) else None  # why it didn't run, when a key was given
         return {
-            "key": "bill", "status": "skip", "short": "needs the organization's Admin key",
-            "result": "Not run%s: it needs the organization's Admin key to read Anthropic's usage records."
+            "key": "bill", "status": "skip", "short": _e(reason) if reason else "needs the organization's Admin key",
+            "result": ("Not run: %s." % _e(reason)) if reason else
+                      "Not run%s: it needs the organization's Admin key to read Anthropic's usage records."
                       % (" (%s)" % _e(why) if why else ""),
             "means": "Would compare Anthropic's per-minute billing records for one API key with the log.",
             "limits": "Without it, nothing here shows whether usage was billed that the log does not record.",

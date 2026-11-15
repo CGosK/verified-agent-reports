@@ -26,7 +26,7 @@ class DemoTest(unittest.TestCase):
         text = out.getvalue()
         self.assertIn("430,844 tokens that the log doesn't account for", text)
         self.assertIn("replayed", text)
-        self.assertIn("not run: the log or the report already failed", text)
+        self.assertIn("the log or the report already failed its own checks", text)
         self.assertEqual(pages, ["batch-hidden.html", "full-day-edited.html", "full-day.html"])
         self.assertEqual(text.count("REPLAYED from responses saved"), 4)  # the header and each case
         self.assertNotIn("checked against your own Anthropic records", text)
