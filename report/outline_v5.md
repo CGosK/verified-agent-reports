@@ -87,7 +87,7 @@ Replace the command-by-command description with one table (Table 1, new; fill fr
 
 ## 7. Conclusion (three sentences)
 
-- For API usage, a payer who owns the account can check a team's usage report end to end against records the team doesn't write.
+- For API usage, a payer who owns the account can check a team's usage report end to end against the provider's bill, a record the team can't switch off.
 - In our tests the bill caught every hidden run and flagged no logged one, the category check caught relabels the log couldn't, and on real interactive sessions the log matched the bill to the token.
 - Agents' own records can silently miss billed work, so completeness needs an outside record; for subscription usage none exists yet.
 
