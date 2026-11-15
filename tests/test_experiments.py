@@ -90,6 +90,8 @@ class OutcomeColumnTest(unittest.TestCase):
                                "cost_usd": 0.0, "claims": 1, "claims_held": 1, "outcomes": 2, "outcomes_passed": 1}],
                "log": {"entries": 1, "chain_ok": True, "head": "ab"}, "note": ""}
         self.assertIn("| 1 of 2 |", report.render(rep))
+        from vawr import html_report
+        self.assertIn("Work passing its tests", html_report.render(rep))
 
 
 class ResultsRenderTest(unittest.TestCase):

@@ -732,9 +732,12 @@ def _usage(report):
     total_runs = sum(_int(c.get("runs")) for c in cats)
     total_reqs = sum(_int(c.get("requests")) for c in cats)
     with_claims = any(_int(c.get("claims")) for c in cats)
+    with_outcomes = any(_int(c.get("outcomes")) for c in cats)
     head = ["Category", "Share of tokens", "Tokens", "Est. cost", "Runs", "Requests"]
     if with_claims:
         head.append("Claims held up")
+    if with_outcomes:
+        head.append("Work passing its tests")
     th = "".join('<th scope="col"%s>%s</th>' % (' class="num"' if i >= 2 else "", h) for i, h in enumerate(head))
     body = []
     for c in cats:
@@ -749,11 +752,17 @@ def _usage(report):
         if with_claims:
             cells.append('<td class="num">%s</td>' % (
                 "%s of %s" % (_num(c.get("claims_held")), _num(c.get("claims"))) if _int(c.get("claims")) else "none"))
+        if with_outcomes:
+            cells.append('<td class="num">%s</td>' % (
+                "%s of %s" % (_num(c.get("outcomes_passed")), _num(c.get("outcomes"))) if _int(c.get("outcomes"))
+                else "none"))
         body.append("<tr>%s</tr>" % "".join(cells))
     foot = ['<th scope="row">Total</th>', "<td></td>", '<td class="num">%s</td>' % _num(total_tok),
             '<td class="num">%s</td>' % _usd(total_cost), '<td class="num">%s</td>' % _num(total_runs),
             '<td class="num">%s</td>' % _num(total_reqs)]
     if with_claims:
+        foot.append("<td></td>")
+    if with_outcomes:
         foot.append("<td></td>")
     table = ('<div class="table-wrap"><table class="usage wide"><caption class="sr">Tokens, estimated cost, runs '
              'and requests by category</caption><thead><tr>%s</tr></thead><tbody>%s</tbody>'

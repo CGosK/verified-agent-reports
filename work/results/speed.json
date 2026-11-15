@@ -1,0 +1,2 @@
+{"note": "Synthetic log, 100,000 entries (2,000 sessions, 40,000 API requests), 50 MB; Xcode Python 3.9 on the sprint MacBook, Nov 15 2026. Seconds of wall time per command.",
+ "verify": 1.1, "report": 2.1, "check_no_bill_no_coverage": 2.0, "bundle_no_bill_with_coverage": 16.9, "receive_no_bill": 5.2, "bundle_zip_bytes": 6269383}
