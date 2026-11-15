@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="vawr 0.1.0"><title>Grant demo, 2026-11-14</title><style>
+:root{color-scheme:light dark;
+--bg:#fcfcfb;--fg:#1c1e22;--muted:#565c68;--rule:#d9dce2;--panel:#f3f4f6;--code:#eceef1;
+--bar:#36628e;--track:#dde2e8;
+--pass:#1b6a3d;--pass-bg:#e2f1e7;--fail:#a2341d;--fail-bg:#f9e6e1;--skip:#565c68;--skip-bg:#e9ebee}
+@media (prefers-color-scheme:dark){:root{
+--bg:#15171b;--fg:#e5e7ea;--muted:#a1a7b2;--rule:#31353c;--panel:#1e2126;--code:#272b31;
+--bar:#82abd8;--track:#30353d;
+--pass:#86d3a5;--pass-bg:#173424;--fail:#f1a491;--fail-bg:#3c1e17;--skip:#a1a7b2;--skip-bg:#2a2e35}}
+@media print{:root{
+--bg:#fff;--fg:#000;--muted:#3d424b;--rule:#c4c8cf;--panel:#fff;--code:#f2f3f5;
+--bar:#36628e;--track:#dde2e8;
+--pass:#1b6a3d;--pass-bg:#fff;--fail:#a2341d;--fail-bg:#fff;--skip:#3d424b;--skip-bg:#fff}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+main{max-width:50rem;margin:0 auto;padding:2rem 1rem 3rem}
+h1{font-size:1.6rem;line-height:1.25;margin:0 0 .4rem;letter-spacing:-.01em}
+h2{font-size:1.15rem;margin:2.25rem 0 .8rem;padding-bottom:.35rem;border-bottom:1px solid var(--rule)}
+h3{font-size:1rem;margin:0 0 .3rem;display:flex;align-items:center;gap:.6rem}
+h4{font-size:.92rem;margin:1rem 0 .4rem}
+p{margin:.45rem 0}
+.meta{color:var(--muted);font-size:.9rem;margin:0 0 1.4rem}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.85em}
+code.hash,code.id{word-break:break-all}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.verdict{background:var(--panel);border:1px solid var(--rule);border-left:6px solid var(--pass);
+border-radius:6px;padding:.9rem 1.1rem}
+.verdict.attention{border-left-color:var(--fail)}
+.verdict .headline{font-size:1.15rem;font-weight:650;margin:0}
+.verdict ul{margin:.5rem 0 0;padding-left:1.2rem}
+.verdict li{margin:.2rem 0}
+.verdict .tail{color:var(--muted);font-size:.9rem;margin:.5rem 0 0}
+.verdict .level{margin:.5rem 0 0;font-size:.92rem}
+.table-wrap{overflow-x:auto;margin:.5rem 0}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+thead th{font-size:.8rem;color:var(--muted);font-weight:600;border-bottom-color:var(--fg)}
+tfoot th,tfoot td{font-weight:600;border-bottom:none;border-top:1px solid var(--fg)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.compact{width:auto;min-width:60%}
+table.usage td.share{width:34%;min-width:9rem}
+.share .pct{display:inline-block;min-width:3.4rem;font-variant-numeric:tabular-nums}
+svg.bar{display:inline-block;vertical-align:middle;width:calc(100% - 3.6rem);height:.6rem}
+svg.bar .track{fill:var(--track)}
+svg.bar .fill{fill:var(--bar)}
+.note{color:var(--muted);font-size:.88rem}
+.checks{list-style:none;margin:0;padding:0}
+.check{border-top:1px solid var(--rule);padding:.9rem 0}
+.check:first-child{border-top:none;padding-top:.2rem}
+.check .result{font-weight:500}
+.check .means,.check .limits{color:var(--muted);font-size:.9rem}
+.badge{display:inline-block;min-width:4.4rem;text-align:center;font-size:.75rem;font-weight:700;
+letter-spacing:.03em;text-transform:uppercase;padding:.12rem .5rem;border-radius:999px;border:1px solid}
+.badge.pass{color:var(--pass);background:var(--pass-bg)}
+.badge.fail{color:var(--fail);background:var(--fail-bg)}
+.badge.skip{color:var(--skip);background:var(--skip-bg)}
+details{margin:.55rem 0 0;border:1px solid var(--rule);border-radius:6px;padding:.4rem .8rem}
+details[open]{padding-bottom:.7rem}
+summary{cursor:pointer;font-weight:600;font-size:.9rem}
+ul.flags{list-style:none;padding:0;margin:.3rem 0}
+ul.flags li{border-top:1px solid var(--rule);padding:.5rem 0}
+blockquote{margin:.3rem 0 0;padding:.1rem 0 .1rem .8rem;border-left:3px solid var(--rule);color:var(--muted);
+font-size:.9rem}
+.verify{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:.1rem 1.1rem .9rem;
+margin-top:2.25rem}
+.verify h2{margin-top:1rem}
+.verify dl{display:grid;grid-template-columns:max-content 1fr;gap:.3rem 1rem;margin:.5rem 0 1rem}
+.verify dt{font-weight:600}
+.verify dd{margin:0;min-width:0}
+pre{background:var(--code);border-radius:4px;padding:.7rem .8rem;overflow-x:auto;white-space:pre;margin:.5rem 0}
+footer{color:var(--muted);font-size:.85rem;margin-top:2.5rem;padding-top:.8rem;border-top:1px solid var(--rule)}
+@media (max-width:540px){
+body{font-size:14px}
+table.wide{min-width:34rem}
+table.runs td:first-child{min-width:14rem}
+main{padding:1.25rem 1rem 2rem}
+.verify dl{grid-template-columns:1fr;gap:0}
+.verify dd{margin-bottom:.4rem}}
+@page{margin:15mm}
+@media print{
+body{font-size:9.5pt}
+main{max-width:none;padding:0}
+a{color:inherit}
+details{border:none;padding:0}
+details::details-content{content-visibility:visible;display:block}
+summary{list-style:none;cursor:auto}
+summary::-webkit-details-marker{display:none}
+.check,tr,.verdict,ul.flags li,.verify dl{break-inside:avoid}
+h2,h3,h4{break-after:avoid}
+.table-wrap{overflow:visible}
+pre{white-space:pre-wrap;word-break:break-all}}
+</style></head><body><main><header><h1>Grant demo, 2026-11-14</h1><p class="meta">Log <code>log.jsonl</code> · 276 entries · checks cover 2026-11-14 00:00 to 2026-11-15 07:56 UTC</p></header><section class="verdict ok" aria-labelledby="verdict-head"><p class="headline" id="verdict-head">All checks that ran passed (chain, bill and sessions)</p><p class="level"><strong>Level: Checked against Anthropic&#x27;s records.</strong> The usage figures match Anthropic&#x27;s own billing records for the API key. Of the tokens in this report: 100.0% on an API key. Checks run by the recipient, on their own machine with their own Admin key.</p><p class="tail">Not run: continuity (first report from this log). Not included in this report: coverage, category, claims.</p></section><section aria-labelledby="usage"><h2 id="usage">Usage by category</h2><p>550,952 tokens across 5 runs and 34 requests, by the category each run was labelled with when it started.</p><div class="table-wrap"><table class="usage wide"><caption class="sr">Tokens, estimated cost, runs and requests by category</caption><thead><tr><th scope="col">Category</th><th scope="col">Share of tokens</th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Est. cost</th><th scope="col" class="num">Runs</th><th scope="col" class="num">Requests</th></tr></thead><tbody><tr><th scope="row">safety</th><td class="share"><span class="pct">44.4%</span><svg class="bar" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="track" width="100" height="8"/><rect class="fill" width="44.40" height="8"/></svg></td><td class="num">244,637</td><td class="num">$0.1265</td><td class="num">2</td><td class="num">15</td></tr><tr><th scope="row">capabilities</th><td class="share"><span class="pct">34.5%</span><svg class="bar" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="track" width="100" height="8"/><rect class="fill" width="34.54" height="8"/></svg></td><td class="num">190,285</td><td class="num">$0.0928</td><td class="num">1</td><td class="num">9</td></tr><tr><th scope="row">other</th><td class="share"><span class="pct">21.1%</span><svg class="bar" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="track" width="100" height="8"/><rect class="fill" width="21.06" height="8"/></svg></td><td class="num">116,030</td><td class="num">$0.0450</td><td class="num">2</td><td class="num">10</td></tr></tbody><tfoot><tr><th scope="row">Total</th><td></td><td class="num">550,952</td><td class="num">$0.2643</td><td class="num">5</td><td class="num">34</td></tr></tfoot></table></div><h3>By project</h3><div class="table-wrap"><table><thead><tr><th scope="col">Project</th><th scope="col">Category</th><th scope="col" class="num">Sessions</th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Est. cost</th></tr></thead><tbody><tr><td>grant-demo</td><td>other</td><td class="num">5</td><td class="num">550,952</td><td class="num">$0.2643</td></tr></tbody></table></div><p class="note">Cost is Claude Code&#x27;s client-side estimate, not a bill. Tokens are the primary measure.</p><details><summary>Tokens by type</summary><p>Cache reads re-use earlier context and are billed at a lower rate than input tokens.</p><div class="table-wrap"><table><thead><tr><th scope="col">Category</th><th scope="col" class="num">Input</th><th scope="col" class="num">Output</th><th scope="col" class="num">Cache read</th><th scope="col" class="num">Cache write</th></tr></thead><tbody><tr><td>safety</td><td class="num">2,789</td><td class="num">3,865</td><td class="num">212,537</td><td class="num">25,446</td></tr><tr><td>capabilities</td><td class="num">4,296</td><td class="num">2,574</td><td class="num">165,622</td><td class="num">17,793</td></tr><tr><td>other</td><td class="num">1,256</td><td class="num">2,971</td><td class="num">99,644</td><td class="num">12,159</td></tr></tbody></table></div></details><details><summary>All 5 runs</summary><div class="table-wrap"><table class="runs wide"><thead><tr><th scope="col">Run</th><th scope="col">Category</th><th scope="col">Billed to</th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Est. cost</th><th scope="col" class="num">Requests</th></tr></thead><tbody><tr><td><code class="id">12b93a92-e986-4158-83de-52629b85fa15</code></td><td>other</td><td>API key</td><td class="num">13,041</td><td class="num">$0.0014</td><td class="num">4</td></tr><tr><td><code class="id">400ad14a-6afc-4146-8326-962ae9bd706c</code></td><td>safety</td><td>API key</td><td class="num">237,005</td><td class="num">$0.1124</td><td class="num">12</td></tr><tr><td><code class="id">6668cedc-b1e1-4a3b-9b62-cfc2d04be45f</code></td><td>capabilities</td><td>API key</td><td class="num">190,285</td><td class="num">$0.0928</td><td class="num">9</td></tr><tr><td><code class="id">a064ba90-6b5a-429c-beae-50cd3e1b5753</code></td><td>safety</td><td>API key</td><td class="num">7,632</td><td class="num">$0.0141</td><td class="num">3</td></tr><tr><td><code class="id">ded800a4-b8e1-45c0-a809-7e2a47eb6be6</code></td><td>other</td><td>API key</td><td class="num">102,989</td><td class="num">$0.0437</td><td class="num">6</td></tr></tbody></table></div></details></section><section aria-labelledby="checks"><h2 id="checks">Checks</h2><ul class="checks"><li class="check" id="check-chain"><h3><span class="badge pass">Pass</span> Chain</h3><p class="result">All 276 entries' hashes recompute.</p><p class="means"><strong>What it shows:</strong> No entry was edited, deleted or reordered after it was written.</p><p class="limits"><strong>What it does not show:</strong> Whoever holds the log can rebuild the whole chain after an edit, so this check only ties the figures to the head hash given below: compare that hash with any copy of the log you receive.</p></li><li class="check" id="check-bill"><h3><span class="badge pass">Pass</span> Bill</h3><p class="result">Anthropic billed API key <code>apikey_01ACxYY1jehtHaxqdPihHsqV</code> 550,952 tokens in the window, and every one is accounted for by the log plus Claude Code's background requests.</p><p class="means"><strong>What it shows:</strong> Compares Anthropic's per-minute billing records for one API key with what was recorded, minute by minute. In our tests, headless Claude Code runs that inherit the Claude desktop app's environment made one small background request that Claude Code records nowhere; the check allows one such request per session.</p><p class="limits"><strong>What it does not show:</strong> It covers only that one API key. Re-running it needs the organization's Admin key.</p><details><summary>Details</summary><h4>Against the published log</h4><div class="table-wrap"><table class="compact"><thead><tr><th scope="col"></th><th scope="col" class="num">Tokens</th><th scope="col" class="num">Share of billed</th></tr></thead><tbody><tr><td>Billed by Anthropic</td><td class="num">550,952</td><td class="num"></td></tr><tr><td>Matched by logged requests</td><td class="num">550,952</td><td class="num">100.0%</td></tr><tr><td>Claude Code background requests (5 sessions)</td><td class="num">0</td><td class="num">0.0%</td></tr><tr><td>Unexplained</td><td class="num">0</td><td class="num">0.0%</td></tr></tbody></table></div><p>1,916 minutes checked, 1,916 with no difference either way; API key: <code>apikey_01ACxYY1jehtHaxqdPihHsqV</code>.</p></details></li><li class="check" id="check-sessions"><h3><span class="badge pass">Pass</span> Sessions</h3><p class="result">On 2026-11-14, 2026-11-15 (so far), the log's sessions and tokens equal Anthropic's count.</p><p class="means"><strong>What it shows:</strong> Anthropic counts each API key's Claude Code sessions and their tokens by model, per day, on its own side. On a day the log fully covers, the two counts should be equal; a session that never reached the log shows up here even if it ran at the same time as logged work.</p><p class="limits"><strong>What it does not show:</strong> Whole UTC days only, an hour or more behind, and only usage on Anthropic's API (not a Claude subscription, Bedrock or Vertex). Anthropic's count leaves out the one background request Claude Code records nowhere, which the bill check covers.</p><details><summary>Details</summary><div class="table-wrap"><table><thead><tr><th scope="col">Day</th><th scope="col">Result</th><th scope="col" class="num">Anthropic's sessions</th><th scope="col" class="num">Log's sessions</th><th scope="col">Tokens, Anthropic minus log</th></tr></thead><tbody><tr><td>2026-11-14</td><td>pass</td><td class="num">5</td><td class="num">5</td><td>none</td></tr><tr><td>2026-11-15</td><td>pass so far</td><td class="num">0</td><td class="num">0</td><td>none</td></tr></tbody></table></div><p>Anthropic's records also count, for these days: 60 lines added, 5 removed, 0 commits and 0 pull requests made through Claude Code.</p></details></li><li class="check" id="check-continuity"><h3><span class="badge skip">Skipped</span> Continuity</h3><p class="result">This is the first report you have received from this log, so there is nothing earlier to compare it with. Its head hash is now recorded for the next one.</p><p class="means"><strong>What it shows:</strong> Each report you receive commits to the log as it stood then. This one's log must contain every earlier report's head hash from the same log, so history can't be rewritten between reports.</p><p class="limits"><strong>What it does not show:</strong> It compares only with reports you received before; the first report from a log has nothing to compare.</p></li></ul></section><section class="verify" aria-labelledby="verify"><h2 id="verify">How to verify this report</h2><dl><dt>Log file</dt><dd><code>log.jsonl</code></dd><dt>Head hash</dt><dd><code class="hash">8eab021fbe1d0d9a62b47d99a45a4e853611c3ddd8803e29019e4ac39030d0e7</code></dd><dt>Entries</dt><dd>276</dd><dt>Window</dt><dd>2026-11-14 00:00 to 2026-11-15 07:56 UTC</dd></dl><p>If this came as a vawr bundle (a <code>.zip</code>), one command checks everything below, and with your own Admin key also checks it against Anthropic's records for the key: <code>vawr receive &lt;file&gt;.zip</code>. It keeps the head hash, so the next report from the same log must extend this one.</p><p>Or, step by step, with the published log file and the tool installed (or <code>python3 -m vawr</code> from a copy of it):</p><pre><code>vawr status --log log.jsonl
+vawr verify-report report.json --log log.jsonl
+vawr check --no-coverage --since 2026-11-14T00:00:00+00:00 \
+    --until 2026-11-15T07:56:00+00:00 \
+    --log log.jsonl</code></pre><ul><li><code>vawr status</code> should show 276 entries and the chain intact. The last line of the log carries the head hash above in its <code>hash</code> field.</li><li><code>vawr verify-report</code> takes the report's data file (<code>report.json</code>, from <code>vawr report --out</code>), checks that its head hash (<code>8eab021fbe1d0d9a</code>) is an entry of the log, and recounts its totals from the log; any edited figure fails.</li><li><code>vawr check --no-coverage</code> re-runs the chain check, and with the account's Admin key the bill check, on any machine. If you hold the account (for example, you issued the API key), nothing here rests on the team's word. Coverage reads the team's own session files, so only the team can re-run it.</li></ul></section><footer><p>Generated 2026-11-15 08:26 UTC by vawr 0.1.0 from: allocation report, check. Every figure on this page comes from those files; shares and totals are computed from them.</p></footer></main></body></html>

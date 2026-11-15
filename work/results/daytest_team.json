@@ -1,0 +1,305 @@
+{
+ "window": [
+  "2026-11-14T00:00:00+00:00",
+  "2026-11-15T07:56:00+00:00"
+ ],
+ "members": [
+  {
+   "bundle": "/Users/operator/ClaudeWork/personal/verified-agent-reports/work/daytest/grant-demo.zip",
+   "title": "Grant demo, 2026-11-14",
+   "key_id": "apikey_01ACxYY1jehtHaxqdPihHsqV",
+   "only_projects": [
+    "grant-demo"
+   ],
+   "window": [
+    "2026-11-14T00:00:00+00:00",
+    "2026-11-15T07:56:00+00:00"
+   ],
+   "log_id": "67cff0750869a8ca3933a186a65fe20b6b0171b9a7e41605b3d2e540e323bf5f",
+   "chain_ok": true,
+   "report_ok": true,
+   "continuity": {
+    "ok": null,
+    "short": "same report you received 2026-11-15 08:26",
+    "note": "You received this exact log before, and no other report from it.",
+    "earlier": 0
+   }
+  }
+ ],
+ "unreadable": [],
+ "keys": [
+  {
+   "key_id": "apikey_014nm6SadTU7zy9DoURcd48j",
+   "key_name": "Apart AI Epistemics Key",
+   "in_organization": true,
+   "billed_tokens": 2452498,
+   "bundles": [],
+   "bill": null,
+   "sessions": null,
+   "status": "no report"
+  },
+  {
+   "key_id": "apikey_01ACxYY1jehtHaxqdPihHsqV",
+   "key_name": "vawr-daytest",
+   "in_organization": true,
+   "billed_tokens": 550952,
+   "bundles": [
+    "/Users/operator/ClaudeWork/personal/verified-agent-reports/work/daytest/grant-demo.zip"
+   ],
+   "bill": {
+    "ok": true,
+    "window": [
+     "2026-11-14T00:00:00+00:00",
+     "2026-11-15T07:56:00+00:00"
+    ],
+    "shift_minutes": 2,
+    "tolerance": {
+     "input": 0,
+     "output": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "provider_tokens": {
+     "input": 8341,
+     "output": 9410,
+     "cache_read": 477803,
+     "cache_creation": 55398
+    },
+    "logged_tokens": {
+     "input": 8341,
+     "output": 9410,
+     "cache_read": 477803,
+     "cache_creation": 55398
+    },
+    "background_tokens": {
+     "input": 0,
+     "output": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "recorded_totals_tokens": {
+     "input": 0,
+     "output": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "background_model": "claude-haiku-5-5",
+    "logged_sessions": 5,
+    "per_session": {
+     "ded800a4-b8e1-45c0-a809-7e2a47eb6be6": {
+      "first_minute": "2026-11-14T17:30:00+00:00",
+      "last_minute": "2026-11-14T17:32:00+00:00",
+      "logged_tokens": {
+       "input": 1246,
+       "output": 1396,
+       "cache_read": 92123,
+       "cache_creation": 8224
+      },
+      "provider_tokens_in_span": 102989,
+      "background_in_span": 0,
+      "background_share": 0.0,
+      "span_shared": false
+     },
+     "400ad14a-6afc-4146-8326-962ae9bd706c": {
+      "first_minute": "2026-11-14T17:33:00+00:00",
+      "last_minute": "2026-11-14T17:35:00+00:00",
+      "logged_tokens": {
+       "input": 2781,
+       "output": 3218,
+       "cache_read": 208449,
+       "cache_creation": 22557
+      },
+      "provider_tokens_in_span": 237005,
+      "background_in_span": 0,
+      "background_share": 0.0,
+      "span_shared": false
+     },
+     "6668cedc-b1e1-4a3b-9b62-cfc2d04be45f": {
+      "first_minute": "2026-11-14T17:37:00+00:00",
+      "last_minute": "2026-11-14T17:40:00+00:00",
+      "logged_tokens": {
+       "input": 4296,
+       "output": 2574,
+       "cache_read": 165622,
+       "cache_creation": 17793
+      },
+      "provider_tokens_in_span": 190285,
+      "background_in_span": 0,
+      "background_share": 0.0,
+      "span_shared": false
+     },
+     "12b93a92-e986-4158-83de-52629b85fa15": {
+      "first_minute": "2026-11-14T17:41:00+00:00",
+      "last_minute": "2026-11-14T17:41:00+00:00",
+      "logged_tokens": {
+       "input": 10,
+       "output": 1575,
+       "cache_read": 7521,
+       "cache_creation": 3935
+      },
+      "provider_tokens_in_span": 20673,
+      "background_in_span": 0,
+      "background_share": 0.0,
+      "span_shared": true
+     },
+     "a064ba90-6b5a-429c-beae-50cd3e1b5753": {
+      "first_minute": "2026-11-14T17:41:00+00:00",
+      "last_minute": "2026-11-14T17:41:00+00:00",
+      "logged_tokens": {
+       "input": 8,
+       "output": 647,
+       "cache_read": 4088,
+       "cache_creation": 2889
+      },
+      "provider_tokens_in_span": 20673,
+      "background_in_span": 0,
+      "background_share": 0.0,
+      "span_shared": true
+     }
+    },
+    "background_by_session": {
+     "ded800a4-b8e1-45c0-a809-7e2a47eb6be6": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+     },
+     "400ad14a-6afc-4146-8326-962ae9bd706c": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+     },
+     "6668cedc-b1e1-4a3b-9b62-cfc2d04be45f": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+     },
+     "12b93a92-e986-4158-83de-52629b85fa15": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+     },
+     "a064ba90-6b5a-429c-beae-50cd3e1b5753": {
+      "input": 0,
+      "output": 0,
+      "cache_read": 0,
+      "cache_creation": 0
+     }
+    },
+    "gaps": [],
+    "log_excess": [],
+    "per_minute": {
+     "2026-11-14T17:30:00+00:00": {
+      "provider": 60954,
+      "background": 0,
+      "gap": 0,
+      "matched": 60954
+     },
+     "2026-11-14T17:32:00+00:00": {
+      "provider": 42035,
+      "background": 0,
+      "gap": 0,
+      "matched": 42035
+     },
+     "2026-11-14T17:33:00+00:00": {
+      "provider": 91035,
+      "background": 0,
+      "gap": 0,
+      "matched": 91035
+     },
+     "2026-11-14T17:35:00+00:00": {
+      "provider": 145970,
+      "background": 0,
+      "gap": 0,
+      "matched": 145970
+     },
+     "2026-11-14T17:37:00+00:00": {
+      "provider": 115169,
+      "background": 0,
+      "gap": 0,
+      "matched": 115169
+     },
+     "2026-11-14T17:39:00+00:00": {
+      "provider": 26330,
+      "background": 0,
+      "gap": 0,
+      "matched": 26330
+     },
+     "2026-11-14T17:40:00+00:00": {
+      "provider": 48786,
+      "background": 0,
+      "gap": 0,
+      "matched": 48786
+     },
+     "2026-11-14T17:41:00+00:00": {
+      "provider": 20673,
+      "background": 0,
+      "gap": 0,
+      "matched": 20673
+     }
+    },
+    "minutes_checked": 1916,
+    "clean_minutes": 1916
+   },
+   "sessions": {
+    "ok": true,
+    "actor": {
+     "api_key_name": "vawr-daytest"
+    },
+    "key_id": "apikey_01ACxYY1jehtHaxqdPihHsqV",
+    "days": [
+     {
+      "day": "2026-11-14",
+      "status": "pass",
+      "complete": true,
+      "anthropic_sessions": 5,
+      "log_sessions": 5,
+      "anthropic_tokens": {
+       "claude-sonnet-5-5": 534121,
+       "claude-haiku-5-5": 16831
+      },
+      "log_tokens": {
+       "claude-haiku-5-5": 16831,
+       "claude-sonnet-5-5": 534121
+      },
+      "token_difference": {},
+      "by_terminal": [
+       {
+        "terminal": "xterm-256color",
+        "status": "pass",
+        "anthropic_sessions": 5,
+        "log_sessions": 5,
+        "token_difference": {}
+       }
+      ],
+      "work": {
+       "lines_added": 60,
+       "lines_removed": 5,
+       "commits": 0,
+       "pull_requests": 0
+      }
+     },
+     {
+      "day": "2026-11-15",
+      "status": "pass_so_far",
+      "complete": false,
+      "anthropic_sessions": 0,
+      "log_sessions": 0,
+      "anthropic_tokens": {},
+      "log_tokens": {},
+      "token_difference": {},
+      "by_terminal": [],
+      "work": {}
+     }
+    ]
+   },
+   "status": "pass"
+  }
+ ],
+ "billed_tokens": 3003450,
+ "accounted_tokens": 550952,
+ "no_key_tokens": 0
+}

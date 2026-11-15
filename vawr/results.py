@@ -166,6 +166,36 @@ def render():
                 "planted runs that passed the visible tests but fail the hidden ones %s"
                 % (_fmt(hs.get("normal_runs_pass_hidden")), _fmt(hs.get("planted_passing_visible_but_failing_hidden"))),
                 ""]
+    dt = _load("daytest_received.json")
+    if dt:
+        ck = dt.get("check") or {}
+        b = ck.get("bill") or {}
+        days = (ck.get("sessions") or {}).get("days") or []
+        out += ["## Full day on a separate key (payer's receive)", "",
+                "Key %s: every Claude Code session on it that day was logged (3 interactive, 2 headless). "
+                "Bundle received with the organization's Admin key." % (dt.get("manifest") or {}).get("key_id"), "",
+                "- Verdict: %s" % dt.get("verdict"),
+                "- Bill: %s tokens billed, %s unexplained, %d minute(s) of log excess" % (
+                    "{:,}".format(sum((b.get("provider_tokens") or {}).values())),
+                    "{:,}".format(sum(sum(g["tokens"].values()) for g in b.get("gaps") or [])),
+                    len(b.get("log_excess") or []))]
+        for d in days:
+            out.append("- Sessions, %s (%s): Anthropic %d, log %d, token difference %s" % (
+                d["day"], d["status"].replace("_", " "), d["anthropic_sessions"], d["log_sessions"],
+                d["token_difference"] or "none"))
+        out.append("")
+    ver = _load("version_2_1_325.json")
+    if ver and ver.get("ab"):
+        be, c = ver["ab"]["by_env"], ver["check"]
+        out += ["## Claude Code %s (the environment A/B again)" % ver["claude_version"], "",
+                "- Unrecorded small-model request: %d of %d runs in the desktop app's environment (cache read %s), "
+                "%d of %d clean" % (be["inherited"]["with_unrecorded_request"], be["inherited"]["runs"],
+                                     be["inherited"]["cache_read_values"], be["clean"]["with_unrecorded_request"],
+                                     be["clean"]["runs"]),
+                "- Checks over the window: chain %s, session files %s, bill %s (%d gaps, %d excess), level %s" % (
+                    "intact" if c["chain_ok"] else "BROKEN", "pass" if c["coverage"]["ok"] else "FAIL",
+                    "pass" if c["bill_ok"] else "FAIL", len(c["gaps"] or []), len(c["log_excess"] or []), c["level"]),
+                ""]
     ct = _load("continuity_trials.json")
     if ct:
         out += ["## Continuity (relabel and rebuild after an earlier report)", "",

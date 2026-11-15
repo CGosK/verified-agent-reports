@@ -1,0 +1,10 @@
+vawr team, 2026-11-14 00:00 to 2026-11-15 07:56 UTC
+
+  bundle grant-demo.zip: key apikey_01ACxYY1jehtHaxqdPihHsqV, chain intact, report matches its log, continuity: same report you received 2026-11-15 08:26
+
+NO REPORT  Apart AI Epistemics Key (apikey_014nm6SadTU7zy9DoURcd48j): 2,452,498 tokens billed, no bundle covers this key
+PASS  vawr-daytest (apikey_01ACxYY1jehtHaxqdPihHsqV): 550,952 tokens billed, 0 unexplained; 1 bundle(s)
+        2026-11-14  Anthropic counted 5 Claude Code sessions, the log has 5
+        2026-11-15  Anthropic counted 0 Claude Code sessions, the log has 0 (day not over)
+
+Organization: 3,003,450 tokens billed to API keys in the window; 550,952 (18.3%) accounted for by bundles.

@@ -1,0 +1,15 @@
+vawr check, 2026-11-14 00:00 to 07:56 UTC
+
+PASS  chain        276 entries, head 8eab021fbe1d0d9a
+PASS  coverage     25 requests in session files, 34 in the log
+PASS  bill         550,952 tokens billed: 550,952 logged, 0 Claude Code background, 0 unexplained
+PASS  sessions     Anthropic's daily count of Claude Code sessions and tokens on this key vs the log
+        2026-11-14  Anthropic counted 5 Claude Code sessions, the log has 5
+        2026-11-15  Anthropic counted 0 Claude Code sessions, the log has 0 (day not over)
+
+Level: Checked against Anthropic's records
+
+Wrote /Users/operator/ClaudeWork/personal/verified-agent-reports/work/daytest/grant-demo.zip (38,142 bytes)
+Covers 2026-11-14 00:00 to 2026-11-15 07:56 UTC, projects grant-demo; log head 8eab021fbe1d0d9a…, 276 entries.
+The recipient gets the whole log (the chain can only be checked whole): token counts, models, times, session IDs, tool names, project tags and categories; prompts and responses are not in it.
+The recipient runs: vawr receive grant-demo.zip

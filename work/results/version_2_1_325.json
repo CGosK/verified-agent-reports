@@ -1,0 +1,296 @@
+{
+  "claude_version": "2.1.325",
+  "window": [
+    "2026-11-14T17:56:00+00:00",
+    "2026-11-14T18:17:00+00:00"
+  ],
+  "key_id": "apikey_014nm6SadTU7zy9DoURcd48j",
+  "runs": [
+    {
+      "run_id": "20261114T175840Z-o2durations-spr-eec097",
+      "task": "o2_durations",
+      "env_mode": "inherited",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T180052Z-c1sampling-spr-63ed72",
+      "task": "c1_sampling",
+      "env_mode": "clean",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T180302Z-s1refusals-spr-3de3f5",
+      "task": "s1_refusals",
+      "env_mode": "inherited",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T180512Z-o5versions-spr-2fed68",
+      "task": "o5_versions",
+      "env_mode": "clean",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T180722Z-c2schedule-spr-e0f26f",
+      "task": "c2_schedule",
+      "env_mode": "inherited",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T180932Z-s2agreement-spr-2c849f",
+      "task": "s2_agreement",
+      "env_mode": "clean",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T181142Z-o1slugify-spr-0c9fb4",
+      "task": "o1_slugify",
+      "env_mode": "inherited",
+      "test_pass": true
+    },
+    {
+      "run_id": "20261114T181354Z-c3batching-spr-1650d8",
+      "task": "c3_batching",
+      "env_mode": "clean",
+      "test_pass": true
+    }
+  ],
+  "ab": {
+    "by_env": {
+      "inherited": {
+        "runs": 4,
+        "with_unrecorded_request": 4,
+        "cache_read_values": [
+          7010
+        ]
+      },
+      "clean": {
+        "runs": 4,
+        "with_unrecorded_request": 0,
+        "cache_read_values": [
+          0
+        ]
+      }
+    },
+    "rows": [
+      {
+        "run_id": "20261114T175840Z-o2durations-spr-eec097",
+        "task": "o2_durations",
+        "env_mode": "inherited",
+        "billed_small_model": {
+          "input": 390,
+          "output": 163,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 390,
+          "output": 163,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": true
+      },
+      {
+        "run_id": "20261114T180052Z-c1sampling-spr-63ed72",
+        "task": "c1_sampling",
+        "env_mode": "clean",
+        "billed_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": false
+      },
+      {
+        "run_id": "20261114T180302Z-s1refusals-spr-3de3f5",
+        "task": "s1_refusals",
+        "env_mode": "inherited",
+        "billed_small_model": {
+          "input": 292,
+          "output": 225,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 292,
+          "output": 225,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": true
+      },
+      {
+        "run_id": "20261114T180512Z-o5versions-spr-2fed68",
+        "task": "o5_versions",
+        "env_mode": "clean",
+        "billed_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": false
+      },
+      {
+        "run_id": "20261114T180722Z-c2schedule-spr-e0f26f",
+        "task": "c2_schedule",
+        "env_mode": "inherited",
+        "billed_small_model": {
+          "input": 347,
+          "output": 233,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 347,
+          "output": 233,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": true
+      },
+      {
+        "run_id": "20261114T180932Z-s2agreement-spr-2c849f",
+        "task": "s2_agreement",
+        "env_mode": "clean",
+        "billed_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": false
+      },
+      {
+        "run_id": "20261114T181142Z-o1slugify-spr-0c9fb4",
+        "task": "o1_slugify",
+        "env_mode": "inherited",
+        "billed_small_model": {
+          "input": 409,
+          "output": 271,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 409,
+          "output": 271,
+          "cache_read": 7010,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": true
+      },
+      {
+        "run_id": "20261114T181354Z-c3batching-spr-1650d8",
+        "task": "c3_batching",
+        "env_mode": "clean",
+        "billed_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "logged_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "unrecorded_small_model": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0,
+          "cache_creation": 0
+        },
+        "has_unrecorded_request": false
+      }
+    ]
+  },
+  "check": {
+    "chain_ok": true,
+    "coverage": {
+      "ok": true,
+      "local_requests": 24,
+      "logged_requests_in_window": 54,
+      "token_mismatches": 0,
+      "unlogged_sessions": []
+    },
+    "bill_ok": true,
+    "gaps": [],
+    "log_excess": [],
+    "provider_tokens": {
+      "input": 1582,
+      "output": 15118,
+      "cache_read": 126903,
+      "cache_creation": 26114
+    },
+    "background_tokens": {
+      "input": 1438,
+      "output": 892,
+      "cache_read": 28040,
+      "cache_creation": 0
+    },
+    "level": "provider"
+  }
+}

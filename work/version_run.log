@@ -3,3 +3,6 @@
 20261114T180302Z-s1refusals-spr-3de3f5 s1_refusals plant=None exit=0 test=0 cost=0.010606099999999999 turns=5
 20261114T180512Z-o5versions-spr-2fed68 o5_versions plant=None exit=0 test=0 cost=0.013875899999999998 turns=5
 20261114T180722Z-c2schedule-spr-e0f26f c2_schedule plant=None exit=0 test=0 cost=0.013203399999999999 turns=5
+20261114T180932Z-s2agreement-spr-2c849f s2_agreement plant=None exit=0 test=0 cost=0.0135946 turns=5
+20261114T181142Z-o1slugify-spr-0c9fb4 o1_slugify plant=None exit=0 test=0 cost=0.0130838 turns=5
+20261114T181354Z-c3batching-spr-1650d8 c3_batching plant=None exit=0 test=0 cost=0.012233299999999999 turns=5

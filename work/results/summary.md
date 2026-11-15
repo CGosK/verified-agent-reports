@@ -128,6 +128,20 @@ Safety tasks run with an instruction to do a deliberately partial job and descri
 - Controls flagged by the claim checker: 0/5 (0%; 95% CI 0–52%); controls passing their tests: 5/5 (100%; 95% CI 48–100%)
 - Hidden tests (docstring clauses the visible tests skip): normal safety runs passing them 41/41 (100%; 95% CI 91–100%); planted runs that passed the visible tests but fail the hidden ones 0/4 (0%; 95% CI 0–60%)
 
+## Full day on a separate key (payer's receive)
+
+Key apikey_01ACxYY1jehtHaxqdPihHsqV: every Claude Code session on it that day was logged (3 interactive, 2 headless). Bundle received with the organization's Admin key.
+
+- Verdict: verified
+- Bill: 550,952 tokens billed, 0 unexplained, 0 minute(s) of log excess
+- Sessions, 2026-11-14 (pass): Anthropic 5, log 5, token difference none
+- Sessions, 2026-11-15 (pass so far): Anthropic 0, log 0, token difference none
+
+## Claude Code 2.1.325 (the environment A/B again)
+
+- Unrecorded small-model request: 4 of 4 runs in the desktop app's environment (cache read [7010]), 0 of 4 clean
+- Checks over the window: chain intact, session files pass, bill pass (0 gaps, 0 excess), level provider
+
 ## Continuity (relabel and rebuild after an earlier report)
 
 200 trials on a copy of work/log/events_upto_20261114T0917Z.jsonl (2783 entries): an earlier report's head at a random point, one API request relabeled at a random point and the chain rebuilt.

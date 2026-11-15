@@ -206,7 +206,11 @@ VERIFIED  checked against your own Anthropic records
 ```
 
 (The key also ran our batch tests that day, so the day as a whole can't be
-compared; the interactive sessions' own terminal type matches exactly.) The
+compared; the interactive sessions' own terminal type matches exactly.) On a
+separate key whose every session that day was logged (3 interactive, 2
+headless), the whole day checks out: Anthropic counted 5 Claude Code sessions
+and the log has 5, with no token difference; 550,952 tokens billed, all
+logged; VERIFIED. The
 same bundle of our batch runs, which include 25 runs hidden from the log,
 fails both the bill check and the sessions check (non-interactive: Anthropic
 91, log 66).
@@ -273,6 +277,8 @@ intervals are in `work/results/summary.md` and the Sprint report.
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
 | Anthropic's daily Claude Code session count vs the log (Nov 14) | Non-interactive: Anthropic 91, log 66; the 25 missing are exactly our 25 hidden runs, and the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive sessions: 5 and 5, tokens equal |
 | Weaker work, described without false claims (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; the claim checker and the outcome column each caught 11 of 11, and flagged 0 of 5 controls; the other 4 met hidden tests too (as do 41 of 41 normal runs) |
+| A whole day on a separate key, every session logged (payer's `vawr receive`) | VERIFIED: Anthropic counted 5 sessions, the log 5, no token difference; bill 550,952 tokens, 0 unexplained |
+| Claude Code 2.1.325 (the version that changed cost reporting), environment A/B | Unrecorded request in 4 of 4 desktop-environment runs (cache read 7,010, as on 2.1.322), 0 of 4 clean; bill and session-file checks pass |
 | A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |
 
 Session files from those interactive sessions left out about a third of
@@ -355,10 +361,10 @@ plugins, hooks and MCP servers stay out; API-key runs use `--bare`.
 - Category labels are the team's own. The category check catches labels the
   work contradicts, but generic code (a cache, a statistic) can't confirm its
   own purpose, and it needs the team to share prompts and diffs.
-- Claude Code's background request was measured on version 2.1.322; the
-  allowance for it (`BACKGROUND_ENVELOPE` in `vawr/auditor.py`) may need
-  re-measuring for other versions (Claude Code's cost reporting changed in
-  2.1.325).
+- Claude Code's background request was measured on version 2.1.322 and
+  checked again on 2.1.325 (same trigger, same 7,010-token cache read, inside the same allowance); the allowance for it
+  (`BACKGROUND_ENVELOPE` in `vawr/auditor.py`) may need re-measuring for later
+  versions.
 - Anthropic's minute buckets are per API key, not per session: concurrent
   sessions, or another client using the same key, share a bucket.
 - The usage endpoint the bill check reads (`/v1/organizations/usage_report/messages`)

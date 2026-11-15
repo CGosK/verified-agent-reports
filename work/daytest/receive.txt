@@ -1,0 +1,17 @@
+vawr receive grant-demo.zip
+
+Report: Grant demo, 2026-11-14, 2026-11-14 00:00 to 2026-11-15 07:56 UTC, projects grant-demo
+API key: apikey_01ACxYY1jehtHaxqdPihHsqV
+
+PASS  chain        276 entries, head 8eab021fbe1d0d9a
+PASS  report       rebuilt from the log: same tokens per category
+SKIP  continuity   first report from this log
+PASS  bill         550,952 tokens billed: 550,952 logged, 0 Claude Code background, 0 unexplained
+PASS  sessions     Anthropic's daily count of Claude Code sessions and tokens on this key vs the log
+        2026-11-14  Anthropic counted 5 Claude Code sessions, the log has 5
+        2026-11-15  Anthropic counted 0 Claude Code sessions, the log has 0 (day not over)
+        the last day isn't over: run `vawr receive` again an hour after it ends (UTC) for the final count
+
+VERIFIED  checked against your own Anthropic records
+Figures: the report rebuilt from the log (--html writes it as a page); the team's own report.html in the bundle is not checked.
+Page built here from the log and your checks: /Users/operator/ClaudeWork/personal/verified-agent-reports/work/daytest/received.html
