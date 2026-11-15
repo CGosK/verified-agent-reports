@@ -211,7 +211,7 @@ def demo_report_when_ready(expected=5, key_var=KEY_VAR, poll=180, max_wait=6 * 3
     print("gave up waiting", flush=True)
 
 
-def midnight_test(start_at, port=4321, key_var="ANTHROPIC_API_KEY"):
+def midnight_test(start_at, port=4321, key_var="ANTHROPIC_API_KEY", now=None):
     """One interactive session that spans 00:00 UTC, logged to its own log, to see how
     Anthropic's daily records split a session across two days. Runs only if the
     machine is awake within three minutes of start_at; otherwise records a skip."""
@@ -221,10 +221,15 @@ def midnight_test(start_at, port=4321, key_var="ANTHROPIC_API_KEY"):
     cfg = os.path.join(home, "claude-config")
     log = os.path.join(home, "log", "events.jsonl")
     os.makedirs(os.path.dirname(log), exist_ok=True)
-    while datetime.now(timezone.utc) < start_at:
-        time.sleep(min(60, max(1, (start_at - datetime.now(timezone.utc)).total_seconds())))
-    if datetime.now(timezone.utc) > start_at + timedelta(minutes=3):
-        print("MIDNIGHT_SKIPPED: woke at %s" % datetime.now(timezone.utc).isoformat(), flush=True)
+    now = now or (lambda: datetime.now(timezone.utc))
+    if start_at.tzinfo is None:
+        start_at = start_at.replace(tzinfo=timezone.utc)
+    while now() < start_at:
+        time.sleep(min(60, max(1, (start_at - now()).total_seconds())))
+    # the session must start before 00:00 UTC to span it: allow 30 s of lateness, and never past midnight
+    midnight = (start_at + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    if now() > min(start_at + timedelta(seconds=30), midnight - timedelta(seconds=60)):
+        print("MIDNIGHT_SKIPPED: woke at %s" % now().isoformat(), flush=True)
         return "skipped"
     rlog = open(os.path.join(home, "receiver.out"), "a")
     recv = subprocess.Popen([sys.executable, "-u", "-m", "vawr", "serve", "--log", log, "--port", str(port)],
@@ -243,12 +248,21 @@ def midnight_test(start_at, port=4321, key_var="ANTHROPIC_API_KEY"):
     return "done"
 
 
+def main(argv):
+    usage = "usage: python -m vawr.interactive day | report | report-when-ready | midnight <UTC time> ..."
+    if not argv or argv[0] not in ("day", "report", "report-when-ready", "midnight"):
+        print(usage)
+        return 2
+    if argv[0] == "midnight":
+        for when in argv[1:]:  # VAWR_KEY_VAR picks the .env key (default ANTHROPIC_API_KEY)
+            if midnight_test(datetime.fromisoformat(when.replace("Z", "+00:00")),
+                             key_var=os.environ.get("VAWR_KEY_VAR", "ANTHROPIC_API_KEY")) == "done":
+                break
+        return 0
+    {"day": demo_day, "report": demo_report, "report-when-ready": demo_report_when_ready}[argv[0]]()
+    return 0
+
+
 if __name__ == "__main__":
     import sys
-    if sys.argv[1:2] == ["midnight"]:  # one or more start times; stops after the first that runs
-        for when in sys.argv[2:]:
-            if midnight_test(datetime.fromisoformat(when.replace("Z", "+00:00"))) == "done":
-                break
-    else:
-        {"report": demo_report, "report-when-ready": demo_report_when_ready}.get(
-            (sys.argv[1:] or [""])[0], demo_day)()
+    sys.exit(main(sys.argv[1:]))

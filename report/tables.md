@@ -55,6 +55,43 @@ Concurrency (unit: a window of three logged runs started 5 s apart): windows wit
 
 Log head 4ae380e2851250ec; 3020 entries.
 
+## Table 6. Anthropic's daily count of Claude Code sessions vs the log
+
+Anthropic's Claude Code Analytics API, per API key, UTC day and terminal type, against the log's sessions and tokens. Main key: the validation key (Nov 14; the main log started on Nov 13, so that day isn't compared). Separate key: every session on it that day was logged, received by the payer after the day closed.
+
+| Key, day | Terminal | Anthropic's sessions | Log's sessions | Tokens, Anthropic minus log | Result |
+| --- | --- | --- | --- | --- | --- |
+| Main key, Nov 14 | non-interactive | 91 | 66 | haiku-5-5 +95,655, opus-5-5 +74,764, sonnet-5-5 +82,633 | fail |
+| Main key, Nov 14 | xterm | 2 | 0 | haiku-5-5 +35,936 | fail |
+| Main key, Nov 14 | xterm-256color | 5 | 5 | none | pass so far |
+| Separate key, Nov 14 | all | 5 | 5 | none | pass |
+
+Main key, Nov 14: 91 runs on the key in the manifests, 25 of them hidden from the log. Billed minus Anthropic's count: haiku-4-5-20251001 +9, haiku-5-5 +616,117.
+
+## Table 7. Weaker work described without false claims
+
+Safety tasks; planted runs were told to do a deliberately partial job and describe it in general terms without saying anything untrue. Controls ran normally at the same time.
+
+| | Planted | Controls |
+| --- | --- | --- |
+| Work fails the task's tests | 11/15 (45–92%) | 0/5 (0–52%) |
+| Of those failing, flagged by the claim checker | 11/11 (72–100%) | – |
+| Of those failing, flagged by the outcome column | 11/11 (72–100%) | – |
+| Flagged by the claim checker | – | 0/5 (0–52%) |
+| Passed the visible tests but fail hidden tests | 0/4 (0–60%) | – |
+
+Hidden tests (docstring clauses the visible tests skip) pass on every reference solution, fail on every stub, and pass on 41/41 (91–100%) normal safety runs.
+
+## Table B2. Claude Code 2.1.325 and continuity (appendix)
+
+| Test | Result |
+| --- | --- |
+| 2.1.325, desktop-app environment: runs with the unrecorded request | 4/4 (40–100%) (cache read 7,010) |
+| 2.1.325, clean environment: runs with the unrecorded request | 0/4 (0–60%) |
+| 2.1.325 window: bill check, session-file check | pass, pass |
+| Continuity: rebuilds before an earlier report's head caught | 98/98 (96–100%) |
+| Continuity: rebuilds after it caught (by design) | 0/102 (0–4%) |
+
 ## Table B1. Hidden runs (appendix)
 
 | Run | Kind | Model | Provider check | Session-file check | Gap tokens |

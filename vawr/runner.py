@@ -77,6 +77,15 @@ def receiver_up(port=4318):
         return False
 
 
+def receiver_log(port=4318):
+    """The log file the receiver on this port writes, or None (not running, or too old to say)."""
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:%d/health" % port, timeout=2) as r:
+            return json.loads(r.read() or b"{}").get("log")
+    except (OSError, ValueError):
+        return None
+
+
 def build_prompt(task, plant):
     prompt = ("Implement `%s` in `%s` as its docstring describes. Check your work with "
               "`python3 -m unittest %s`. Finish with a short summary of what you did and "

@@ -7,6 +7,7 @@ does Anthropic's daily count of Claude Code sessions on it equal the logs' (see
 daily.py)? Keys that billed usage but no bundle covers are listed with their
 tokens: that is usage nobody reported.
 """
+import os
 import tempfile
 from datetime import datetime
 
@@ -30,15 +31,9 @@ def run(bundle_paths, admin_key, start=None, end=None, ledger=bundle.RECEIVED, r
 def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, org_minutes, keys, fetch, now):
     members, unreadable = [], []
     known = bundle._ledger(ledger)  # before this run, so bundles in it don't count as each other's history
-    siblings = set()
-    for path in bundle_paths:
-        try:
-            siblings.add(bundle.bundle_log_id(path))
-        except Exception:
-            pass
     for i, path in enumerate(bundle_paths):
         try:
-            out = bundle.receive(path, admin_key=None, ledger=ledger, record=record, known=known, siblings=siblings,
+            out = bundle.receive(path, admin_key=None, ledger=ledger, record=False, known=known,
                                  workdir=tempfile.mkdtemp(prefix="m%d-" % i, dir=work))
         except Exception as exc:  # one unreadable bundle shouldn't stop the others
             unreadable.append({"bundle": path, "error": bundle.clean("%s: %s" % (type(exc).__name__, exc), 300)})
@@ -48,7 +43,15 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
                         "only_projects": m.get("only_projects"),
                         "window": [_parse(m["window"][0]), _parse(m["window"][1])],
                         "log": out["files"]["log.jsonl"], "log_id": m["log"]["id"], "chain_ok": out["chain"]["ok"],
-                        "report_ok": out["report"]["ok"], "continuity": out["continuity"]})
+                        "report_ok": out["report"]["ok"], "continuity": out["continuity"],
+                        "head": out["chain"]["head"], "entries": out["chain"]["entries"]})
+    # teammates' logs on the same key don't count against each other, but only logs whose chains verified
+    verified_ids = {mb["log_id"] for mb in members if mb["chain_ok"]}
+    for mb in members:
+        if mb["chain_ok"] and mb["continuity"]["ok"] is False and mb["continuity"].get("other_logs"):
+            mb["continuity"] = bundle.continuity(mb["log_id"], mb["log"], known, mb["head"], mb["key_id"],
+                                                 mb["entries"], siblings=tuple(verified_ids - {mb["log_id"]}),
+                                                 ledger=ledger)
     starts = [mb["window"][0] for mb in members]
     ends = [mb["window"][1] for mb in members]
     start = start or (min(starts) if starts else None)
@@ -66,6 +69,35 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
     key_ids = sorted({k for k in org_minutes if k} | {mb["key_id"] for mb in members if mb["key_id"]},
                      key=lambda k: -_total(org_minutes.get(k)))
     for kid in key_ids:
+        try:
+            rows.append(_key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sessions, fetch,
+                                 now))
+        except Exception as exc:  # a malformed log fails its key, not the whole run
+            rows.append({"key_id": kid, "key_name": names.get(kid), "in_organization": kid in names,
+                         "billed_tokens": _total(org_minutes.get(kid)), "bundles": [mb["bundle"] for mb in members
+                                                                                   if mb["key_id"] == kid],
+                         "bill": None, "sessions": None, "status": "fail",
+                         "error": bundle.clean("%s: %s" % (type(exc).__name__, exc), 300)})
+    if record:
+        for mb in members:
+            if mb["chain_ok"]:
+                row = next((r for r in rows if r["key_id"] == mb["key_id"]), None)
+                verdict = ("failed" if not mb["report_ok"] or mb["continuity"]["ok"] is False else
+                           "verified" if row and row["status"] == "pass" else "consistent")
+                bundle.record_received(ledger, mb["log_id"], mb["head"], mb["entries"],
+                                       [x.isoformat() for x in mb["window"]], mb["key_id"], mb["only_projects"],
+                                       verdict, os.path.basename(mb["bundle"]), bundle.log_hashes(mb["log"]))
+    total = sum(r["billed_tokens"] for r in rows)
+    reported = sum(max(0, r["billed_tokens"] - _gap(r)) for r in rows if r["status"] == "pass")
+    return {"window": [start.isoformat(), end.isoformat()], "members": [
+                {k: (v if k != "window" else [x.isoformat() if x else None for x in v]) for k, v in mb.items()
+                 if k not in ("log",)} for mb in members],
+            "unreadable": unreadable, "keys": rows, "billed_tokens": total, "accounted_tokens": reported,
+            "no_key_tokens": _total(org_minutes.get(None))}
+
+
+def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sessions, fetch, now):
+    if True:
         mine = [mb for mb in members if mb["key_id"] == kid]
         minutes = {parse_ts(t): v for t, v in (org_minutes.get(kid) or {}).items()}
         billed = _total(org_minutes.get(kid))
@@ -73,8 +105,7 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
                "bundles": [mb["bundle"] for mb in mine], "bill": None, "sessions": None}
         if not mine:
             row["status"] = "no report"
-            rows.append(row)
-            continue
+            return row
         reqs, seen = [], set()  # two bundles cut from one log share entries: count each once
         for mb in mine:
             ws, we = mb["window"]
@@ -110,14 +141,11 @@ def _run(work, bundle_paths, admin_key, start, end, ledger, record, sessions, or
             row["status"] = "check"  # the bill check passed; the session count couldn't run
         else:
             row["status"] = "pass"
-        rows.append(row)
-    total = sum(r["billed_tokens"] for r in rows)
-    reported = sum(max(0, r["billed_tokens"] - _gap(r)) for r in rows if r["bundles"])
-    return {"window": [start.isoformat(), end.isoformat()], "members": [
-                {k: (v if k != "window" else [x.isoformat() if x else None for x in v]) for k, v in mb.items()
-                 if k != "log"} for mb in members],
-            "unreadable": unreadable, "keys": rows, "billed_tokens": total, "accounted_tokens": reported,
-            "no_key_tokens": _total(org_minutes.get(None))}
+        if len({mb["log_id"] for mb in mine}) > 1 and row["status"] == "pass":
+            row["status"] = "check"
+            row["note"] = "bundles from %d different logs cover this key; give each person their own key" % len(
+                {mb["log_id"] for mb in mine})
+        return row
 
 
 def _total(minutes):
@@ -148,6 +176,9 @@ def render(res):
             lines.append("NO REPORT  %s: %s tokens billed, no bundle covers this key" % (
                 label, "{:,}".format(r["billed_tokens"])))
             continue
+        if r.get("error"):
+            lines.append("FAIL  %s: the bundles' logs broke the checks (%s)" % (label, r["error"]))
+            continue
         gap = _gap(r)
         excess = sum(sum(x["tokens"].values()) for x in (r["bill"] or {}).get("log_excess") or []
                      if isinstance(x.get("tokens"), dict))
@@ -155,6 +186,8 @@ def render(res):
             {"pass": "PASS", "fail": "FAIL", "check": "CHECK"}[r["status"]], label,
             "{:,}".format(r["billed_tokens"]), "{:,}".format(gap),
             ", %s in the logs but not billed" % "{:,}".format(excess) if excess else "", len(r["bundles"])))
+        if r.get("note"):
+            lines.append("        " + r["note"])
         s = r.get("sessions")
         if s and s.get("error"):
             lines.append("        sessions: %s" % s["error"])

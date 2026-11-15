@@ -13,6 +13,7 @@ metrics and all traces are accepted and dropped.
 """
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -169,8 +170,8 @@ def make_handler(log):
             return self._reply(200)
 
         def do_GET(self):
-            if self.path == "/health":
-                return self._reply(200, b'{"ok":true}')
+            if self.path == "/health":  # which log this receiver writes, so `vawr status` can tell homes apart
+                return self._reply(200, json.dumps({"ok": True, "log": os.path.abspath(log.path)}).encode())
             return self._reply(404)
 
     return Handler

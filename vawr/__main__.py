@@ -278,8 +278,13 @@ def cmd_stop(args):
 def cmd_status(args):
     import os
     from . import chainlog
-    from .runner import receiver_up
-    print("receiver: %s on port %d" % ("running" if receiver_up(args.port) else "not running", args.port))
+    from .runner import receiver_log, receiver_up
+    up = receiver_up(args.port)
+    print("receiver: %s on port %d" % ("running" if up else "not running", args.port))
+    other = receiver_log(args.port) if up else None
+    if other and os.path.abspath(other) != os.path.abspath(args.log):
+        print("        but it writes %s, not this log; start this one on another port "
+              "(`vawr start --port N`, then `vawr setup --port N --write`)" % other)
     if os.path.exists(args.log):
         ok, problems, n, head = chainlog.verify(args.log)
         print("log: %s, %d entries, chain %s" % (args.log, n, "intact" if ok else "BROKEN (%s)" % problems[:3]))
@@ -638,6 +643,12 @@ def main(argv=None):
     s.set_defaults(func=lambda a: print(__import__("vawr.results", fromlist=["write"]).write()[1]))
 
     args = p.parse_args(argv)
+    import os
+    if args.cmd in ("bundle", "check", "report", "verify", "categories", "verify-report", "audit") \
+            and not os.path.exists(args.log):
+        print("No log at %s yet. Run `vawr setup --write` and `vawr start`, then use Claude Code; "
+              "or pass --log with the log to read." % args.log)
+        return 1
     return args.func(args) or 0
 
 

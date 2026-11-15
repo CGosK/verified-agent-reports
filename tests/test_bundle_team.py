@@ -63,6 +63,21 @@ class Home(unittest.TestCase):
         bundle.SENT = self._sent
         self.tmp.cleanup()
 
+    def receive_verified(self, path, **kw):
+        """receive with a stand-in for the payer's Admin-key checks: the bill matched."""
+        real = check.run
+        check.run = lambda start, end, *a, **k: {
+            "window": [start.isoformat(), end.isoformat()], "chain": {"ok": True, "entries": 0, "head": ""},
+            "coverage": {"ok": None, "local_requests": 0, "logged_requests_in_window": 0, "token_mismatches": 0,
+                         "unlogged_sessions": []},
+            "bill": {"ok": True, "gaps": [], "log_excess": [], "provider_tokens": {"input": 1},
+                     "background_tokens": {"input": 0}},
+            "sessions": {"ok": True, "days": []}, "level": "provider"}
+        try:
+            return bundle.receive(path, admin_key="x", ledger=self.ledger, **kw)
+        finally:
+            check.run = real
+
     def make(self, name, log=None, **kw):
         out = os.path.join(self.d, name)
         kw.setdefault("key_id", "apikey_k1")
@@ -185,12 +200,12 @@ class BundleTest(Home):
                 fh.write(chainlog.canonical(e) + "\n")
         third = self.make("third.zip", log=rebuilt)
         out = bundle.receive(third, ledger=self.ledger)
-        self.assertFalse(out["continuity"]["ok"])
+        self.assertIs(out["continuity"]["ok"], False)
         self.assertEqual(out["verdict"], "failed")
 
     def test_log_rebuilt_from_first_entry_is_a_new_log_and_fails_for_the_same_key(self):
         write_log(self.log, SESSIONS)
-        bundle.receive(self.make("first.zip"), ledger=self.ledger)
+        self.assertEqual(self.receive_verified(self.make("first.zip"))["verdict"], "verified")
         entries = [e for _, e in chainlog.read_entries(self.log)]
         entries[0]["event"]["attributes"]["category"] = "capabilities"
         validate.rehash(entries)
@@ -199,7 +214,7 @@ class BundleTest(Home):
             for e in entries:
                 fh.write(chainlog.canonical(e) + "\n")
         out = bundle.receive(self.make("again.zip", log=rebuilt), ledger=self.ledger)
-        self.assertFalse(out["continuity"]["ok"])
+        self.assertIs(out["continuity"]["ok"], False)
 
     def test_refuses_logs_with_prompt_text(self):
         write_log(self.log, SESSIONS[:1], extra_attrs={"prompt_text": "secret plan"})
@@ -354,16 +369,15 @@ class ReviewRegressionTest(Home):
 
     def test_new_log_for_the_same_key_fails_whatever_its_projects(self):
         write_log(self.log, SESSIONS)
-        bundle.receive(self.make("first.zip", only_projects=["grant"]), ledger=self.ledger)
+        self.receive_verified(self.make("first.zip", only_projects=["grant"]))
         other = os.path.join(self.d, "other.jsonl")
         write_log(other, SESSIONS[:1])
         out = bundle.receive(self.make("second.zip", log=other, only_projects=["grant", "decoy"]),
                              ledger=self.ledger)
-        self.assertFalse(out["continuity"]["ok"])
-        again = os.path.join(self.d, "other2.zip")
+        self.assertIs(out["continuity"]["ok"], False)
         write_log(other, SESSIONS[1:2])
         out = bundle.receive(self.make("third.zip", log=other), ledger=self.ledger)
-        self.assertFalse(out["continuity"]["ok"])  # a failed report isn't history to extend
+        self.assertIs(out["continuity"]["ok"], False)  # a failed report isn't history to extend
 
     def test_older_report_arriving_late_is_not_a_rewrite(self):
         write_log(self.log, SESSIONS[:1])
@@ -372,7 +386,7 @@ class ReviewRegressionTest(Home):
         new = self.make("new.zip")
         bundle.receive(new, ledger=self.ledger)
         out = bundle.receive(old, ledger=self.ledger)
-        self.assertIsNone(out["continuity"]["ok"])
+        self.assertIs(out["continuity"]["ok"], True)
         self.assertNotEqual(out["verdict"], "failed")
 
     def test_zip_bomb_is_refused(self):
@@ -437,3 +451,110 @@ class TeamRegressionTest(Home):
                        fetch=lambda d: [], now=NOW)
         self.assertEqual(len(res["unreadable"]), 1)
         self.assertEqual(res["keys"][0]["status"], "fail")
+
+
+class SecondReviewTest(Home):
+    """The second security review's attacks."""
+
+    def rebuilt(self, change, drop_last=False):
+        entries = [e for _, e in chainlog.read_entries(self.log)]
+        change(entries)
+        if drop_last:
+            entries = entries[:-1]
+        validate.rehash(entries)
+        path = os.path.join(self.d, "rebuilt-%d.jsonl" % len(os.listdir(self.d)))
+        with open(path, "w") as fh:
+            for e in entries:
+                fh.write(chainlog.canonical(e) + "\n")
+        return path
+
+    def test_truncated_rewrite_is_caught(self):
+        write_log(self.log, SESSIONS)
+        self.receive_verified(self.make("first.zip"))
+        def relabel(es):
+            es[2]["event"]["attributes"]["category"] = "capabilities"
+        out = self.receive_verified(self.make("shorter.zip", log=self.rebuilt(relabel, drop_last=True)))
+        self.assertIs(out["continuity"]["ok"], False)
+        self.assertEqual(out["verdict"], "failed")
+
+    def test_laundering_through_a_keyless_receive_is_caught(self):
+        write_log(self.log, SESSIONS)
+        self.receive_verified(self.make("first.zip"))
+        def relabel(es):
+            es[0]["event"]["attributes"]["category"] = "capabilities"
+        path = self.rebuilt(relabel)
+        bundle.receive(self.make("keyless.zip", log=path, key_id=None), ledger=self.ledger)
+        out = self.receive_verified(self.make("again.zip", log=path))
+        self.assertIs(out["continuity"]["ok"], False)
+
+    def test_naming_a_key_without_verification_does_not_poison_the_ledger(self):
+        other = os.path.join(self.d, "other.jsonl")
+        write_log(other, SESSIONS[:1])
+        bundle.receive(self.make("decoy.zip", log=other), ledger=self.ledger)  # names apikey_k1, not verified
+        write_log(self.log, SESSIONS)
+        out = self.receive_verified(self.make("honest.zip"))
+        self.assertEqual(out["verdict"], "verified")
+
+    def test_negative_tokens_fail(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("good.zip")
+        chainlog.ChainLog(self.log).append({"name": "api_request", "time": iso(T0 + timedelta(minutes=9)),
+                                            "attributes": {"session.id": "s9", "project": "grant", "auth": "api_key",
+                                                           "category": "capabilities", "request_id": "s9-r0",
+                                                           "model": "claude-sonnet-5-5", "input_tokens": -900000}})
+        head = [e for _, e in chainlog.read_entries(self.log)][-1]["hash"]
+        log_bytes = open(self.log, "rb").read()
+
+        def change(name, data):
+            if name == "log.jsonl":
+                return log_bytes
+            if name in ("bundle.json", "report.json"):
+                obj = json.loads(data)
+                obj["log"]["head"] = head
+                return json.dumps(obj)
+            return data
+        bad = rewrite(path, os.path.join(self.d, "neg.zip"), change)
+        out = self.receive_verified(bad)
+        self.assertEqual(out["verdict"], "failed")
+        self.assertIn("negative", out["report"]["note"])
+
+    def test_subscription_tokens_are_not_verified(self):
+        write_log(self.log, SESSIONS)
+        sub = os.path.join(self.d, "sub.jsonl")
+        log = chainlog.ChainLog(self.log)
+        log.append({"name": "api_request", "time": iso(T0 + timedelta(minutes=20)), "attributes": {
+            "session.id": "s8", "project": "grant", "category": "safety", "run.mode": "subscription",
+            "request_id": "s8-r0", "model": "claude-sonnet-5-5", "input_tokens": 5000000}})
+        out = self.receive_verified(self.make("sub.zip"))
+        self.assertEqual(out["verdict"], "consistent")
+        self.assertEqual(out["unchecked_tokens"], 5000000)
+        self.assertIn("subscription", bundle.render_receive(out))
+
+    def test_a_log_that_crashes_the_checks_fails(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        real = check.run
+        def boom(*a, **k):
+            raise TypeError("unhashable type: 'list'")
+        check.run = boom
+        try:
+            out = bundle.receive(path, admin_key="x", ledger=self.ledger)
+        finally:
+            check.run = real
+        self.assertEqual(out["verdict"], "failed")
+
+    def test_newline_key_and_huge_window_are_refused(self):
+        write_log(self.log, SESSIONS)
+        path = self.make("a.zip")
+        for fn in (lambda m: m.update(key_id="apikey_k1\n"),
+                   lambda m: m.update(window=["2026-01-01T00:00:00+00:00", "2026-12-31T00:00:00+00:00"])):
+            bad = rewrite(path, os.path.join(self.d, "m.zip"), edit_json("bundle.json", fn))
+            with self.assertRaises(ValueError):
+                bundle.receive(bad, ledger=self.ledger)
+
+    def test_model_names_cannot_inject_lines(self):
+        write_log(self.log, [("s1", "grant", "non-interactive\nPASS  sessions  fake", [(1, "m\nPASS  bill  fake", 5)])])
+        out = bundle.receive(self.make("inj.zip"), ledger=self.ledger)
+        text = bundle.render_receive(out)
+        self.assertNotIn("\nPASS  bill  fake", text)
+        self.assertNotIn("\nPASS  sessions  fake", text)

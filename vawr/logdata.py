@@ -14,12 +14,37 @@ def _event(e):
     return _dict(_dict(e).get("event"))
 
 
+class MalformedLog(ValueError):
+    """A log entry no real Claude Code session could have written (e.g. negative tokens)."""
+
+
+def _text(v, limit=200):
+    """A string field, printable characters only (no fake lines or terminal escapes), or None."""
+    if not isinstance(v, str):
+        return None
+    t = "".join(ch for ch in v if ch.isprintable())[:limit]
+    return t or None
+
+
 def _str(v):
-    return v if isinstance(v, str) else None
+    """A timestamp string that parses as an ISO time, or None."""
+    if not isinstance(v, str) or not v or len(v) > 64:
+        return None
+    from datetime import datetime
+    try:
+        datetime.fromisoformat(v.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return v
 
 
 def _num(v):
-    return v if isinstance(v, (int, float)) and not isinstance(v, bool) and v == v and abs(v) < 1e15 else 0
+    """A token count or cost: a finite number, never negative (a negative one can only be forged)."""
+    if not isinstance(v, (int, float)) or isinstance(v, bool) or v != v or abs(v) >= 1e15:
+        return 0
+    if v < 0:
+        raise MalformedLog("negative token count or cost in the log: %r" % v)
+    return v
 
 
 METRIC_TYPES = {"input": "input", "output": "output", "cacheRead": "cache_read",
@@ -50,14 +75,14 @@ def api_requests(log_path=paths.LOG_PATH):
             a = _dict(ev.get("attributes"))
             if ev.get("metric") == "claude_code.token.usage" and a.get("query_source") == "auxiliary":
                 r = _dict(ev.get("resource"))
-                key = (_str(ev.get("time")), a.get("model"), a.get("session.id"))
+                key = (_str(ev.get("time")), _text(a.get("model")), _text(a.get("session.id")))
                 rec = aux.setdefault(key, {
-                    "seq": e.get("seq"), "request_id": None, "session_id": a.get("session.id"),
-                    "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
-                    "category": a.get("category") or r.get("category") or "untagged",
-                    "project": a.get("project") or r.get("project"),
-                    "mode": a.get("run.mode") or r.get("run.mode") or _auth(a), "time": _str(ev.get("time")),
-                    "model": a.get("model"), "query_source": "auxiliary", "cost_usd": 0.0,
+                    "seq": e.get("seq"), "request_id": None, "session_id": _text(a.get("session.id")),
+                    "run_id": _text(a.get("run.id") or r.get("run.id") or a.get("session.id")),
+                    "category": _text(a.get("category") or r.get("category")) or "untagged",
+                    "project": _text(a.get("project") or r.get("project")),
+                    "mode": _text(a.get("run.mode") or r.get("run.mode") or _auth(a)), "time": _str(ev.get("time")),
+                    "model": _text(a.get("model")), "query_source": "auxiliary", "cost_usd": 0.0,
                     "tokens": {t: 0 for t in TOKEN_TYPES}})
                 t = METRIC_TYPES.get(a.get("type"))
                 if t:
@@ -69,15 +94,15 @@ def api_requests(log_path=paths.LOG_PATH):
         r = _dict(ev.get("resource"))
         out.append({
             "seq": e.get("seq"),
-            "request_id": a.get("request_id"),
-            "session_id": a.get("session.id"),
-            "run_id": a.get("run.id") or r.get("run.id") or a.get("session.id"),
-            "category": a.get("category") or r.get("category") or "untagged",
-            "project": a.get("project") or r.get("project"),
-            "mode": a.get("run.mode") or r.get("run.mode") or _auth(a),
+            "request_id": _text(a.get("request_id")),
+            "session_id": _text(a.get("session.id")),
+            "run_id": _text(a.get("run.id") or r.get("run.id") or a.get("session.id")),
+            "category": _text(a.get("category") or r.get("category")) or "untagged",
+            "project": _text(a.get("project") or r.get("project")),
+            "mode": _text(a.get("run.mode") or r.get("run.mode") or _auth(a)),
             "time": _str(a.get("event.timestamp") or ev.get("time")),
-            "model": a.get("model"),
-            "query_source": a.get("query_source"),
+            "model": _text(a.get("model")),
+            "query_source": _text(a.get("query_source")),
             "cost_usd": _num(a.get("cost_usd")),
             "tokens": {
                 "input": int(_num(a.get("input_tokens"))),
@@ -125,15 +150,15 @@ def sessions(log_path=paths.LOG_PATH):
         ev = _event(e)
         a = _dict(ev.get("attributes"))
         r = _dict(ev.get("resource"))
-        sid = a.get("session.id")
-        if not isinstance(sid, str) or not sid:
+        sid = _text(a.get("session.id"))
+        if not sid:
             continue
         t = _str(a.get("event.timestamp") or ev.get("time"))
         s = out.setdefault(sid, {"first": t, "terminal": None, "mode": None, "project": None, "category": None})
         if t and (not s["first"] or t < s["first"]):
             s["first"] = t
-        s["terminal"] = s["terminal"] or a.get("terminal.type")
-        s["mode"] = s["mode"] or a.get("run.mode") or r.get("run.mode") or _auth(a)
-        s["project"] = s["project"] or a.get("project") or r.get("project")
-        s["category"] = s["category"] or a.get("category") or r.get("category")
+        s["terminal"] = s["terminal"] or _text(a.get("terminal.type"))
+        s["mode"] = s["mode"] or _text(a.get("run.mode") or r.get("run.mode") or _auth(a))
+        s["project"] = s["project"] or _text(a.get("project") or r.get("project"))
+        s["category"] = s["category"] or _text(a.get("category") or r.get("category"))
     return out

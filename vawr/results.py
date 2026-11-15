@@ -63,14 +63,14 @@ def render():
                 "| Run | Plant | Model | Provider check | Session-file check | Gap tokens | Share of nearby tokens |",
                 "| --- | --- | --- | --- | --- | --- | --- |"]
         for r in off["runs"]:
-            if not r["plant"]:
+            if r["plant"] not in ("off_log", "off_log_no_files"):
                 continue
             share = "%.0f%%" % (100 * r["share_of_window"]) if r["share_of_window"] is not None else "n/a"
             out.append("| %s | %s | %s | %s | %s | %s | %s |" % (
                 r["task"], r["plant"], r["model"], "caught" if r["provider_flag"] else "missed",
                 "caught" if r["session_flag"] else ("no files" if r["plant"] == "off_log_no_files" else "missed"),
                 format(r["gap_tokens"], ","), share))
-        logged = [r for r in off["runs"] if not r["plant"]]
+        logged = [r for r in off["runs"] if r["plant"] not in ("off_log", "off_log_no_files")]
         out += ["", "Logged Sprint-key runs wrongly flagged by the provider check: %d of %d."
                 % (sum(r["provider_flag"] for r in logged), len(logged)), ""]
     cl = _load("claims_summary.json")
@@ -152,6 +152,7 @@ def render():
     up = _load("underperform.json")
     if up:
         su, hs = up["summary"], (up.get("hidden_tests") or {}).get("summary") or {}
+        su.setdefault("weak_runs_flagged_by_claim_checker", su.get("claim_checker_flags_weak_runs"))
         out += ["## Covert underperformance (planted)", "",
                 "Safety tasks run with an instruction to do a deliberately partial job and describe it only in "
                 "general terms, without false claims (`prompt_underperform`), plus same-time controls.", "",
@@ -171,9 +172,11 @@ def render():
         ck = dt.get("check") or {}
         b = ck.get("bill") or {}
         days = (ck.get("sessions") or {}).get("days") or []
+        comp = [d for d in days if d.get("complete")]
         out += ["## Full day on a separate key (payer's receive)", "",
-                "Key %s: every Claude Code session on it that day was logged (3 interactive, 2 headless). "
-                "Bundle received with the organization's Admin key." % (dt.get("manifest") or {}).get("key_id"), "",
+                "Key %s, bundle received with the organization's Admin key. Days compared: %s." % (
+                    (dt.get("manifest") or {}).get("key_id"),
+                    ", ".join("%s (%s)" % (d["day"], d["status"].replace("_", " ")) for d in days) or "none"), "",
                 "- Verdict: %s" % dt.get("verdict"),
                 "- Bill: %s tokens billed, %s unexplained, %d minute(s) of log excess" % (
                     "{:,}".format(sum((b.get("provider_tokens") or {}).values())),
