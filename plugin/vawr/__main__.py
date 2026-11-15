@@ -661,7 +661,14 @@ def main(argv=None):
         print("No log at %s yet. Run `vawr setup --write` and `vawr start`, then use Claude Code; "
               "or pass --log with the log to read." % args.log)
         return 1
-    return args.func(args) or 0
+    try:
+        return args.func(args) or 0
+    except ValueError as exc:
+        from .billcheck import BadTime
+        if not isinstance(exc, BadTime):
+            raise
+        print("vawr %s: %s" % (args.cmd, exc), file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

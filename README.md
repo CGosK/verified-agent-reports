@@ -65,7 +65,8 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
   and [#82274](https://github.com/anthropics/claude-code/issues/82274)). The
   bill check accounts for all of this; anything beyond it shows up, except
   small-model usage that fits inside the per-session allowance it makes for
-  the desktop request. (We didn't test the desktop app's own interactive
+  the desktop request (one allowance per logged session with usage of its own,
+  and never more than Anthropic's own session count for the day justifies). (We didn't test the desktop app's own interactive
   sessions.)
 - **Usage nobody on this machine recorded stands out.** Another machine or a
   script using the key, a run with session files turned off, or a leaked key
@@ -84,16 +85,21 @@ Two things stood out in our runs (one API key, one machine, Claude Code 2.1.322)
   with `DISABLE_TELEMETRY=1` and `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
   were billed (about 34,500 tokens) and never counted, while two identical
   sessions without them were (`work/results/telemetry_off_test.json`); either
-  variable alone does it (0 of 2 each, `telemetry_off_bisect.json`; in a
-  headless repeat, Anthropic counted only the same-time control, 1 of 3,
+  variable alone does it (0 of 2 each, `telemetry_off_bisect.json`, a run
+  without its own control; in a headless repeat with one, Anthropic counted
+  only the control, identified by its tokens, 1 of 3,
   `telemetry_off_headless.json`). So the
   count catches sessions kept out of the team's log, not a team that also
   switches off Claude Code's reporting. The bill is the record a team can't
   switch off. vawr still logs sessions run with either variable, so an honest
   team that sets one has more in its log than Anthropic counted. The sessions
-  check calls such a day "uncounted": not a failure, since nothing is hidden
-  (the bill check covers the tokens), but the report stops at CONSISTENT, and
-  `vawr setup`, `vawr status` and `vawr bundle` warn when either is set.
+  check calls such a day "uncounted": not a failure on its own, since the bill
+  check covers the tokens, but the report stops at CONSISTENT, and `vawr setup`,
+  `vawr status` and `vawr bundle` warn when either is set (in the shell, or in
+  user, project or managed settings). Extra logged sessions with no usage of
+  their own fail, and so does a day where the bill check needed more
+  background allowance than Anthropic's count justifies, so made-up sessions
+  can't cover unlogged use of the key.
 
 ## Install
 
@@ -238,9 +244,13 @@ they overlap (continuity), so history can't be rewritten between reports; once
 a report for an API key has been verified, a report for that key from a
 different log fails until someone explains why. VERIFIED needs the payer's
 Admin key, a bill check with nothing billed missing from the log and nothing
-in the log that wasn't billed, a sessions check that ran without failing or
-finding uncounted days (a day not yet over counts "so far"), a window that has ended, and every token in
-the report on that key. Usage marked as a Claude subscription can't be
+in the log that wasn't billed, a sessions check that confirmed every day (a day
+not yet over counts "so far"), a window that has ended, and every token in the
+report on that key. A day isn't confirmed when Anthropic counted fewer sessions
+than the log has (uncounted), when its count hasn't caught up yet, or when it
+counted sessions the log lacks on a day the log starts, or the window ends,
+partway through: those may lie outside the log, so report whole UTC days to get
+VERIFIED. Such a report is CONSISTENT. Usage marked as a Claude subscription can't be
 checked, so a report with any is CONSISTENT, as is one received without an
 Admin key (the log and report hold together; nothing was checked against a
 bill). A log that makes the checks crash, or has negative token counts, is
@@ -303,7 +313,7 @@ intervals (conditional on these tasks and logs) are in
 | Real interactive sessions (follow-ups, a subagent, `/compact`) | Log equals the bill exactly; bill check from session files alone: 0 unexplained |
 | Anthropic's daily Claude Code session count vs the log (Nov 14, as of 17:17 UTC) | Headless: Anthropic 91, log 66, a shortfall equal to our 25 hidden runs; the Sonnet and Opus tokens they add equal the hidden runs' unexplained tokens. Interactive terminal type: 5 and 5, tokens equal. 2 more sessions were our unlogged plugin test, also flagged by the bill check (35,936 tokens) |
 | Weaker work, told to hide it (15 planted safety runs, 5 controls) | 11 of 15 broke the task's tests; 8 of those 11 said so anyway; the claim checker flagged all 11 (3 of 3 that hid it) and 0 of 5 controls; the other 4 met hidden tests too |
-| Sessions run with Claude Code's own telemetry off (`DISABLE_TELEMETRY=1`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`) | Billed, but not in Anthropic's session count: 0 of 2 counted with both, 0 of 2 with each alone, against 2 of 2 identical sessions without them, and 1 of 3 in a headless repeat (the same-time control); the bill check still sees them, and vawr still logs them (1 of 1 with each) |
+| Sessions run with Claude Code's own telemetry off (`DISABLE_TELEMETRY=1`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`) | Billed, but not in Anthropic's session count: 0 of 2 counted with both, 0 of 2 with each alone, against 2 of 2 identical sessions without them, and 1 of 3 in a headless repeat (the same-time control, identified by its tokens); the bill check flagged every billed token of all three runs (69,848, 69,068 and 53,204), and vawr still logs such sessions (1 of 1 with each) |
 | A whole day on a separate key, every session logged (payer's `vawr receive`) | VERIFIED: Anthropic counted 5 sessions, the log 5, no token difference; bill 550,952 tokens, 0 unexplained |
 | Claude Code 2.1.325, environment A/B (desktop app's environment vs clean) | Unrecorded request in 4 of 4 desktop-environment runs (cache read 7,010, as on 2.1.322), 0 of 4 clean; bill and session-file checks pass |
 | A report rebuilt after an earlier report was received (200 trials) | Continuity caught 98 of 98 edits before the earlier report's head; by design, 0 of 102 after it |

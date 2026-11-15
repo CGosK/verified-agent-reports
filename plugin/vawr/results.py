@@ -242,6 +242,14 @@ def render():
                                th.get("checked_at", "")[11:16]))
                 out.append("- Billed on the key 11:22–11:25 UTC, while the three ran: %s Haiku tokens"
                            % format(billed, ","))
+            bc = [(n, _load("telemetry_off_billcheck_run%d.json" % n)) for n in (1, 2, 3)]
+            if all(r for _, r in bc):
+                out.append("- Bill check (`vawr billcheck`, Nov 15, against this machine's session files, which "
+                           "these sessions' separate config folders kept out): %s" % "; ".join(
+                               "run %d %s of %s billed tokens unexplained" % (
+                                   n, format(sum(sum(g["tokens"].values()) for g in r["gaps"]), ","),
+                                   format(sum(r["provider_tokens"].values()), ","))
+                               for n, r in bc))
             out += ["", "So an honest team with either setting has more in its log than Anthropic counted. The "
                     "sessions check reports such a day as uncounted: not a failure, but not VERIFIED."]
         out.append("")

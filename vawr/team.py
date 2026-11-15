@@ -127,21 +127,23 @@ def _key_row(kid, members, org_minutes, names, keys, admin_key, start, end, sess
             row["sessions"] = {"ok": None, "error": "more than one key is named %r; Anthropic's Claude Code "
                                "analytics names keys, not IDs, so it can't tell them apart" % names.get(kid)}
         elif sessions:
-            try:
+            try:  # Anthropic-side failures come back as an "error"; this catches the logs' own
                 row["sessions"] = daily.check(admin_key, kid, start, end,
                                               [(mb["log"], mb["only_projects"]) for mb in mine],
                                               key_name=names.get(kid), fetch=fetch, now=now)
+                daily.limit_background(row["sessions"], row["bill"])
             except Exception as exc:
-                row["sessions"] = {"ok": None, "error": "%s: %s" % (type(exc).__name__, exc)}
+                row["sessions"] = {"ok": False, "error": "the logs made the sessions check fail: %s: %s"
+                                   % (type(exc).__name__, exc)}
         broken = [mb for mb in mine if not mb["chain_ok"] or not mb["report_ok"] or mb["continuity"]["ok"] is False]
         s = row["sessions"] or {}
         if broken or not row["bill"]["ok"] or s.get("ok") is False or not row["in_organization"]:
             row["status"] = "fail"
         elif s.get("error"):
             row["status"] = "check"  # the bill check passed; the session count couldn't run
-        elif s.get("uncounted_days"):
-            row["status"] = "check"  # the bill check passed; Anthropic counted less than the logs have
-            row["note"] = daily.uncounted_text(s)
+        elif s.get("ok") is not True:
+            row["status"] = "check"  # the bill check passed; the session count couldn't confirm every day
+            row["note"] = daily.unconfirmed_text(s) or "Anthropic's session count couldn't confirm every day yet"
         else:
             row["status"] = "pass"
         if len({mb["log_id"] for mb in mine}) > 1 and row["status"] == "pass":

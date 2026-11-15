@@ -122,7 +122,7 @@ class SessionsCheckTest(unittest.TestCase):
 
     def test_overall(self):
         self.assertIsNone(daily.overall([{"status": "partial"}, {"status": "before_log"}]))
-        self.assertTrue(daily.overall([{"status": "pass_so_far"}, {"status": "partial"}]))
+        self.assertIsNone(daily.overall([{"status": "pass_so_far"}, {"status": "partial"}]))  # unconfirmed day
         self.assertFalse(daily.overall([{"status": "pass"}, {"status": "fail"}]))
         self.assertIsNone(daily.overall([{"status": "pass"}, {"status": "uncounted"}]))
 

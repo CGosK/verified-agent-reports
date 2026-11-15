@@ -43,9 +43,13 @@ to it), 5 and 5; VERIFIED.
 vawr receive work/samples/batch-runs-with-hidden.zip
 ```
 
-Point at: FAIL bill (430,844 tokens unexplained), FAIL sessions (Anthropic
-counted 91 headless sessions, the log has 66: the 25 runs we hid), and the NOTE
-that subscription usage can't be checked against any record.
+Point at: FAIL bill (430,844 tokens unexplained: the runs we hid, minute by
+minute); the sessions NOTE (this bundle's log stops at 09:17, and Anthropic's
+whole-day count includes runs logged after that, so vawr says the day can't be
+confirmed rather than guessing); and the NOTE that subscription usage can't be
+checked against any record. (Anthropic's count for that day, compared with
+every log we kept, is Table 6 in the paper: a shortfall of exactly the 25 runs
+we hid.)
 
 ## 5. Someone edits the report (30 s)
 

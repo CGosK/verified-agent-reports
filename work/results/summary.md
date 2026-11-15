@@ -160,6 +160,7 @@ Does vawr still log such a session? One headless session each, OpenTelemetry to 
 - Control (neither): 1 session and 1 API request logged
 - Anthropic's count of these three headless sessions: 1 of 3, the control: the counted row's tokens equal the control's request exactly (checked 12:31 UTC, about an hour after)
 - Billed on the key 11:22–11:25 UTC, while the three ran: 53,204 Haiku tokens
+- Bill check (`vawr billcheck`, Nov 15, against this machine's session files, which these sessions' separate config folders kept out): run 1 69,848 of 69,848 billed tokens unexplained; run 2 69,068 of 69,068 billed tokens unexplained; run 3 53,204 of 53,204 billed tokens unexplained
 
 So an honest team with either setting has more in its log than Anthropic counted. The sessions check reports such a day as uncounted: not a failure, but not VERIFIED.
 

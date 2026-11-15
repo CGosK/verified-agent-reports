@@ -37,5 +37,5 @@ out = {"exit": r.returncode, "reply": r.stdout.strip()[:40], "log_entries": sum(
        "log_sessions": sess,
        "api_requests": sum(1 for l in open(LOG) if "api_request" in l) if os.path.exists(LOG) else 0,
        "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started))}
-json.dump(out, open("work/results/telemetry_off_otel.json", "w"), indent=1, default=str)
+json.dump(out, open("work/results/telemetry_off_otel_disable_telemetry.json", "w"), indent=1, default=str)
 print(json.dumps(out, default=str)[:600])

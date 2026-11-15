@@ -1,0 +1,79 @@
+{
+ "ok": false,
+ "window": [
+  "2026-11-15T09:49:00+00:00",
+  "2026-11-15T09:52:00+00:00"
+ ],
+ "shift_minutes": 2,
+ "tolerance": {
+  "input": 0,
+  "output": 0,
+  "cache_read": 0,
+  "cache_creation": 0
+ },
+ "provider_tokens": {
+  "input": 8,
+  "output": 16,
+  "cache_read": 48467,
+  "cache_creation": 20577
+ },
+ "logged_tokens": {
+  "input": 0,
+  "output": 0,
+  "cache_read": 0,
+  "cache_creation": 0
+ },
+ "background_tokens": {
+  "input": 0,
+  "output": 0,
+  "cache_read": 0,
+  "cache_creation": 0
+ },
+ "recorded_totals_tokens": {
+  "input": 0,
+  "output": 0,
+  "cache_read": 0,
+  "cache_creation": 0
+ },
+ "background_model": "claude-haiku-5-5",
+ "logged_sessions": 0,
+ "per_session": {},
+ "background_by_session": {},
+ "gaps": [
+  {
+   "start": "2026-11-15T09:50:00+00:00",
+   "end": "2026-11-15T09:50:00+00:00",
+   "tokens": {
+    "input": 8,
+    "output": 16,
+    "cache_read": 48467,
+    "cache_creation": 20577
+   },
+   "by_model": {
+    "claude-haiku-5-5": {
+     "input": 8,
+     "output": 16,
+     "cache_read": 48467,
+     "cache_creation": 20577
+    }
+   }
+  }
+ ],
+ "log_excess": [],
+ "per_minute": {
+  "2026-11-15T09:50:00+00:00": {
+   "provider": 69068,
+   "background": 0,
+   "gap": 69068,
+   "matched": 0
+  }
+ },
+ "minutes_checked": 3,
+ "clean_minutes": 2,
+ "key_id": "apikey_014nm6SadTU7zy9DoURcd48j",
+ "source": "legacy",
+ "data_refreshed_at": null,
+ "local_api_key_requests": 0,
+ "local_api_key_sessions": 0,
+ "local_account_requests": 14
+}

@@ -20,6 +20,8 @@ from .sessions import parse_ts
 
 LEVELS = {
     "provider": "Checked against Anthropic's records",
+    "provider-unconfirmed": "Bill checked against Anthropic's records; its session count couldn't confirm every "
+                            "day",
     "tamper-evident": "Tamper-evident only: not checked against Anthropic's records",
     "failed": "A check failed",
 }
@@ -27,14 +29,18 @@ LEVELS = {
 
 def level(res):
     """How far a check result vouches for the log: "provider" (chain intact and the
-    bill check passed against Anthropic's records), "tamper-evident" (chain intact,
-    no bill check: a Claude subscription, or no Admin key) or "failed"."""
+    bill check passed against Anthropic's records), "provider-unconfirmed" (the same,
+    but Anthropic's session count couldn't confirm some day), "tamper-evident" (chain
+    intact, no bill check: a Claude subscription, or no Admin key) or "failed"."""
     sess = res.get("sessions")
     bill = res.get("bill")
     if (res["chain"]["ok"] is False or (res.get("coverage") or {}).get("ok") is False
             or (bill and (bill["gaps"] or bill.get("log_excess"))) or (sess and sess.get("ok") is False)):
         return "failed"
-    return "provider" if res.get("bill") is not None else "tamper-evident"
+    if res.get("bill") is None:
+        return "tamper-evident"
+    return "provider-unconfirmed" if sess and (sess.get("unconfirmed_days") or sess.get("uncounted_days")) \
+        else "provider"
 
 
 def provider_checks(reqs, start, end, admin_key=None, key_id=None, api_key=None, provider_minutes=None,
@@ -54,10 +60,10 @@ def provider_checks(reqs, start, end, admin_key=None, key_id=None, api_key=None,
         bill["key_id"] = key_id
         bill["source"] = source
     if sessions and admin_key and key_id and log_paths:
-        try:
-            sess = daily.check(admin_key, key_id, start, end, log_paths, only_projects=only_projects)
-        except Exception as exc:  # the bill check stands on its own; say why this one didn't run
-            sess = {"ok": None, "error": "%s: %s" % (type(exc).__name__, exc)}
+        # daily.check reports Anthropic-side failures as an "error"; a failure in the log's
+        # own data raises, so `vawr receive` fails the log rather than skipping the check
+        sess = daily.check(admin_key, key_id, start, end, log_paths, only_projects=only_projects)
+        daily.limit_background(sess, bill)
     return bill, sess
 
 
@@ -148,8 +154,8 @@ def render(res):
             lines.append("SKIP  sessions     needs an Admin key and the key's ID")
     elif s.get("error"):
         lines.append("SKIP  sessions     %s" % s["error"])
-    elif s.get("uncounted_days") and s.get("ok") is not False:
-        lines.append("NOTE  sessions     %s" % daily.uncounted_text(s))
+    elif daily.unconfirmed_text(s) and s.get("ok") is not False:
+        lines.append("NOTE  sessions     %s" % daily.unconfirmed_text(s))
         lines += daily.render_lines(s)
     else:
         lines.append("%s  sessions     %s" % (mark[s["ok"]], (

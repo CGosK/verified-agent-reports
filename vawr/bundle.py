@@ -437,7 +437,7 @@ def receive(bundle_path, admin_key=None, key_id=None, ledger=RECEIVED, record=Tr
               or (isinstance(sess, dict) and sess.get("ok") is False))
     if failed:
         verdict = "failed"
-    elif (bill is not None and not (isinstance(sess, dict) and (sess.get("error") or sess.get("uncounted_days")))
+    elif (bill is not None and isinstance(sess, dict) and sess.get("ok") is True  # every day confirmed
           and not unchecked and not out["window_open"]):
         verdict = "verified"
     else:
@@ -540,7 +540,8 @@ def receive_html(out, title=None):
     res["coverage"] = None  # only the team can run it, on its own session files
     res["continuity"] = out["continuity"]
     res["level"] = ("failed" if out["verdict"] == "failed" else
-                    "provider" if out["verdict"] == "verified" else "tamper-evident")
+                    "provider" if out["verdict"] == "verified" else
+                    "provider-unconfirmed" if (out.get("check") or {}).get("bill") is not None else "tamper-evident")
     res["checked_by"] = "the recipient, on their own machine" + (
         " with their own Admin key" if out.get("check") else "")
     return html_report.render(rep, check=res, title=title or out["manifest"].get("title") or "Agent usage report")

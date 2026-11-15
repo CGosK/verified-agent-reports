@@ -37,8 +37,16 @@ def parse_when(s, now=None):
     if s[-1:] in "mhd" and s[:-1].isdigit():
         n = int(s[:-1])
         return now - {"m": timedelta(minutes=n), "h": timedelta(hours=n), "d": timedelta(days=n)}[s[-1]]
-    t = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    try:
+        t = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except ValueError:
+        raise BadTime("%r isn't a time vawr reads: use 90m, 24h or 7d, or a UTC time such as "
+                      "2026-11-15T08:43 or 2026-11-15T08:43:00Z" % s) from None
     return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+
+
+class BadTime(ValueError):
+    """A --since or --until value that isn't a duration or an ISO time."""
 
 
 # Signs that a session was signed in with a Claude account (a subscription)

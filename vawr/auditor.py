@@ -188,12 +188,19 @@ def check_provider(log_reqs, start, end, shift=2, tolerance=None, key_mode="spri
         for t in TOKEN_TYPES:
             slot = logged.setdefault(model, {}).setdefault(t, {})
             slot[mm] = slot.get(mm, 0) + r["tokens"][t]
-        sid = r.get("session_id") or r.get("run_id") or r.get("request_id")
+        # a background allowance goes to a real session (Claude Code's session ID, or a
+        # harness run ID), never to a request on its own: each made-up ID would buy one
+        sid = r.get("session_id") or r.get("run_id")
+        if not sid:
+            continue
         span = sessions.setdefault(sid, [mm, mm])
         span[0], span[1] = min(span[0], mm), max(span[1], mm)
         sess_tokens = logged_by_session.setdefault(sid, {t: 0 for t in TOKEN_TYPES})
         for t in TOKEN_TYPES:
             sess_tokens[t] += r["tokens"][t]
+    # ... and only to a session with usage of its own: a session whose requests carry no
+    # tokens is no evidence of the background request that comes with real work
+    sessions = {sid: v for sid, v in sessions.items() if any(logged_by_session[sid].values())}
 
     models = set(logged) | {mod for v in pm.values() for mod in v}
     unmatched_p = {mod: {} for mod in models}

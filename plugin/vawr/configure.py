@@ -143,29 +143,47 @@ def telemetry_status(port=4318):
 TELEMETRY_OFF = ("DISABLE_TELEMETRY", "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC")
 
 
-def _on(value):
-    return value is not None and str(value).strip().lower() not in ("", "0", "false", "no", "off")
+MANAGED_SETTINGS = ("/Library/Application Support/ClaudeCode/managed-settings.json",  # macOS
+                    "/etc/claude-code/managed-settings.json")  # Linux
 
 
-def telemetry_off_settings(environ=None, settings_path=None):
+def _set(value):
+    """The value as it would read in a warning, or None if unset. Any non-empty value
+    counts: we only tested "1", and a warning on "0" costs less than silence on it."""
+    if value is None or not str(value).strip():
+        return None
+    v = str(value).strip()
+    return "" if v.lower() in ("1", "true") else "=%s" % json.dumps(v)
+
+
+def telemetry_off_settings(environ=None, settings_path=None, project_dir=None, managed_paths=MANAGED_SETTINGS):
     """Where DISABLE_TELEMETRY or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set: the
-    shell, or the user's Claude Code settings. Claude Code doesn't report sessions run
+    shell, the user's Claude Code settings, this project's (.claude/settings.json and
+    settings.local.json) or managed settings. Claude Code doesn't report sessions run
     with either to Anthropic (vawr still logs them), so a payer's check of Anthropic's
     session count can't confirm them."""
     environ = os.environ if environ is None else environ
-    path = settings_path or user_settings_path()
-    found = ["%s in the shell" % k for k in TELEMETRY_OFF if _on(environ.get(k))]
-    try:
-        with open(path) as fh:
-            env = (json.load(fh) or {}).get("env") or {}
-    except (OSError, ValueError, AttributeError):
-        env = {}
-    found += ["%s in %s" % (k, path) for k in TELEMETRY_OFF if isinstance(env, dict) and _on(env.get(k))]
+    project_dir = os.getcwd() if project_dir is None else project_dir
+    paths = [settings_path or user_settings_path(),
+             os.path.join(project_dir, ".claude", "settings.json"), project_settings_path(project_dir)]
+    paths += list(managed_paths or ())
+    found = ["%s%s in the shell" % (k, _set(environ.get(k))) for k in TELEMETRY_OFF
+             if _set(environ.get(k)) is not None]
+    for path in dict.fromkeys(paths):
+        try:
+            with open(path) as fh:
+                data = json.load(fh)
+            env = data.get("env") if isinstance(data, dict) else None
+        except (OSError, ValueError, RecursionError):
+            env = None
+        if isinstance(env, dict):
+            found += ["%s%s in %s" % (k, _set(env.get(k)), path) for k in TELEMETRY_OFF
+                      if _set(env.get(k)) is not None]
     return found
 
 
-def telemetry_off_warning(environ=None, settings_path=None):
-    found = telemetry_off_settings(environ, settings_path)
+def telemetry_off_warning(environ=None, settings_path=None, project_dir=None, managed_paths=MANAGED_SETTINGS):
+    found = telemetry_off_settings(environ, settings_path, project_dir, managed_paths)
     if not found:
         return ""
     return ("Note: %s is set. vawr still logs these sessions and the bill check still covers them, but Claude Code "

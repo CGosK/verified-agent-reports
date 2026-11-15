@@ -13,10 +13,15 @@ reporting; the bill is the record a team can't switch off.
 
 vawr's own log still records such sessions (work/results/telemetry_off_otel_*.json),
 so an honest team with either setting has more in its log than Anthropic counted.
-That isn't hidden work, so it doesn't fail: the day is "uncounted", which the bill
-check still covers but which keeps a report from VERIFIED. Its tokens matched the log exactly for logged sessions,
-and it leaves out the one background request that Claude Code records nowhere
-(see billcheck), which the log doesn't have either.
+So a day where the log has more sessions and more tokens than Anthropic counted
+doesn't fail: it's "uncounted", which the bill check still covers but which keeps
+a report from VERIFIED. Extra logged sessions with no tokens of their own fail, and
+so does an uncounted day where the bill check needed more background allowance than
+Anthropic's own session count justifies (see limit_background): a log padded with
+made-up sessions mustn't buy cover for unlogged use of the key. Anthropic's tokens
+matched the log exactly for logged sessions; they leave out the one background
+request that Claude Code records nowhere (see billcheck), which the log doesn't
+have either.
 
 So on a day when everything was logged, the log's sessions and tokens per model
 equal Anthropic's. A session that never reached the log shows up as a missing
@@ -82,9 +87,10 @@ def anthropic_days(admin_key, days, actor, fetch=None):
     return out
 
 
-def log_days(log_paths, days, only_projects=None):
+def log_days(log_paths, days, only_projects=None, ends=None):
     """The log's side: {day: {"sessions": set, "tokens": {model: n}}} for sessions billed
-    to an API key (optionally only these project tags), plus when each log starts."""
+    to an API key (optionally only these project tags), plus when each log starts.
+    Pass a list as `ends` to get when each log's last event is, in the same order."""
     if isinstance(log_paths, str):
         log_paths = [log_paths]
     # items may be (path, only_projects) pairs, for logs from several people
@@ -92,8 +98,8 @@ def log_days(log_paths, days, only_projects=None):
     out = {d: {"sessions": set(), "tokens": Counter(), "cells": {}} for d in days}
     first = []
 
-    def cell(d, term):
-        return out[d]["cells"].setdefault(term, {"sessions": set(), "tokens": Counter()})
+    def cell(d, term):  # Anthropic calls a session without a terminal type "unknown"; so does the log
+        return out[d]["cells"].setdefault(term or "unknown", {"sessions": set(), "tokens": Counter()})
     seen = set()  # (log ID, entry seq): two bundles from one log share requests
     for path, only in log_paths:
         keep = lambda mode, project: mode in API_KEY_MODES and (not only or project in only)  # noqa: E731
@@ -114,6 +120,9 @@ def log_days(log_paths, days, only_projects=None):
         starts = [_parse(s["first"]) for s in sess.values()]
         starts = [t for t in starts if t]
         first.append(min(starts).isoformat() if starts else None)
+        if ends is not None:
+            times = starts + [t for t in (_parse(r.get("time")) for r in api_requests(path)) if t]
+            ends.append(max(times).isoformat() if times else None)
     return out, first
 
 
@@ -123,9 +132,9 @@ def _parse(s):
         return None
     try:
         t = datetime.fromisoformat(s.replace("Z", "+00:00"))
-    except ValueError:
+        return (t if t.tzinfo else t.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
+    except (ValueError, OverflowError):
         return None
-    return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
 
 
 def _day(s):
@@ -149,20 +158,25 @@ def _status(a_sessions, a_tokens, l_sessions, l_tokens, complete, partial_log):
         return "partial", diff
     if short:
         return "fail", diff
+    if missing < 0 and not any(v < 0 for v in diff.values()):
+        return "fail", diff  # sessions Anthropic never saw, with no usage of their own: made up
     # the log has more than Anthropic counted: Claude Code doesn't report sessions run with
     # DISABLE_TELEMETRY or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC, though vawr logs them.
-    # Not a sign of hidden work (the bill check sees any log entry that wasn't billed).
+    # The bill check covers their tokens; limit_background stops them buying allowance.
     return ("uncounted" if complete else "pending"), diff
 
 
-def compare(anth, logd, now, log_starts=()):
+def compare(anth, logd, now, log_starts=(), log_ends=()):
     """Per-day verdicts, per terminal type where the log records it (Anthropic reports
     each actor's sessions by terminal type: "non-interactive" for `claude -p`, or the
     terminal's name). A day fails when Anthropic counted sessions or tokens the log
     doesn't have. Once the day is over, a log with more than Anthropic counted is
     "uncounted" (see the module docstring). A day the log only partly covers (it
-    started that day) doesn't fail on a shortfall."""
+    starts or ends during the day) doesn't fail on a shortfall: Anthropic's count
+    for it includes sessions outside the log, which the per-minute bill check covers
+    within the window. Such a day is "partial" and can't be confirmed."""
     starts = [_parse(s) for s in log_starts if s]
+    ends = [_parse(s) for s in log_ends if s]
     rows = []
     for d in sorted(anth):
         a = anth[d]
@@ -170,9 +184,10 @@ def compare(anth, logd, now, log_starts=()):
         day0 = datetime.combine(date.fromisoformat(d), datetime.min.time(), tzinfo=timezone.utc)
         complete = now >= day0 + timedelta(days=1) + LAG
         before_log = bool(starts) and all(s >= day0 + timedelta(days=1) for s in starts)
-        partial_log = bool(starts) and all(s > day0 for s in starts) and not before_log
+        partial_log = not before_log and ((bool(starts) and all(s > day0 for s in starts)) or
+                                          (bool(ends) and all(e < day0 + timedelta(days=1) for e in ends)))
         cells = []
-        if not before_log and None not in lg.get("cells", {}):  # every logged session has its terminal type
+        if not before_log:
             for term in sorted(set(a.get("cells", {})) | set(lg.get("cells", {}))):
                 ac = a["cells"].get(term) or {"sessions": 0, "tokens": Counter()}
                 lc = lg["cells"].get(term) or {"sessions": set(), "tokens": Counter()}
@@ -194,13 +209,15 @@ def compare(anth, logd, now, log_starts=()):
     return rows
 
 
+UNCONFIRMED = ("uncounted", "pending", "partial")
+
+
 def overall(rows):
-    """False if any day failed; True if none failed, none was uncounted and at least
-    one day matched; None otherwise (some day uncounted, or none could be checked:
-    before or partly before the log, or not over yet)."""
+    """False if any day failed; True if none failed, none is unconfirmed (uncounted,
+    pending or partial) and at least one day matched; None otherwise."""
     if any(r["status"] == "fail" for r in rows):
         return False
-    if any(r["status"] == "uncounted" for r in rows):
+    if any(r["status"] in UNCONFIRMED for r in rows):
         return None
     return True if any(r["status"] in ("pass", "pass_so_far") for r in rows) else None
 
@@ -210,37 +227,94 @@ def check(admin_key, key_id, start, end, log_paths, only_projects=None, now=None
     """The sessions check for the days the window touches. Returns a dict with "ok"
     (False only if some day failed) and per-day rows, or "error" if it couldn't run."""
     now = now or datetime.now(timezone.utc)
-    if actor is None:
-        if key_name is None:
-            keys = [k for k in usage_api.api_keys(admin_key)]
-            match = [k for k in keys if k.get("id") == key_id]
-            if not match:
-                return {"ok": None, "error": "key %s isn't in this Admin key's organization" % key_id}
-            key_name = match[0].get("name")
-            if sum(1 for k in keys if k.get("name") == key_name) > 1:
-                return {"ok": None, "error": "more than one key in the organization is named %r; Anthropic's "
-                        "Claude Code analytics names keys, not IDs, so it can't tell them apart" % key_name}
-        actor = {"api_key_name": key_name}
     days = days_between(start, end)
-    anth = anthropic_days(admin_key, days, actor, fetch=fetch)
-    logd, starts = log_days(log_paths, days, only_projects)
-    rows = compare(anth, logd, now, starts)
-    return {"ok": overall(rows), "actor": actor, "key_id": key_id, "days": rows,
-            "uncounted_days": [r["day"] for r in rows if r["status"] == "uncounted"]}
+    try:  # Anthropic's records: if they can't be read, the check didn't run
+        if actor is None:
+            if key_name is None:
+                keys = [k for k in usage_api.api_keys(admin_key)]
+                match = [k for k in keys if k.get("id") == key_id]
+                if not match:
+                    return {"ok": None, "error": "key %s isn't in this Admin key's organization" % key_id}
+                key_name = match[0].get("name")
+                if sum(1 for k in keys if k.get("name") == key_name) > 1:
+                    return {"ok": None, "error": "more than one key in the organization is named %r; Anthropic's "
+                            "Claude Code analytics names keys, not IDs, so it can't tell them apart" % key_name}
+            actor = {"api_key_name": key_name}
+        anth = anthropic_days(admin_key, days, actor, fetch=fetch)
+    except Exception as exc:
+        return {"ok": None, "error": "couldn't read Anthropic's count: %s: %s" % (type(exc).__name__, exc)}
+    # the log's side: an exception here comes from the log itself and isn't caught
+    ends = []
+    logd, starts = log_days(log_paths, days, only_projects, ends=ends)
+    # a log runs at least to the end of the window it reports on (quiet hours have no
+    # events), so a whole-day window is compared whole: a session hidden after the last
+    # logged event still fails. A window that ends mid-day leaves that day partial.
+    ends = [max(t, end).isoformat() for t in (_parse(e) or end for e in ends)]
+    rows = compare(anth, logd, now, starts, ends)
+    return summarize({"actor": actor, "key_id": key_id, "days": rows})
 
 
-UNCOUNTED = ("Anthropic counted fewer Claude Code sessions or tokens than the log has on %s. That isn't a sign "
-             "of hidden work: Claude Code doesn't report sessions run with DISABLE_TELEMETRY or "
-             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC set, though vawr logs them, and the bill check covers "
-             "their tokens. The count can't confirm these days; unset both for future sessions.")
+def summarize(res):
+    """Set "ok", "uncounted_days" and "unconfirmed_days" ({day: status}) from the rows."""
+    rows = res.get("days") or []
+    res["ok"] = overall(rows)
+    res["uncounted_days"] = [r["day"] for r in rows if r["status"] == "uncounted"]
+    res["unconfirmed_days"] = {r["day"]: r["status"] for r in rows if r["status"] in UNCONFIRMED}
+    return res
+
+
+def limit_background(sess, bill, envelope=None):
+    """An unconfirmed day (the log has more than Anthropic counted, or the day isn't
+    covered) fails if the bill check credited more background allowance that day than
+    Anthropic's own session count justifies: each logged session earns an allowance,
+    so made-up sessions could otherwise pass unlogged use of the key as background."""
+    if not isinstance(sess, dict) or not sess.get("days") or not isinstance(bill, dict):
+        return sess
+    from .auditor import BACKGROUND_ENVELOPE
+    per_session = sum((envelope or BACKGROUND_ENVELOPE).values())
+    used = Counter()
+    for mm, v in (bill.get("per_minute") or {}).items():
+        used[str(mm)[:10]] += (v or {}).get("background", 0) if isinstance(v, dict) else 0
+    changed = False
+    for r in sess["days"]:
+        if r["status"] in ("uncounted", "pending") and used[r["day"]] > r["anthropic_sessions"] * per_session:
+            r["status"] = "fail"
+            r["background_over_count"] = {"credited": used[r["day"]],
+                                          "justified": r["anthropic_sessions"] * per_session}
+            changed = True
+    return summarize(sess) if changed else sess
+
+
+UNCOUNTED = ("Anthropic counted fewer Claude Code sessions and tokens than the log has on %s, so its count "
+             "can't confirm the log. The likeliest cause is sessions run with DISABLE_TELEMETRY or "
+             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC, which Claude Code doesn't report to Anthropic but vawr "
+             "logs; the bill check covers their tokens.")
+PARTIAL = ("The log starts or ends partway through %s, so Anthropic's whole-day count can't confirm it; the bill "
+           "check covers the window minute by minute. Report whole UTC days to get VERIFIED.")
+
+
+def _days_text(days):
+    days = list(days)
+    return ", ".join(days) if len(days) <= 3 else "%s and %d more days" % (", ".join(days[:3]), len(days) - 3)
 
 
 def uncounted_text(res):
     days = (res or {}).get("uncounted_days") or []
-    return UNCOUNTED % ", ".join(days) if days else ""
+    return UNCOUNTED % _days_text(days) if days else ""
 
 
-NOTES = {"pass": "", "pass_so_far": " (day not over)", "partial": " (the log started this day)",
+def unconfirmed_text(res):
+    """NOTE text for the days the count can't confirm (not the pending ones, which a
+    later run settles)."""
+    un = (res or {}).get("unconfirmed_days") or {}
+    parts = [uncounted_text(res)] if (res or {}).get("uncounted_days") else []
+    partial = [d for d, st in sorted(un.items()) if st == "partial"]
+    if partial:
+        parts.append(PARTIAL % _days_text(partial))
+    return " ".join(parts)
+
+
+NOTES = {"pass": "", "pass_so_far": " (day not over)", "partial": " (the log starts or ends during this day)",
          "before_log": " (before the log started; not checked)",
          "pending": " (day not over; Anthropic's count lags up to an hour)", "fail": "",
          "uncounted": " (Anthropic counted fewer than the log has)"}
@@ -258,6 +332,12 @@ def render_lines(res):
         out.append("        %s  Anthropic counted %d Claude Code session%s, the log has %d%s%s" % (
             r["day"], r["anthropic_sessions"], "" if r["anthropic_sessions"] == 1 else "s", r["log_sessions"],
             NOTES[r["status"]], _diff_text(r["token_difference"])))
+        bo = r.get("background_over_count")
+        if bo:
+            out.append("          the bill check credited %s tokens of background allowance this day; Anthropic's "
+                       "count of %d session%s justifies at most %s, so the log's extra sessions don't explain "
+                       "the usage" % ("{:,}".format(bo["credited"]), r["anthropic_sessions"],
+                                      "" if r["anthropic_sessions"] == 1 else "s", "{:,}".format(bo["justified"])))
         if len(r.get("by_terminal") or []) > 1:
             for c in r["by_terminal"]:
                 out.append("          %-16s %-11s Anthropic %d, log %d%s" % (

@@ -20,7 +20,7 @@ import shlex
 from datetime import datetime, timezone
 
 from . import __version__
-from .daily import UNCOUNTED
+from .daily import unconfirmed_text
 
 CATEGORY_ORDER = ("safety", "capabilities", "other")
 TOKEN_TYPES = (("input", "Input"), ("output", "Output"), ("cache_read", "Cache read"),
@@ -34,6 +34,9 @@ CHECK_TITLES = {"chain": "Chain", "coverage": "Coverage", "bill": "Bill", "sessi
 LEVEL_TEXT = {
     "provider": ("Checked against Anthropic's records",
                  "The usage figures match Anthropic's own billing records for the API key."),
+    "provider-unconfirmed": ("Bill checked against Anthropic's records",
+                             "Usage billed to the API key matches Anthropic's billing records, but Anthropic's "
+                             "daily session count could not confirm every day (see the Sessions check)."),
     "tamper-evident": ("Tamper-evident only",
                        "The log has not been edited since it was written, but it was not checked against "
                        "Anthropic's records (no Admin key, or usage on a Claude subscription, for which "
@@ -434,11 +437,12 @@ def _sessions(check):
     rows = ss["days"]
     failed = [r for r in rows if r.get("status") == "fail"]
     matched = [r for r in rows if r.get("status") in ("pass", "pass_so_far")]
-    uncounted = [r for r in rows if r.get("status") == "uncounted"]
-    if uncounted and not failed:
+    unconfirmed = unconfirmed_text(ss)
+    if unconfirmed and not failed:
         status = "skip"
-        result = _e(UNCOUNTED % ", ".join(r["day"] for r in uncounted))
-        short = "could not confirm: Anthropic counted fewer sessions than the log has"
+        result = _e(unconfirmed)
+        short = ("Anthropic counted fewer sessions than the log has" if ss.get("uncounted_days") else
+                 "the log covers only part of a day")
     elif failed:
         status = "fail"
         missing = sum(max(0, _int(r.get("anthropic_sessions")) - _int(r.get("log_sessions"))) for r in failed)
@@ -476,7 +480,7 @@ def _sessions(check):
                         _count(work.get("commits", 0), "commit"), _count(work.get("pull_requests", 0),
                                                                           "pull request")))
     return {"key": "sessions", "status": status, "short": short, "result": result, "means": means,
-            "limits": limits, "details": details}
+            "limits": limits, "details": details, "ran": True}
 
 
 def _continuity(check):
@@ -718,9 +722,14 @@ def _verdict(checks, warnings, level=""):
     tail = []
     if failed and passed:
         tail.append("Passed: %s." % names(passed))
-    if skipped:
+    not_run = [c for c in skipped if not c.get("ran")]
+    unconfirmed = [c for c in skipped if c.get("ran")]
+    if not_run:
         tail.append("Not run: %s." % "; ".join(
-            "%s (%s)" % (CHECK_TITLES[c["key"]].lower(), c["short"]) for c in skipped))
+            "%s (%s)" % (CHECK_TITLES[c["key"]].lower(), c["short"]) for c in not_run))
+    if unconfirmed:
+        tail.append("Ran but could not confirm: %s." % "; ".join(
+            "%s (%s)" % (CHECK_TITLES[c["key"]].lower(), c["short"]) for c in unconfirmed))
     if missing:
         tail.append("Not included in this report: %s." % ", ".join(missing))
     return ('<section class="verdict %s" aria-labelledby="verdict-head"><p class="headline" id="verdict-head">'
