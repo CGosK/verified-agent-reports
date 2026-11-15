@@ -9,7 +9,7 @@ Everything needed to write the paper on the template. The rules below come from 
 - **Required:** the title; an abstract of 150–250 words; authors and affiliations; and an appendix titled "Limitations and Dual-Use / Ethical Considerations".
 - **Recommended sections:** Introduction, Related Work, Methodology, Results, Discussion, Limitations and Dual-Use, and References. Outline v5 already follows this order. The template itself recommends 4 pages, not counting references and appendix (Intro and Related Work 1 page, Methods and Results 2.5, Discussion 0.5); 8 is the cap.
 - **LLM use:** no statement is required ("use AI tools however they help you"). The team answers for everything in the report, and made-up results or references disqualify it. The outline's one-line statement is enough.
-- **Preexisting code:** must be marked in the README and the report. Nothing predates the sprint. The repository's first commit is `fe63989`, Nov 14, 2026 04:22 UTC (Nov 13 local time), and the README's "What predates the sprint" section says so.
+- **Preexisting code:** must be marked in the README and the report. Nothing predates the sprint. The repository's first commit is `db8e541`, Nov 14, 2026 04:22 UTC (Nov 13 local time), and the README's "What predates the sprint" section says so.
 - **Judging:** each criterion is scored 1–5: Impact Potential & Innovation, Execution Quality, and Presentation & Clarity. A judge may decline to score a report that's too unclear to follow.
 - **Resubmitting:** use the same title, before the deadline (Nov 16, 11:59 UTC).
 - **Optional:** a public repository, a 3–5 minute demo video (`docs/demo-script.md`; every command checked Nov 15 against the current code), slides, and a project image.
