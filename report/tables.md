@@ -53,7 +53,7 @@ Concurrency (unit: a window of three logged runs started 5 s apart): windows wit
 | other | 32 | 99 | 1,228,654 | 33.0% | 0.68 | 60 of 65 |
 | safety | 36 | 116 | 1,275,114 | 34.3% | 0.88 | 72 of 73 |
 
-Log head 4ae380e2851250ec; 3020 entries.
+Log head 2de8c02de77d686b; 3020 entries.
 
 ## Table 6. Anthropic's daily count of Claude Code sessions vs the log
 

@@ -2,7 +2,7 @@
   "log": {
     "path": "/Users/operator/ClaudeWork/personal/verified-agent-reports/work/log/events.jsonl",
     "entries": 3020,
-    "head": "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce",
+    "head": "2de8c02de77d686b1c443e880a82ebc7bc45f79fb58160295998ea8981942e5c",
     "chain_ok": true
   },
   "window": [

@@ -1,0 +1,22 @@
+{
+ "allowed_email_domains": [],
+ "allowed_people": [],
+ "allow": [
+  {"path": "work/**", "label": "token or cost counts", "reason": "Token counts and Claude Code's client-side cost estimates of the Sprint's own test runs are this project's data: the tool checks Claude Code's logged usage against the bill. No plan usage, rate limits or credits."},
+  {"path": "vawr/*.py", "label": "token or cost counts", "reason": "Code that reads Claude Code's usage and cost fields by name."},
+  {"path": "plugin/vawr/*.py", "label": "token or cost counts", "reason": "Identical copy of vawr/*.py shipped as the Claude Code plugin."},
+  {"path": "vawr/demo_data/*", "label": "token or cost counts", "reason": "vawr demo's inputs: replayed usage records of the two Sprint test keys and two sample bundles from the Sprint runs."},
+  {"path": "plugin/vawr/demo_data/*", "label": "token or cost counts", "reason": "Identical copy of vawr/demo_data shipped with the plugin."},
+  {"path": "tests/test_*.py", "label": "token or cost counts", "reason": "Made-up token and cost counts in unit-test fixtures."},
+  {"path": "report/make_tables.py", "label": "token or cost counts", "reason": "Builds the paper's tables from the token counts in work/results."},
+  {"path": "docs/drafts/*.md", "label": "token or cost counts", "reason": "Draft issue text that names Claude Code's cost fields."},
+  {"path": "work/**", "label": "home path", "match": "/Users/operator", "reason": "Placeholder username written over the real one when history was rewritten on Nov 15, 2026."},
+  {"path": "work/**/manifests/*s4redact*.json", "label": "email", "match": "a@b.co", "reason": "Made-up address from the redaction task (s4redact), quoted in an agent's run summary."},
+  {"path": "work/**/manifests/*s4redact*.json", "label": "email", "match": "name@domain.tld", "reason": "Made-up address from the redaction task (s4redact), quoted in an agent's run summary."},
+  {"path": "work/**/manifests/*s4redact*.json", "label": "email", "match": "user42@mail.co", "reason": "Made-up address from the redaction task (s4redact), quoted in an agent's run summary."},
+  {"path": "work/**/manifests/*s4redact*.json", "label": "email", "match": "foo@bar.co", "reason": "Made-up address from the redaction task (s4redact), quoted in an agent's run summary."},
+  {"path": "tasks/hidden_tests/test_hidden_s4.py", "label": "email", "match": "a.b+c@ex-ample.co.uk", "reason": "Made-up address in the redaction task's hidden test."},
+  {"path": "work/daytest/received.json", "label": "temp path", "match": "/var/folders/", "reason": "macOS temp folder of a finished receive run; it holds no username."},
+  {"path": "work/results/daytest_received.json", "label": "temp path", "match": "/var/folders/", "reason": "Copy of work/daytest/received.json; same reason."}
+ ]
+}

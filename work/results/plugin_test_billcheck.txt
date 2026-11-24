@@ -3,7 +3,7 @@
 
 vawr check, 2026-11-14 10:30 to 11:00 UTC
 
-PASS  chain        3830 entries, head a8924b5bc78342ff
+PASS  chain        3830 entries, head 933ec76bd6e4b1e8
 SKIP  coverage     not run (--no-coverage); 0 requests in the log
 FAIL  bill         35,936 tokens billed: 0 logged, 0 Claude Code background, 35,936 unexplained
         unexplained 10:45-10:46: 35,936 tokens (claude-haiku-5-5)

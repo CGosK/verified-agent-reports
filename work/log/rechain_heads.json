@@ -1,0 +1,117 @@
+{
+ "why": "anthropic.plan and anthropic.seat_type were removed from these logs on Nov 24, 2026 and their hash chains rebuilt; see scripts/scrub_plan_fields.py. Old hashes are those in commit 48184d9 and earlier.",
+ "logs": {
+  "work/log/events.jsonl": {
+   "entries": 3830,
+   "entries_scrubbed": 756,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "a8924b5bc78342ff123a0be7d6898735c59290418ea757d93c24e7c12500e6d7",
+   "new_head": "933ec76bd6e4b1e8f2889d082b8f0c12653c85b2ec424ae1a44aed518b1b60c5"
+  },
+  "work/log/events_upto_20261114T0917Z.jsonl": {
+   "entries": 2783,
+   "entries_scrubbed": 756,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "5f82bd60ecfee14fcc5e95a14cc6d17fca73387c45639ef81312eeae818a902c",
+   "new_head": "ffce29718a33a4679e4564b3dc43c6b7f53d238f4730fb21a448caa43c0a3c12"
+  },
+  "work/log/events_upto_20261114T1010Z.jsonl": {
+   "entries": 3020,
+   "entries_scrubbed": 756,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce",
+   "new_head": "2de8c02de77d686b1c443e880a82ebc7bc45f79fb58160295998ea8981942e5c"
+  },
+  "work/batch1/events.jsonl": {
+   "entries": 558,
+   "entries_scrubbed": 318,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "037ac8fe7b13f518d5c7be9b72f368b5711a6ade95f34913fa2b1c863d0bc7df",
+   "new_head": "b5cb5e9ca777dfebec5cc6b4972291b4dd87f74f8cd0c28478a32d2eb90863ac"
+  },
+  "work/pilot/log/events.jsonl": {
+   "entries": 319,
+   "entries_scrubbed": 198,
+   "first_changed_seq": 0,
+   "old_id": "72f275e9eccf6b0eccd5d3070811394f35adb985734351ff44af5869eacdf972",
+   "new_id": "9a23c6cc59e5e5d37d5c6e3b86b2288bd5af8d8e94a89df42eb52210547fbc92",
+   "old_head": "80c5d4312d0e5c5ae578ca723e41af560d797846a632261bc2ce76a63e96c8d9",
+   "new_head": "3a9863685116da519860a88fa59876ccf1e20bd80500bc430ec9f83a6ed30669"
+  },
+  "work/samples/batch-runs-with-hidden.zip!log.jsonl": {
+   "entries": 3020,
+   "entries_scrubbed": 756,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce",
+   "new_head": "2de8c02de77d686b1c443e880a82ebc7bc45f79fb58160295998ea8981942e5c"
+  },
+  "vawr/demo_data/batch-runs-with-hidden.zip!log.jsonl": {
+   "entries": 3020,
+   "entries_scrubbed": 756,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce",
+   "new_head": "2de8c02de77d686b1c443e880a82ebc7bc45f79fb58160295998ea8981942e5c"
+  },
+  "plugin/vawr/demo_data/batch-runs-with-hidden.zip!log.jsonl": {
+   "entries": 3020,
+   "entries_scrubbed": 756,
+   "first_changed_seq": 68,
+   "old_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "new_id": "eab85d0e4ee7d82163860d96d4717881f83193b6a53c4d5d951c467b718b4a12",
+   "old_head": "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce",
+   "new_head": "2de8c02de77d686b1c443e880a82ebc7bc45f79fb58160295998ea8981942e5c"
+  }
+ },
+ "cited_hashes_old_to_new": {
+  "037ac8fe7b13f518": "b5cb5e9ca777dfeb",
+  "037ac8fe7b13f518d5c7be9b72f368b5711a6ade95f34913fa2b1c863d0bc7df": "b5cb5e9ca777dfebec5cc6b4972291b4dd87f74f8cd0c28478a32d2eb90863ac",
+  "43b9cc939641718a1c02408a3a4e5b1579d623dee161150dd0d0988037e0e383": "7fe471db0904b45390f356005a5d1ac9ae29f6587f048bdef74f201f2a228500",
+  "4ae380e2851250ec": "2de8c02de77d686b",
+  "4ae380e2851250eca3415ddb4181053cde0f75b031166227e0af95ebbd5326ce": "2de8c02de77d686b1c443e880a82ebc7bc45f79fb58160295998ea8981942e5c",
+  "a8924b5bc78342ff": "933ec76bd6e4b1e8",
+  "f083f390ea8df75261dc35e59ced0ed92aea33213b74a3521ebb46d59888c767": "06168a7560643b1245fb4221ef591faeb353ec7b53813415320d174be5cfaf1e"
+ },
+ "files_rewritten": {
+  "logs_scrubbed_and_rechained": [
+   "work/log/events.jsonl",
+   "work/log/events_upto_20261114T0917Z.jsonl",
+   "work/log/events_upto_20261114T1010Z.jsonl",
+   "work/batch1/events.jsonl",
+   "work/pilot/log/events.jsonl"
+  ],
+  "zips_log_rebuilt_and_hashes_swapped": [
+   "work/samples/batch-runs-with-hidden.zip",
+   "vawr/demo_data/batch-runs-with-hidden.zip",
+   "plugin/vawr/demo_data/batch-runs-with-hidden.zip"
+  ],
+  "hashes_swapped_in_saved_outputs_and_tables": [
+   "report/tables.md",
+   "work/audits/20261113T213003Z.json",
+   "work/batch1/results/allocation_report.json",
+   "work/pilot/audits/20261113T200749Z.json",
+   "work/pilot/audits/20261113T200901Z.json",
+   "work/pilot/audits/20261113T201311Z.json",
+   "work/results/allocation_report.json",
+   "work/results/plugin_test_billcheck.txt",
+   "work/samples/check_batch1.json",
+   "work/samples/report_batch1.html",
+   "work/samples/report_batch1.json",
+   "work/samples/report_batch1_cli.html"
+  ],
+  "organization_id_removed": [
+   "work/results/cc_analytics.json"
+  ]
+ }
+}

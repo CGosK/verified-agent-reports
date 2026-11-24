@@ -684,7 +684,9 @@ def cc_analytics(admin_key, key_id, days=("2026-11-13", "2026-11-14"),
             "sprint_key_runs_in_manifests": runs.get(d, 0), "hidden_runs_in_manifests": hidden.get(d, 0),
             "comparison": r,
         }
-    out["raw_records"] = raw
+    # the organization's ID isn't needed to redo the comparison, and the result file is published
+    out["raw_records"] = {d: [{k: v for k, v in r.items() if k != "organization_id"} for r in rows]
+                          for d, rows in raw.items()}
     return out
 
 

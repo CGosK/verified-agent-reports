@@ -361,7 +361,17 @@ Claude Code's events and token and cost metrics, with prompts redacted
 `user.email`, `user.account_uuid`, `user.account_id`, `user.id`,
 `organization.id`, `anthropic.plan` and `anthropic.seat_type`, keeping only
 whether a session used an API key or a Claude account (`auth`). Logs written
-before Nov 14, 2026 08:30 UTC still carry the plan and seat type.
+before Nov 14, 2026 08:30 UTC kept the plan and seat type until Nov 24, 2026,
+when `scripts/scrub_plan_fields.py` removed them (adding `auth=account` in
+their place) and rebuilt those logs' hash chains. That changed their heads:
+Table 5's log head `4ae380e2851250ec` is now `2de8c02de77d686b`. The pilot
+log's ID changed too, because its first entry carried the plan. Saved outputs
+that cite those hashes (audit records, a `vawr check` transcript, sample
+reports and bundles) now show the new ones, which their commands never
+printed. `work/log/rechain_heads.json` maps each old ID and head to its new
+one and lists every file the scrub rewrote. In a full clone,
+`python3 scripts/scrub_plan_fields.py --check 48184d9` rebuilds each of those
+files from the last commit before the scrub and compares it with the tree.
 
 ## What predates the sprint
 

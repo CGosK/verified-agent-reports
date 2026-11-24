@@ -150,7 +150,6 @@
           "type": "api_actor",
           "api_key_name": "Apart AI Epistemics Key"
         },
-        "organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
         "terminal_type": "non-interactive",
         "customer_type": "api",
         "subscription_type": null,
@@ -232,7 +231,6 @@
           "type": "api_actor",
           "api_key_name": "Apart AI Epistemics Key"
         },
-        "organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
         "terminal_type": "non-interactive",
         "customer_type": "api",
         "subscription_type": null,
@@ -312,7 +310,6 @@
           "type": "api_actor",
           "api_key_name": "Apart AI Epistemics Key"
         },
-        "organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
         "terminal_type": "xterm",
         "customer_type": "api",
         "subscription_type": null,
@@ -366,7 +363,6 @@
           "type": "api_actor",
           "api_key_name": "Apart AI Epistemics Key"
         },
-        "organization_id": "af509dc0-d96c-4a27-bc25-0ab07ff24a6c",
         "terminal_type": "xterm-256color",
         "customer_type": "api",
         "subscription_type": null,

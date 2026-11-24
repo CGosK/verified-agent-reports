@@ -53,8 +53,9 @@ METRIC_TYPES = {"input": "input", "output": "output", "cacheRead": "cache_read",
 
 def _auth(a):
     """How a request was billed when the run carries no mode tag: an API key or
-    a Claude account. Logs from before the receiver kept auth= still carry the
-    plan attribute, which only account sessions send."""
+    a Claude account. A log written before the receiver kept auth= may carry the
+    plan attribute instead, which only account sessions send. (This repo's were
+    scrubbed to auth=account on Nov 24, 2026.)"""
     if a.get("auth"):
         return a["auth"]
     if "anthropic.plan" in a:

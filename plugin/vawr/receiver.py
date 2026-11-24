@@ -47,8 +47,9 @@ def any_value(v):
 
 # Identity fields Claude Code attaches to every event, plus the account's plan
 # and seat type. They are dropped before hashing so the log can be published;
-# nothing the checks use depends on them. (Logs written before Nov 14, 2026
-# 08:30 UTC still carry anthropic.plan and anthropic.seat_type.)
+# nothing the checks use depends on them. (This repo's logs written before
+# Nov 14, 2026 08:30 UTC carried the plan and seat type until
+# scripts/scrub_plan_fields.py removed them on Nov 24, 2026.)
 DROPPED_ATTRIBUTES = frozenset({
     "user.email", "user.account_uuid", "user.account_id", "user.id", "organization.id",
     "anthropic.plan", "anthropic.seat_type",
